@@ -81,6 +81,22 @@ bounce_vps_CTID ()
 ```
 
 
+#Can't find your blocked ip in a fail2ban env?
+
+```
+f2b(){
+clear;
+unblock $1
+tail -n 5 /var/log/fail2ban.log $1
+sudo cat /var/log/maillog | grep 'auth failed' | grep $1
+sudo cat /var/log/exim_mainlog | grep 'authenticator failed' | grep $1
+sudo cat /usr/local/apache/logs/error_log | grep -E 'id "(13052|13051|13504|90334)"' $1
+#sudo cat /var/log/messages grep $1
+}
+
+```
+
+
 #Force HTTPS in a .htaccess file
 
 ```
