@@ -57,7 +57,7 @@ bounce_vps_user()
 	} 
 ```
 
-In a Virtuozzo environment, eyeballs the logs relating to a container, waits to reboot if needed.
+#In a Virtuozzo environment, eyeballs the logs relating to a container, waits to reboot if needed.
 
 ```
 bounce_vps_CTID ()
@@ -133,7 +133,7 @@ systemctl restart mysql ; systemctl status mysql
 ```
 
 
-Glance at all error logs for an IP
+#Glance at all error logs for an IP
 #ROOT/VPS
 #Syntax: 'err $IP_ADDRESS'
 
@@ -165,7 +165,7 @@ err()
 	}
 ```
 
-WIP SITE MOVER
+#WIP SITE MOVER. TODO: automate search-replacing
 
 ```
 ##1 is the destination docroot. Don't forget to search-replace
