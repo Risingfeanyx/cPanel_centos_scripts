@@ -168,20 +168,15 @@ err()
 WIP SITE MOVER
 
 ```
-##1 is the site name, 2 is the destination docroot. 
+##1 is the destination docroot. Don't forget to search-replace
 doc_mover()
 	{
-	wp db export&&
-	cp -v .htaccess{,.bak_$(date +%F)};
-	cp -v .user.ini.{,.bak_$(date +%F)};
-	cp -v php.ini{,.bak_$(date +%F)};
-	cp -v index.html.{,.bak_$(date +%F)};
-	cp -v index.php.{,.bak_$(date +%F)};
-	tar -caf "$1.tar.gz" *
+	wp db export&
+	tar -caf "OG.$(date +%F).tar.gz" *
 	clear
-	rsync -azPv  $1.tar.gz $2
-	cd $2
-	tar -xvzf $1.tar.gz
+	rsync -azPv  OG.$(date +%F).tar.gz ~/$1/.
+	cd ~/$1
+	tar -xvzf OG.$(date +%F).tar.gz
 	}
 ```
 
