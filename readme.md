@@ -81,6 +81,19 @@ bounce_vps_CTID ()
 ```
 
 
+
+#Test HTTP codes on all domains on your server
+
+https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
+
+```
+for i in $(for a in /var/named/*.db; do echo $(basename $a .db); done); do echo $i ; curl -o /dev/null --silent --head --write-out '%{http_code}\n' $i ; done
+```
+
+
+
+
+
 #Can't find your blocked ip in a fail2ban env?
 
 ```
