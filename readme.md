@@ -134,7 +134,7 @@ mailtest()
 ```
 
 #What is going on with mysql?
-#Creates domain backups as well
+#Creates db backups as well
 ```
 mysql_bandaid()
 	{
