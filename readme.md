@@ -11,8 +11,6 @@ back(){
 	echo "$2/cpmove-$1.tar.gz" | mail -s "Backup Generated" $3
 	clear
 	}
-	echo "back cPanel username, domain, and email"
-
 ```
 
 #Creates a list of email accounts based on an existing text file. The text files only need the 'user' section of user@domain.com
