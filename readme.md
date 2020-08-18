@@ -15,6 +15,12 @@ back(){
 
 ```
 
+#Creates a list of email accounts based on an existing text file
+
+```
+for i in $(cat foo); do /scripts/addpop $i@domain.com $(openssl rand -base64 16 | tr -cd '[:alnum:]') 50MB
+```
+
 
 #Creates two screens, one to spin up a backup for all your users, and another to run cPanel updates, both email you out once finished.
 #usage $email@address
