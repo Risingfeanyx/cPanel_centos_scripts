@@ -20,6 +20,12 @@ back(){
 ```
  for i in $(cat foo); do /scripts/addpop "$i"@domain.com $(openssl rand -base64 16 | tr -cd '[:alnum:]') 50MB ; done
 ```
+#The same thing, but for all domains on your server
+
+```
+ for i in $(cat foo); do /scripts/addpop "$i"@$(for a in /var/named/*.db; do echo $(basename $a .db); done) $(openssl rand -base64 16 | tr -cd '[:alnum:]') 50 ; done
+```
+
 #And to remove them as well, solely for testing purposes
 
 ```
