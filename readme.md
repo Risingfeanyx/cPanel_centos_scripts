@@ -98,6 +98,10 @@ bounce_vps_CTID ()
 }
 ```
 
+#restart all cpanel services
+```
+for f in /scripts/restartsrv_*; do "$f" -H ; done
+```
 
 
 #Test HTTP codes/A records/whois info on all domains on your server
