@@ -29,6 +29,7 @@ for i in $(cat foo); do /scripts/delpop "$i"@domain.com ; done```
 #Creates two screens, one to spin up a backup for all your users, and another to run cPanel updates, both email you out once finished.
 #usage $email@address
 
+
 ```
 backup_update_email() 
 	{
@@ -37,8 +38,7 @@ backup_update_email()
 	echo "Backups for $(cat /etc/userdomains | awk {'print $2'} | grep -v nobody | sort -n | uniq) located at $(ls /home/*.tar.gz)" | mail-s "Backup Notification for $(hostname) on $(date +%F)" $1 ;  
 	screen -dmS Updates_$(date +%F) /scripts/upcp --force && echo "$(hostname) bumped up to $(/usr/local/cpanel/cpanel -V)" | mail -s "cPanel Upgraded" $1;
 	screen -ls;
-	}
-```
+	}```
 
 
 #in a non-root environment, kills cons for a non-root user
