@@ -15,12 +15,12 @@ back(){
 
 ```
 
-#Creates a list of email accounts based on an existing text file
+#Creates a list of email accounts based on an existing text file. The text files only need the 'user' section of user@domain.com
 
 ```
  for i in $(cat foo); do /scripts/addpop "$i"@domain.com $(openssl rand -base64 16 | tr -cd '[:alnum:]') 50MB ; done
 ```
-#And to remove them as well
+#And to remove them as well, solely for testing purposes
 
 ```
 for i in $(cat foo); do /scripts/delpop "$i"@domain.com ; done```
