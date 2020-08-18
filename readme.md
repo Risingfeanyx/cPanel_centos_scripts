@@ -20,6 +20,11 @@ back(){
 ```
 for i in $(cat foo); do /scripts/addpop $i@domain.com $(openssl rand -base64 16 | tr -cd '[:alnum:]') 50MB
 ```
+#And to remove them as well
+
+```
+for i in $(cat foo); do /scripts/delpop "$i"@domain.com ; done
+```
 
 
 #Creates two screens, one to spin up a backup for all your users, and another to run cPanel updates, both email you out once finished.
