@@ -16,12 +16,12 @@ back(){
 #Creates a list of email accounts based on an existing text file. The text files only need the 'user' section of user@domain.com
 
 ```
- for i in $(cat userlist); do /scripts/addpop "$i"@domain.com $(openssl rand -base64 16 | tr -cd '[:alnum:]') 50MB ; done
+ for i in $(cat userlist); do /scripts/addpop "$i"@domain.com $(date | md5sum) 50 ; done
 ```
 #The same thing, but for all domains on your server
 
 ```
- for i in $(cat userlist); do /scripts/addpop "$i"@$(for a in /var/named/*.db; do echo $(basename $a .db); done) $(openssl rand -base64 16 | tr -cd '[:alnum:]') 50 ; done
+ for i in $(cat userlist); do /scripts/addpop "$i"@$(for a in /var/named/*.db; do echo $(basename $a .db); done) $(date | md5sum) 50 ; done
 ```
 
 #And to remove them as well, solely for testing purposes
