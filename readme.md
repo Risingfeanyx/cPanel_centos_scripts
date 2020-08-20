@@ -251,8 +251,9 @@ site_watch()
 ```
 testpage()
 	  {
-	  clear
-	 echo "This is a test page sent on $(date '+%Y-%m-%d') by a member of the Technical Support team." >> testpage
+	 clear
+	 echo "This is a test page created on $(date '+%Y-%m-%d') by a member of the Technical Support team." >> testpage
+	 echo ""https://$1/testpage""
 	 curl -LA "foo"  $1/testpage
 	 }
 ```
