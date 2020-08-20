@@ -246,12 +246,14 @@ site_watch()
 ```
 
 
-#Tests serving functionality of server
+#Tests serving functionality of server. Be in docroot of site; usage is testpage $domain.tld
 
 ```
 testpage()
 	  {
+	  clear
 	 echo "This is a test page sent on $(date '+%Y-%m-%d') by a member of the Technical Support team." >> testpage
+	 curl -LA "foo"  $1/testpage
 	 }
 ```
 
