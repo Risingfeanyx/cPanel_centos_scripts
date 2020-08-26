@@ -224,6 +224,14 @@ err()
 	}
 ```
 
+#need a root WHM login?
+
+
+```
+clear ; /usr/local/cpanel/bin/whmapi1 create_user_session user=root service=whostmgrd | grep url
+```
+
+
 #WIP SITE MOVER. TODO: automate search-replacing
 
 ```
