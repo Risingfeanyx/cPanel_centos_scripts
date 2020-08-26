@@ -96,6 +96,14 @@ bounce_vps_CTID ()
 }
 ```
 
+
+#IPs connecting/accessing your cpanel in a non-root env
+
+```
+clear ;  sudo cat  /usr/local/cpanel/logs/access_log | grep 'POST\|$userna5\|pass' | grep -v cx.ip.add.ress
+```
+
+
 #restart all cpanel services
 ```
 for f in /scripts/restartsrv_*; do "$f" -H ; done
