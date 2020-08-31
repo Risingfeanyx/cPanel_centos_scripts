@@ -325,3 +325,10 @@ wpinfo()
 	pwd ; ls *bak_* *.sql
 	}
 ```
+
+#Update dns zone for all domains on server
+
+```
+for a in /var/named/*.db; do /scripts/dnscluster synczone $(basename $a .db); done
+
+```
