@@ -137,6 +137,13 @@ sudo cat /usr/local/apache/logs/error_log | grep -E 'id "(13052|13051|13504|9033
 
 ```
 
+#History of all IPs that have accessed your cPanel
+
+```
+ for i in $(sort /usr/local/cpanel/logs/session_log | grep $(date +%F) | awk '{print $6}' | uniq -u) ; do curl ipinfo.io/"$i" ; done
+```
+
+
 
 #Force HTTPS in a .htaccess file
 
