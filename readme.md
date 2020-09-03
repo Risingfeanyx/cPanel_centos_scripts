@@ -173,6 +173,7 @@ mailtest()
 ```
 mysql_bandaid()
 	{
+	clear
 	tail -10 /var/lib/mysql/*.err
 	systemctl stop mysql;
 	mv /var/lib/mysql/ib_logfile0 /var/lib/mysql/ib_logfile0.bak;
@@ -184,6 +185,7 @@ mysql_bandaid()
 
 ```
 (
+clear
 path="/root/dbbackups-$( date +"%Y-%m-%dT%H:%M:%S%z" )"
 mkdir $path && touch $path/dumplist 
 echo "Dumping into $path"
@@ -287,6 +289,7 @@ testpage()
 ```
 trackDNS()
 {
+clear
 IP=$(dig a $1 +short)
 NSIP=$(dig ns $1 +short)
 MX=$(dig mx $1 +short)
@@ -313,6 +316,7 @@ traceroute $1
 ```
 wpinfo()
 	{
+	clear
 	wp cache flush&
 	wp db size
 	wp db repair&  --skip-{plugins,themes}; 
@@ -337,6 +341,6 @@ wpinfo()
 #Update dns zone for all domains on server
 
 ```
-for a in /var/named/*.db; do /scripts/dnscluster synczone $(basename $a .db); done
+clear; for a in /var/named/*.db; do /scripts/dnscluster synczone $(basename $a .db); done
 
 ```
