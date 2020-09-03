@@ -173,6 +173,7 @@ mailtest()
 ```
 mysql_bandaid()
 	{
+	tail -10 /var/lib/mysql/*.err
 	systemctl stop mysql;
 	mv /var/lib/mysql/ib_logfile0 /var/lib/mysql/ib_logfile0.bak;
 	mv /var/lib/mysql/ib_logfile1 /var/lib/mysql/ib_logfile1.bak;
