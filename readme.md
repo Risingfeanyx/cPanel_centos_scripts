@@ -242,20 +242,26 @@ clear ; /usr/local/cpanel/bin/whmapi1 create_user_session user=root service=whos
 ```
 
 
-#WIP SITE MOVER. TODO: automate search-replacing
+
+##To be used within a user; moves site data from one folder to another. 
+USAGE: doc_mover original_site_folder new_site_folder
 
 ```
-##1 is the destination docroot. Don't forget to search-replace
+
 doc_mover()
 	{
-	wp db export&
-	tar -caf "OG.$(date +%F).tar.gz" *
 	clear
-	rsync -azPv  OG.$(date +%F).tar.gz ~/$1/.
-	cd ~/$1
-	tar -xvzf OG.$(date +%F).tar.gz
+	mkdir ~/$2
+	cd $1
+	tar -cvzf "OG.$1.$(date +%F).tar.gz" *
+	clear
+	rsync -azPv  "OG.$1.$(date +%F).tar.gz" ~/$2
+	cd ~/$2
+	tar -xvzf OG.$1.$(date +%F).tar.gz
+	clear
+	diff ~/$1 ~/$2
+	cd
 	}
-```
 
 #Best run in a screen, watches a domain and outputs to a text file
 
