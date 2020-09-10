@@ -262,6 +262,7 @@ doc_mover()
 	diff ~/$1 ~/$2
 	cd
 	}
+```
 
 #Best run in a screen, watches a domain and outputs to a text file
 
