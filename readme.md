@@ -201,6 +201,11 @@ systemctl restart mysql ; systemctl status mysql
 
 ```
 
+##loops through all currenlty existing screens
+
+```
+ for i in $(screen -ls | awk '{print $1}') ; do screen -x "$i" ; done
+```
 
 #Glance at all error logs for an IP
 #ROOT/VPS
