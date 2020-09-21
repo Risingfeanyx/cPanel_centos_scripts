@@ -115,7 +115,7 @@ for f in /scripts/restartsrv_*; do "$f" -H ; done
 https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
 
 ```
-for i in $(for a in /var/named/*.db; do echo $(basename $a .db); done); do echo $i ; curl -o /dev/null --silent --head --write-out '%{http_code}\n' $i ; dig a $i +short ; whois $i | grep 'Name Server\|Expiry\|Domain Status' ; done
+show-conns --http; for i in $(for a in /var/named/*.db; do echo $(basename $a .db); done); do echo $i ; curl -o /dev/null --silent --head --write-out '%{http_code}\n' $i ; dig a $i +short ; whois $i | grep 'Name Server\|Expiry\|Domain Status' ; done
 ```
 
 
