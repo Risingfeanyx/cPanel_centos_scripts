@@ -311,6 +311,19 @@ testpage()
 	 }
 ```
 
+#specs at a glance
+```
+        	{
+        	clear
+        	 df -h | head -n2
+        	 free -m
+        	 grep -i 'cpu family' /proc/cpuinfo | head -n1
+        	 hostname ; hostname -i
+        	 cat /etc/redhat-release && /usr/local/cpanel/cpanel -V
+        	 ls /etc/cpanel/ea4/is_ea4
+        	}
+```
+
 #Yet another DNS wrapper. (it crashes when indented, one of these days I'll figure out why)
 
 ```
