@@ -240,6 +240,7 @@ err()
 #NON ROOT/SHARED
 
 ```
+```
 err()
 	{
 	clear
@@ -251,6 +252,7 @@ err()
 	sudo cat /usr/local/cpanel/logs/login_log | grep $1 
 	}
 ```
+
 
 #need a root WHM login?
 
