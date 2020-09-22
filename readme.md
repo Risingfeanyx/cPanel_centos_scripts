@@ -30,6 +30,20 @@ back(){
 for i in $(cat userlist); do /scripts/delpop "$i"@domain.com ; done
 ```
 
+#As of cPanel 86, a known glitch spawning massive amounts of build_locale_da processes. This will kill that, and force an upgrade to $latest_supported version. Glitch went away in 88
+
+
+```
+	{
+	clear
+	dmesg
+	pkill -9 build_locale_da ;
+	/scripts/upcp --force ;
+	clear
+	ps faux | grep build_locale_da
+	}
+```
+
 
 #Creates two screens, one to spin up a backup for all your users, and another to run cPanel updates, both email you out once finished.
 #usage $email@address
