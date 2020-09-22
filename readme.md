@@ -156,6 +156,19 @@ sudo cat /usr/local/apache/logs/error_log | grep -E 'id "(13052|13051|13504|9033
 	sed -i '1 i\RewriteEngine On' .htaccess
 	}
 ```
+#As root, drop the following into a file and execute it; does the above but for all htacess in your users docroots
+
+```
+#!/bin/bash
+for i in $(find /home/*/* -maxdepth 5 -type f -name ".htaccess" | xargs dirname); do cd "$i" && 	
+        {
+	cp .htaccess{,.pre_https_$(date +%F)}
+	sed -i '1 i\RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]' .htaccess
+	sed -i '1 i\RewriteCond %{HTTPS} off ' .htaccess
+	sed -i '1 i\RewriteEngine On' .htaccess
+	}; done
+```
+
 
 #sends mail out to a test email of your choosing, and watches the logs for it. 
 #Syntax: mailtest test@domain.com
