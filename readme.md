@@ -5,10 +5,10 @@
 
 ```
 back(){
-	/scripts/pkgacct $1
-	mv /home/cpmove-$1.tar.gz /home/$1/public_html
-	chmod 644 /home/$1/public_html/cpmove-$1.tar.gz
-	echo "$2/cpmove-$1.tar.gz" | mail -s "Backup Generated" $3
+	/scripts/pkgacct "$1"
+	mv /home/cpmove-"$1".tar.gz /home/"$1"/public_html
+	chmod 644 /home/"$1"/public_html/cpmove-"$1".tar.gz
+	echo "$2/cpmove-$1.tar.gz" | mail -s "Backup Generated" "$3"
 	clear
 	}
 ```
@@ -52,26 +52,27 @@ backup_update_email()
 ```
 bounce_shared_user()
 	{
-	ps faux | grep $1 >> $1_pre_bounce_$(date +%F)
-	check_software $1
-	account-review $1
-	sudo /opt/sharedrads/suspend_user $1 -r billing
-	sudo /opt/sharedrads/unsuspend_user $1
-	switch $1
+	pgrep "$1" >> "$1"_pre_bounce_$(date +%F)
+	check_software "$1"
+	account-review "$1"
+	sudo /opt/sharedrads/suspend_user "$1" -r billing
+	sudo /opt/sharedrads/unsuspend_user "$1"
+	switch "$1"
 	} 
 ```
 
 #In a root env, kills cons for user. 
 
 ```
+#!/bin/bash
 bounce_vps_user()
 	{
-	ps faux | grep $1 >> $1_pre_bounce_$(date +%F)
-	check_software $1
-	account-review $1
-	sudo /scripts/suspendacct $1
-	sudo /scripts/unsuspendacct $1
-	su $1
+	ps faux | grep "$1" >> "$1"_pre_bounce_$(date +%F)
+	check_software "$1"
+	account-review "$1"
+	sudo /scripts/suspendacct "$1"
+	sudo /scripts/unsuspendacct "$1"
+	su "$1"
 	} 
 ```
 
@@ -82,17 +83,17 @@ bounce_vps_CTID ()
 {
 	clear
 	echo "##What's that VPS$1 doing"
-	sudo cat /var/log/messages | grep $1 | tail -5
+	sudo cat /var/log/messages | grep "$1" | tail -5
 	echo "##Is VPS$1 suspended?"
-	grep $1 /var/log/suspension.log/messages; echo "##Has VPS$1 moved   away?"
-	cat /opt/vzmigrate/$1.log/messages ; 
+	grep "$1" /var/log/suspension.log/messages; echo "##Has VPS$1 moved   away?"
+	cat /opt/vzmigrate/"$1".log/messages ; 
 	echo "##Is VPS$1 moving away?"
-	ls -l /opt/vzmigrate/inprogress/$1
-	echo "##Is VPS$1 napping? alive? full? Lets find out!"
-	vzlist -a -o veid,hostname,ip,status,laverage,description,diskspace,diskinodes | grep $1
-	read -p "Press Enter to reboot $1"
-	suspend_vps -r test $1
-	unsuspend_vps $1
+	ls -l /opt/vzmigrate/inprogress/"$1"
+	echo "##Is VPS$1 napping?"
+	vzlist -a -o veid,hostname,ip,status,laverage,description,diskspace,diskinodes | grep "$1"
+	read -pr "Press Enter to reboot $1"
+	suspend_vps -r test "$1"
+	unsuspend_vps "$1"
 }
 ```
 
@@ -100,7 +101,7 @@ bounce_vps_CTID ()
 #IPs connecting/accessing your cpanel in a non-root env
 
 ```
-clear ;  sudo cat  /usr/local/cpanel/logs/access_log | grep 'POST\|$userna5\|pass' | grep -v cx.ip.add.ress
+clear ;  sudo cat  /usr/local/cpanel/logs/access_log | grep "POST\|$userna5\|pass" | grep -v cx.ip.add.ress
 ```
 
 
@@ -115,7 +116,7 @@ for f in /scripts/restartsrv_*; do "$f" -H ; done
 https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
 
 ```
-show-conns --http; for i in $(for a in /var/named/*.db; do echo $(basename $a .db); done); do echo $i ; curl -o /dev/null --silent --head --write-out '%{http_code}\n' $i ; dig a $i +short ; whois $i | grep 'Name Server\|Expiry\|Domain Status' ; done
+show-conns --http; for i in $(for a in /var/named/*.db; do echo $(basename "$a" .db); done); do echo "$i" ; curl -o /dev/null --silent --head --write-out '%{http_code}\n' "$i" ; dig a "$i" +short ; whois "$i" | grep 'Name Server\|Expiry\|Domain Status' ; done
 ```
 
 
@@ -127,12 +128,12 @@ show-conns --http; for i in $(for a in /var/named/*.db; do echo $(basename $a .d
 ```
 f2b(){
 clear;
-unblock $1
-tail -n 5 /var/log/fail2ban.log $1
-sudo cat /var/log/maillog | grep 'auth failed' | grep $1
-sudo cat /var/log/exim_mainlog | grep 'authenticator failed' | grep $1
-sudo cat /usr/local/apache/logs/error_log | grep -E 'id "(13052|13051|13504|90334)"' $1
-#sudo cat /var/log/messages grep $1
+unblock "$1"
+tail -n 5 /var/log/fail2ban.log "$1"
+sudo cat /var/log/maillog | grep 'auth failed' | grep "$1"
+sudo cat /var/log/exim_mainlog | grep 'authenticator failed' | grep "$1"
+sudo cat /usr/local/apache/logs/error_log | grep -E 'id "(13052|13051|13504|90334)"' "$1"
+#sudo cat /var/log/messages grep "$1"
 }
 
 ```
@@ -140,7 +141,7 @@ sudo cat /usr/local/apache/logs/error_log | grep -E 'id "(13052|13051|13504|9033
 #History of all IPs that have accessed your cPanel
 
 ```
- for i in $(sort /usr/local/cpanel/logs/session_log | grep $(date +%F) | awk '{print $6}' | uniq -u) ; do curl ipinfo.io/"$i" ; done
+for i in $(sort /usr/local/cpanel/logs/session_log | grep "$(date +%F)" | awk '{print $6}' | uniq -u) ; do curl ipinfo.io/"$i" ; done
 ```
 
 
@@ -175,9 +176,9 @@ for i in $(find /home/*/* -maxdepth 5 -type f -name ".htaccess" | xargs dirname)
 ```
 mailtest()
   {
-	echo "This is a test email sent on $(date '+%F') by a member of the Technical Support team. Replies are not monitored. Please ignore." | mail -s  "Email Test Support" $1; 
+	echo "This is a test email sent on $(date '+%F') by a member of the Technical Support team. Replies are not monitored. Please ignore." | mail -s  "Email Test Support" "$1"; 
 	clear ;
-	sudo tail -f /var/log/exim_mainlog | grep $1
+	sudo tail -f /var/log/exim_mainlog | grep "$1"
 	}
 ```
 
@@ -228,14 +229,13 @@ systemctl restart mysql ; systemctl status mysql
 err()
 	{
 	clear
-	sudo grep $1 cat /var/log/messages | tail -1
-	sudo grep $1 cat /usr/local/apache/logs/error_log | tail -1
-	sudo grep $1 cat /var/log/nginx/error.log | grep | tail -1
-	sudo grep $1 cat /usr/local/cpanel/logs/access_log | tail -1
-	sudo grep $1 cat /var/log/secure | tail -1
-	sudo grep $1 cat /usr/local/cpanel/logs/login_log | tail -1
+	sudo grep "$1" cat /var/log/messages | tail -1
+	sudo grep "$1" cat /usr/local/apache/logs/error_log | tail -1
+	sudo grep "$1" cat /var/log/nginx/error.log | grep | tail -1
+	sudo grep "$1" cat /usr/local/cpanel/logs/access_log | tail -1
+	sudo grep "$1" cat /var/log/secure | tail -1
+	sudo grep "$1" cat /usr/local/cpanel/logs/login_log | tail -1
 	}
-```
 
 #NON ROOT/SHARED
 
@@ -269,16 +269,16 @@ USAGE: doc_mover original_site_folder new_site_folder
 doc_mover()
 	{
 	clear
-	mkdir ~/$2
-	cd $1
+	mkdir ~/"$2"
+	cd "$1" || exit
 	tar -cvzf "OG.$1.$(date +%F).tar.gz" *
 	clear
-	rsync -azPv  "OG.$1.$(date +%F).tar.gz" ~/$2
-	cd ~/$2
-	tar -xvzf OG.$1.$(date +%F).tar.gz
+	rsync -azPv  "OG.$1.$(date +%F).tar.gz" ~/"$2"
+	cd ~/"$2" || exit
+	tar -xvzf "OG.$1.$(date +%F).tar.gz"
 	clear
-	diff ~/$1 ~/$2
-	cd
+	diff ~/"$1" ~/"$2"
+	cd || exit
 	}
 ```
 
@@ -288,11 +288,11 @@ doc_mover()
 site_watch()
 	{
 	clear;
-	echo $1 >> site_watch_$1.txt;
-	echo $(date) >> site_watch_$1.txt;
-	wget --server-response wget -r -np -R "index.html*" $1 2>&1 | awk '/^  HTTP/{print $2}' >> $HOME/site_watch_$1.txt;
+	echo "$1" >> site_watch_"$1".txt;
+	echo "$(date)" >> site_watch_"$1".txt;
+	wget --server-response wget -r -np -R "index.html*" "$1" 2>&1 | awk '/^  HTTP/{print $2}' >> "$HOME"/site_watch_"$1".txt;
 	clear ; 
-	cat $HOME/site_watch_$1.txt;
+	cat "$HOME"/site_watch_"$1".txt;
 	}
 ```
 
@@ -304,8 +304,8 @@ testpage()
 	  {
 	 clear
 	 echo "This is a test page created on $(date '+%Y-%m-%d') by a member of the Technical Support team." >> testpage
-	 echo ""https://$1/testpage""
-	 curl -LA "foo"  $1/testpage
+	 echo ""https://"$1"/testpage""
+	 curl -LA "foo"  "$1"/testpage
 	 }
 ```
 
@@ -315,24 +315,24 @@ testpage()
 trackDNS()
 {
 clear
-IP=$(dig a $1 +short)
-NSIP=$(dig ns $1 +short)
-MX=$(dig mx $1 +short)
-TXT=$(dig txt $1 +short)
+IP=$(dig a "$1" +short)
+NSIP=$(dig ns "$1" +short)
+MX=$(dig mx "$1" +short)
+TXT=$(dig txt "$1" +short)
 RED='\033[0;31m'
 NC='\033[0m' # No Color
 clear
 echo -e "${RED}IP INFORMATION for $1 ${NC}"
-curl ipinfo.io/$IP
+curl ipinfo.io/"$IP"
 echo -e "${RED}Auth A, MX and TXT records  @$NSIP for $1 ${NC}"
-dig a $1 @$NSIP  +short
-dig mx $1 @$NSIP +short
-dig txt $1 @$NSIP  +short
+dig a "$1" @"$NSIP"  +short
+dig mx "$1" @"$NSIP" +short
+dig txt "$1" @"$NSIP"  +short
 echo -e "${RED}REGISTRY for $1 ${NC}"
-whois $1 | grep 'Name Server\|Expiry\|Domain Status'
-curl -IL  $1 | head -1
-ping -c4 $1
-traceroute $1
+whois "$1" | grep 'Name Server\|Expiry\|Domain Status'
+curl -IL  "$1" | head -1
+ping -c4 "$1"
+traceroute "$1"
 }
 ```
 
