@@ -186,13 +186,14 @@ for i in $(find /home/*/* -maxdepth 5 -type f -name ".htaccess" | xargs dirname)
 
 
 
-#sends mail out to a test email of your choosing from a mailbox of your chooseing, and watches the logs for it. #Syntax: mailtest from@domain.com test@domain.com
+#sends mail out to a test email of your choosing from a mailbox of your chooseing, and watches the logs for it. Shows txt record as well #Syntax: mailtest from@domain.com test@domain.com
 
 ```
 mailtest()
   {
    echo "This is a test email sent on $(date '+%Y-%m-%d') by a member of the Technical Support team. Replies are not monitored. Please ignore." | mail -s  "Email Test Support" -r "$1" "$2"
 	clear ;
+	dig  txt "$2" +short
 	sudo tail -f /var/log/exim_mainlog | grep "$1"
   }
 ```
