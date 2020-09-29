@@ -60,6 +60,11 @@ backup_update_email()
 	}
 ```
 
+#generates bandwidth logs for each user, saves to /home/*/tmp/webalizer
+
+```
+for username in $(cat /etc/userdomains | awk {'print $2'} | grep -v nobody | sort -n | uniq);do /scripts/runweblogs "$username";done ; ls  /home/*/tmp/webalizer`
+```
 
 #in a non-root environment, kills cons for a non-root user
 
