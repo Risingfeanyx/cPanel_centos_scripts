@@ -395,6 +395,7 @@ wpinfo()
 	#echo "define( 'WP_MEMORY_LIMIT', '512M' );" >> wp-config.php;
 	awk -F"'" '/DB_/{print $4}' wp-config.php;
 	cat wp-config.php | grep is_multisite
+	grep -i wordfence .user.ini
 	pwd ; ls *bak_* *.sql
 	}
 ```
