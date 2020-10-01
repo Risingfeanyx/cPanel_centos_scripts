@@ -13,10 +13,14 @@ back(){
 	}
 ```
 
-#Want to back up all your root WHM configs (supported configs here https://documentation.cpanel.net/display/84Docs/The+cpconftool+Script#ThecpconftoolScript-BackupBackupaconfigurationmodule )
+#Want to back up all your root WHM configs+whm backups? (supported configs here https://documentation.cpanel.net/display/84Docs/The+cpconftool+Script#ThecpconftoolScript-BackupBackupaconfigurationmodule and backup docs here https://documentation.cpanel.net/display/CKB/How+to+Run+a+Manual+Backup)
 
 ```
- for i in $(/usr/local/cpanel/bin/cpconftool --list-modules); do  /usr/local/cpanel/bin/cpconftool --backup --modules="$i" ; done
+(
+	clear
+	for i in $(/usr/local/cpanel/bin/cpconftool --list-modules); do  /usr/local/cpanel/bin/cpconftool --backup --modules="$i" ; done
+	/usr/local/cpanel/bin/backup --force
+)
 ```
 
 #Creates a list of email accounts based on an existing text file. The text files only need the 'user' section of user@domain.com
