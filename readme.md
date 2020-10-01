@@ -13,7 +13,8 @@ back(){
 	}
 ```
 
-#Want to back up all your root WHM configs+whm backups? (supported configs here https://documentation.cpanel.net/display/84Docs/The+cpconftool+Script#ThecpconftoolScript-BackupBackupaconfigurationmodule and backup docs here https://documentation.cpanel.net/display/CKB/How+to+Run+a+Manual+Backup)
+#Want to back up all your  <a href="https://documentation.cpanel.net/display/84Docs/The+cpconftool+Script#ThecpconftoolScript-BackupBackupaconfigurationmodule" target="_blank">Root WHM Configs</a> and  <a href="https://documentation.cpanel.net/display/CKB/How+to+Run+a+Manual+Backup" target="_blank">cPanel users?</a>?
+
 
 ```
 (
