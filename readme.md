@@ -285,8 +285,8 @@ err()
 	}
 ```
 
-#rebuild cpanel userdata files
-# https://docs.cpanel.net/knowledge-base/accounts/how-to-rebuild-userdata-files/
+#rebuild cpanel <a href="https://docs.cpanel.net/knowledge-base/accounts/how-to-rebuild-userdata-files/" target="_blank">userdata files</a>? files
+
 ```
 (
 mv /var/cpanel/userdata /var/cpanel/userdata.orig
