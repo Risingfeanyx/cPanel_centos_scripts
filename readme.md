@@ -285,6 +285,21 @@ err()
 	}
 ```
 
+#rebuild cpanel userdata files
+# https://docs.cpanel.net/knowledge-base/accounts/how-to-rebuild-userdata-files/
+```
+(
+mv /var/cpanel/userdata /var/cpanel/userdata.orig
+mkdir /var/cpanel/userdata
+/usr/local/cpanel/bin/userdata_update --reset
+/usr/local/cpanel/bin/fix_userdata_perms
+/scripts/updateuserdatacache
+/scripts/rebuildhttpdconf
+/scripts/restartsrv_httpd
+)
+```
+
+
 
 #need a root WHM login?
 
