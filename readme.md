@@ -140,7 +140,7 @@ clear ;  sudo cat  /usr/local/cpanel/logs/access_log | grep "POST\|$userna5\|pas
 for f in /scripts/restartsrv_*; do "$f" -H ; done
 ```
 
-#view last logs for all systemd services
+#view last logs for all systemd services. tack on ```>> systemd.log.$(date +%b)``` to save it
 
 ```
 for i in $( ls /etc/systemd/system/) ; do systemctl status $i | grep -i "$(date +%b)" ; done
