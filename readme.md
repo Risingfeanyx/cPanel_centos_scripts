@@ -155,7 +155,10 @@ https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
 show-conns --http; for i in $(for a in /var/named/*.db; do echo $(basename "$a" .db); done); do echo "$i" ; curl -o /dev/null --silent --head --write-out '%{http_code}\n' "$i" ; dig a "$i" +short ; whois "$i" | grep 'Name Server\|Expiry\|Domain Status' ; done
 ```
 
-
+#file breakdown of all users >500M
+```
+for i in $(ls /home/) ; do du -cahS --threshold=500M $i | sort -hr ; done
+```
 
 
 
