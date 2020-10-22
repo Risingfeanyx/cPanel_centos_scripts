@@ -317,6 +317,10 @@ mkdir /var/cpanel/userdata
 clear ; /usr/local/cpanel/bin/whmapi1 create_user_session user=root service=whostmgrd | grep url
 ```
 
+#how about a non-root cpanel login?
+```
+clear ; /usr/local/cpanel/bin/whmapi1 create_user_session user=userna5 service=cpanld | grep url
+```
 
 
 ##To be used within a user; moves site data from one folder to another. 
