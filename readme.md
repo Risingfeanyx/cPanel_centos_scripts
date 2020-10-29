@@ -211,7 +211,7 @@ for i in $(find /home/*/* -maxdepth 5 -type f -name ".htaccess" | xargs dirname)
 
 
 
-#sends mail out to a test email of your choosing from a mailbox of your chooseing, and watches the logs for it. creates an email account for testing. Shows txt record as well #Syntax: 
+#sends mail out to a test email of your choosing from a mailbox of your chooseing, and watches the logs for it. creates an email account for testing.#Syntax: 
 from@localdomain.com to@domain.com
 
 ```
