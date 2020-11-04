@@ -416,7 +416,7 @@ traceroute "$1"
 }
 ```
 
-#Wordpress backup/info
+#Wordpress backup/info. I run this before EVER touching a wordpress site; makes all relevent backups and deliberately holds up STDIN until its done
 
 ```
 wpinfo()
