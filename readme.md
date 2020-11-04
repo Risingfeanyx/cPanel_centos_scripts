@@ -444,9 +444,11 @@ wpinfo()
 	}
 ```
 
-#Update dns zone for all domains on server
+#Reinstalls DNS admin, Update dns zone for all domains on server, shows all domains
 
 ```
-clear; for a in /var/named/*.db; do /scripts/dnscluster synczone $(basename $a .db); done
 
+yum -y remove imh-cpanel-dnsadmin;rpm -e --nopostun imh-cpanel-dnsadmin;yum clean;yum -y install imh-cpanel-dnsadmin; /usr/local/cpanel/whostmgr/bin/dnsadmin --start; rm -f /var/cpanel/clusterqueue/status/imh{,-down};/usr/local/cpanel/cpkeyclt; 
+clear; for a in /var/named/*.db; do /scripts/dnscluster synczone $(basename $a .db); done; 
+clear ; for a in /var/named/*.db; do echo $(basename $a .db); done
 ```
