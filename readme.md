@@ -324,7 +324,7 @@ clear ; /usr/local/cpanel/bin/whmapi1 create_user_session user=root service=whos
 
 #how about a non-root cpanel login?
 ```
-clear ; /usr/local/cpanel/bin/whmapi1 create_user_session user=userna5 service=cpanld | grep url
+clear ; /usr/local/cpanel/bin/whmapi1 create_user_session user=userna5 service=cpaneld | grep url
 ```
 
 
