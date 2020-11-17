@@ -166,14 +166,19 @@ for i in $(ls /home/) ; do du -cahS --threshold=500M $i | sort -hr ; done
 
 ```
 f2b(){
-clear;
-unblock "$1"
-tail -n 5 /var/log/fail2ban.log "$1"
-sudo cat /var/log/maillog | grep 'auth failed' | grep "$1"
-sudo cat /var/log/exim_mainlog | grep 'authenticator failed' | grep "$1"
-sudo cat /usr/local/apache/logs/error_log | grep -E 'id "(13052|13051|13504|90334)"' "$1"
-#sudo cat /var/log/messages grep "$1"
-}
+	clear;
+	unblock $1
+	#fail2ban log
+	tail -n 2 /var/log/fail2ban.log $1
+	#mail client login fails
+	sudo cat /var/log/maillog | grep 'auth failed' | grep $1
+	#failing exim
+	sudo cat /var/log/exim_mainlog | grep 'authenticator failed' | grep $1
+	#Modsec blocks
+	sudo cat /usr/local/apache/logs/error_log | grep -E 'id "(13052|13051|13504|90334)"' | grep $1
+	#cPanel blocks
+	sudo cat 2 /usr/local/cpanel/logs/login_log | grep "FAILED LOGIN" | grep $1
+	}
 
 ```
 
