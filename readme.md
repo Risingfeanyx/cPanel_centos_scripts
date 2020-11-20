@@ -425,29 +425,19 @@ traceroute "$1"
 #Wordpress backup/info. I run this before EVER touching a wordpress site; makes all relevent backups and deliberately holds up STDIN until its done
 
 ```
-wpinfo()
-	{
-	clear
+{
 	wp cache flush&
-	wp db size
-	wp db repair&  --skip-{plugins,themes}; 
-	wp core verify-checksums&  --skip-{plugins,themes};
-	wp db export --skip-{plugins,themes};
-	cp .htaccess{,.bak_$(date +%F)};
-	cp php.ini{,.bak_$(date +%F)};
-	cp wp-config.php{,.bak_$(date +%F)};
-	wp core version --skip-{plugins,themes};
-	##developer.wordpress.org/cli/commands/
-	##Set Permalinks to Default
-	##wp option update permalink_structure ""
-	#wp config set WP_DEBUG true
-	#wp plugin deactivate --all --skip-{plugins,themes};
-	#echo "define( 'WP_MEMORY_LIMIT', '512M' );" >> wp-config.php;
+	wp db repair&	
+	wp core verify-checksums&
+	wp db export&
+	cp .htaccess{,.$(date +%F).bak};
+	cp php.ini{,.$(date +%F).bak};
+	cp wp-config.php{,.$(date +%F).bak};
+	clear
 	awk -F"'" '/DB_/{print $4}' wp-config.php;
 	cat wp-config.php | grep is_multisite
-	grep -i wordfence .user.ini
 	pwd ; ls *bak_* *.sql
-	}
+}
 ```
 
 #Reinstalls DNS admin, Update dns zone for all domains on server, shows all domains
