@@ -147,7 +147,7 @@ for i in $( ls /etc/systemd/system/) ; do systemctl status $i | grep -i "$(date 
 ```
 
 
-#Test HTTP codes/A records/whois info on all domains on your server
+#Test HTTP codes/A records/whois on all domains on your server
 
 https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
 
@@ -437,6 +437,7 @@ traceroute "$1"
 	awk -F"'" '/DB_/{print $4}' wp-config.php;
 	cat wp-config.php | grep is_multisite
 	pwd ; ls *bak_* *.sql
+	mv *.sql ..
 }
 ```
 
