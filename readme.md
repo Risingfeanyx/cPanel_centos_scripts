@@ -459,3 +459,29 @@ clear; for a in /var/named/*.db; do /scripts/dnscluster synczone $(basename $a .
 clear ; for a in /var/named/*.db; do echo $(basename $a .db); done
 )
 ```
+
+Learn who is attempting to access your site
+```
+for i in $(sort /usr/local/apache/domlogs/*.com  | awk '{print $1}' | uniq -u) ; do  curl ipinfo.io/$i ; done
+```
+
+cPanel Attempts
+
+```
+for i in $(sort /usr/local/cpanel/logs/access_log  | awk '{print $1}' | uniq -u) ; do  curl ipinfo.io/$i ; done
+
+```
+
+
+Successfull cPanel logins from today
+
+```
+for i in $(sort /usr/local/cpanel/logs/session_log  | grep  $(date +%F) |  awk '{print $6}' |  uniq -u) ; do  curl ipinfo.io/$i ; done
+```
+
+Temporarily block those attempting to access cPanel. Make sure you're not blocking  <a href="http://fetchip.com/" target="_blank">yourself</a>
+. Might want to run it in a screen/multiplexer
+
+```
+for i in $(sort /usr/local/cpanel/logs/access_log  | awk '{print $1}' | uniq -u) ; do csf -td $i "Attempted cPanel Access, blocked on $(date +%F)"; done
+```
