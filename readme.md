@@ -1,7 +1,7 @@
 <h2>A collection of my commonly used cPanel/Centos scripts </h2>
 
 #To be used in a root env; you'd create a targz of a cpanel account, and move it to a sites public_html. 
-#Usage back userna5 domain.com
+#Usage back userna5 email@domain.com
 
 ```
 back(){
