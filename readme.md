@@ -56,6 +56,13 @@ for i in $(cat userlist); do /scripts/delpop "$i"@domain.com ; done
 ```
 
 
+
+#view database information for all Wordpress sites on your server, run as root
+
+```
+ grep -i "DB" $(find /home/* -maxdepth 4 -type f -name 'wp-config.php')
+ ```
+
 #Creates two screens, one to spin up a backup for all your users, and another to run cPanel updates, both email you out once finished.
 #usage $email@address
 
