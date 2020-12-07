@@ -478,7 +478,7 @@ for i in $(sort /usr/local/cpanel/logs/session_log  | grep  $(date +%F) |  awk '
 ```
 
 Temporarily block those attempting to access cPanel. Make sure you're not blocking  <a href="http://fetchip.com/" target="_blank">yourself</a>
-. Might want to run it in a screen/multiplexer
+. Might want to run it in a screen/multiplexer. Doesn't exactly require CSF, since it is just firewall rules. Will rewerite for iptables at some point. 
 
 ```
 for i in $(sort /usr/local/cpanel/logs/access_log  | awk '{print $1}' | uniq -u) ; do csf -td $i "Attempted cPanel Access, blocked on $(date +%F)"; done
