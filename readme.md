@@ -332,12 +332,12 @@ mkdir /var/cpanel/userdata
 
 
 ```
-clear ; /usr/local/cpanel/bin/whmapi1 create_user_session user=root service=whostmgrd | grep url
+clear ; whmapi1 create_user_session user=root service=whostmgrd | grep "url:" | awk '{print $2}' 
 ```
 
 #how about a non-root cpanel login?
 ```
-clear ; /usr/local/cpanel/bin/whmapi1 create_user_session user=userna5 service=cpaneld | grep url
+clear ; whmapi1 create_user_session user=$(cat /etc/userdomains | awk {'print $2'} | grep -v nobody | sort -n | uniq) service=cpaneld | grep "url:" | awk '{print $2}'
 ```
 
 
