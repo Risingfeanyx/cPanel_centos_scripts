@@ -1,4 +1,3 @@
-#!/bin/bash
 <h2>A collection of my commonly used cPanel/Centos scripts </h2>
 
 #To be used in a root env; you'd create a targz of a cpanel account, and move it to a sites public_html. 
@@ -12,7 +11,7 @@ back(){
 	echo "$2/cpmove-$1.tar.gz" | mail -s "Backup Generated" "$3"
 	clear
 	}
-```
+
 
 #Want to back up all your  <a href="https://documentation.cpanel.net/display/84Docs/The+cpconftool+Script#ThecpconftoolScript-BackupBackupaconfigurationmodule" target="_blank">Root WHM Configs</a> and  <a href="https://documentation.cpanel.net/display/CKB/How+to+Run+a+Manual+Backup" target="_blank">cPanel users</a>?
 
