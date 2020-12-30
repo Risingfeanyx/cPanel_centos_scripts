@@ -82,12 +82,7 @@ backup_update_email()
 for username in $(cat /etc/userdomains | awk {'print $2'} | grep -v nobody | sort -n | uniq);do /scripts/runweblogs "$username";done ; clear ; ls  /home/*/tmp/webalizer
 ```
 
-#in a non-root environment, kills cons for a non-root user
 
-
-#In a root env, kills cons for user. 
-
-```
 
 
 #In a Virtuozzo environment, eyeballs the logs relating to a container, waits to reboot if needed.
