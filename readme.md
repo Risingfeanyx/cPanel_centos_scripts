@@ -24,10 +24,14 @@ back(){
 )
 ```
 
-#Creates a list of email accounts based on an existing text file. The text files only need the 'user' section of user@domain.com
+#Creates a list of email accounts based on an existing text file. The text files only need the 'user' section of user@domain.com. 
+#usage email_creation domain.com
 
 ```
- for i in $(cat userlist); do /scripts/addpop "$i"@domain.com $(date | md5sum) 50 ; done
+email_creation()
+{
+ for i in $(cat userlist); do /scripts/addpop "$i"@$1 $(date | md5sum) 50 ; done
+ }
 ```
 #The same thing, but for all domains on your server
 
