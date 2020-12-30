@@ -1,7 +1,8 @@
+#!/bin/bash
 <h2>A collection of my commonly used cPanel/Centos scripts </h2>
 
 #To be used in a root env; you'd create a targz of a cpanel account, and move it to a sites public_html. 
-#Usage back userna5 email@domain.com
+#Usage back userna5 domain.tld email@domain.com
 
 ```
 back(){
@@ -61,11 +62,6 @@ for i in $(cat userlist); do /scripts/delpop "$i"@domain.com ; done
 
 
 
-#view database information for all Wordpress sites on your server, run as root
-
-```
- grep -i "DB" $(find /home/* -maxdepth 4 -type f -name 'wp-config.php')
- ```
 
 #Creates two screens, one to spin up a backup for all your users, and another to run cPanel updates, both email you out once finished.
 #usage $email@address
@@ -75,8 +71,7 @@ for i in $(cat userlist); do /scripts/delpop "$i"@domain.com ; done
 backup_update_email() 
 	{
 	clear;
-	screen -dmS Backups_$(date +%F) /usr/local/cpanel/bin/backup --force ;
-	echo "Backups for $(cat /etc/userdomains | awk {'print $2'} | grep -v nobody | sort -n | uniq) located at $(ls /home/*.tar.gz)" | mail-s "Backup Notification for $(hostname) on $(date +%F)" $1 ;  
+	screen -dmS Backups_$(date +%F) /usr/local/cpanel/bin/backup --force; 
 	screen -dmS Updates_$(date +%F) /scripts/upcp --force && echo "$(hostname) bumped up to $(/usr/local/cpanel/cpanel -V)" | mail -s "cPanel Upgraded" $1;
 	screen -ls;
 	}
@@ -90,32 +85,11 @@ for username in $(cat /etc/userdomains | awk {'print $2'} | grep -v nobody | sor
 
 #in a non-root environment, kills cons for a non-root user
 
-```
-bounce_shared_user()
-	{
-	pgrep "$1" >> "$1"_pre_bounce_$(date +%F)
-	check_software "$1"
-	account-review "$1"
-	sudo /opt/sharedrads/suspend_user "$1" -r billing
-	sudo /opt/sharedrads/unsuspend_user "$1"
-	switch "$1"
-	} 
-```
 
 #In a root env, kills cons for user. 
 
 ```
-#!/bin/bash
-bounce_vps_user()
-	{
-	ps faux | grep "$1" >> "$1"_pre_bounce_$(date +%F)
-	check_software "$1"
-	account-review "$1"
-	sudo /scripts/suspendacct "$1"
-	sudo /scripts/unsuspendacct "$1"
-	su "$1"
-	} 
-```
+
 
 #In a Virtuozzo environment, eyeballs the logs relating to a container, waits to reboot if needed.
 
@@ -142,7 +116,7 @@ bounce_vps_CTID ()
 #IPs connecting/accessing your cpanel in a non-root env
 
 ```
-clear ;  sudo cat  /usr/local/cpanel/logs/access_log | grep "POST\|$userna5\|pass" | grep -v cx.ip.add.ress
+clear ;  sudo cat  /usr/local/cpanel/logs/access_log | grep "POST\|$userna5\|pass" | grep -v .ip.add.ress
 ```
 
 
@@ -212,20 +186,6 @@ for i in $(sort /usr/local/cpanel/logs/session_log | grep "$(date +%F)" | awk '{
 	sed -i '1 i\RewriteEngine On' .htaccess
 	}
 ```
-#As root, drop the following into a file and execute it; does the above but for all htacess in your users docroots
-
-```
-#!/bin/bash
-for i in $(find /home/*/* -maxdepth 5 -type f -name ".htaccess" | xargs dirname); do cd "$i" && 	
-        {
-	cp .htaccess{,.pre_https_$(date +%F)}
-	sed -i '1 i\RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]' .htaccess
-	sed -i '1 i\RewriteCond %{HTTPS} off ' .htaccess
-	sed -i '1 i\RewriteEngine On' .htaccess
-	}; done
-```
-
-
 
 #sends mail out to a test email of your choosing from a mailbox of your chooseing, and watches the logs for it. creates an email account for testing.#Syntax: 
 from@localdomain.com to@domain.com
@@ -246,7 +206,7 @@ use /scripts/delpop to remove test account after
 
 
 #What is going on with mysql?
-#Creates db backups as well
+
 ```
 mysql_bandaid()
 	{
@@ -278,7 +238,7 @@ systemctl restart mysql ; systemctl status mysql
 
 ```
 
-##loops through all currenlty existing screens
+##loops through all currently existing screens
 
 ```
  for i in $(screen -ls | awk '{print $1}') ; do screen -x "$i" ; done
@@ -339,7 +299,7 @@ mkdir /var/cpanel/userdata
 clear ; whmapi1 create_user_session user=root service=whostmgrd | grep "url:" | awk '{print $2}' 
 ```
 
-#how about a non-root cpanel login?
+#how about a non-root cpanel login? It will loop through each user on the server, the 'session=' section will give away which user it is. 
 ```
 clear ; whmapi1 create_user_session user=$(cat /etc/userdomains | awk {'print $2'} | grep -v nobody | sort -n | uniq) service=cpaneld | grep "url:" | awk '{print $2}'
 ```
@@ -381,7 +341,7 @@ site_watch()
 ```
 
 
-#Tests serving functionality of server. Be in docroot of site; usage is testpage $domain.tld
+#Tests serving functionality of server. Be in docroot of site; usage is testpage $domain.tld. As long as both test pages load, then Apache/Nginx is serving correctly. 
 
 ```
 testpage()
