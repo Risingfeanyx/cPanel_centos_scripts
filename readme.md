@@ -62,7 +62,7 @@ for i in $(cat userlist); do /scripts/delpop "$i"@domain.com ; done
 
 
 
-#Creates two screens, one to spin up a backup for all your users, and another to run cPanel updates, both email you out once finished.
+#Creates two s, one to spin up a backup for all your users, and another to run cPanel updates, both email you out once finished.
 #usage $email@address
 
 
@@ -71,7 +71,7 @@ backup_update_email()
 	{
 	clear;
 	screen -dmS Backups_$(date +%F) /usr/local/cpanel/bin/backup --force; 
-	screen -dmS Updates_$(date +%F) /scripts/upcp --force && echo "$(hostname) bumped up to $(/usr/local/cpanel/cpanel -V)" | mail -s "cPanel Upgraded" $1;
+	screen -dmS Updates_$(date +%F) /scripts/upcp --force && echo -e "$(hostname) bumped up to $(/usr/local/cpanel/cpanel -V). \n See https://docs.cpanel.net/changelogs/ for more information" | mail -s "cPanel Upgraded" $1;
 	screen -ls;
 	}
 ```
