@@ -431,6 +431,19 @@ for i in $(sort /usr/local/cpanel/logs/access_log  | awk '{print $1}' | uniq -u)
 
 Successfull cPanel logins from today
 
+Want to find out where your blocked IPs are from?
+
+```
+for i in $( cat /etc/*/*.deny | awk '{print $1}') ; do curl ipinfo.io/$i ; done
+```
+
+How about your whitelisted ones?
+
+```
+for i in $( cat /etc/*/*.allow | awk '{print $1}') ; do curl ipinfo.io/$i ; done
+```
+
+
 ```
 for i in $(sort /usr/local/cpanel/logs/session_log  | grep  $(date +%F) |  awk '{print $6}' |  uniq -u) ; do  curl ipinfo.io/$i ; done
 ```
