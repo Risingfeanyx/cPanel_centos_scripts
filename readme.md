@@ -346,7 +346,19 @@ testpage()
 	 curl -LA "foo"  "$1"/testpage
 	 }
 ```
-
+#install redis
+```
+(
+yum update
+yum install epel-release -y
+yum install redis -y 
+systemctl start redis
+service redis start
+systemctl enable redis
+chkconfig –add redis
+redis-cli ping
+)
+```
 #specs at a glance
 ```
         	{
