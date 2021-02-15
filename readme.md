@@ -131,7 +131,7 @@ for i in $( ls /etc/systemd/system/) ; do systemctl status $i | grep -i "$(date 
 https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
 
 ```
-show-conns --http; for i in $(for a in /var/named/*.db; do echo $(basename "$a" .db); done); do echo "$i" ; curl -o /dev/null --silent --head --write-out '%{http_code}\n' "$i" ; dig a "$i" +short ; whois "$i" | grep 'Name Server\|Expiry\|Domain Status' ; done
+for i in $(for a in /var/named/*.db; do echo $(basename "$a" .db); done); do echo "$i" ; curl -o /dev/null --silent --head --write-out '%{http_code}\n' "$i" ; dig @ns ns "$i" +short  ; echo https://www.whatsmydns.net/#NS/"$i";  done
 ```
 
 #file breakdown of all users >500M
