@@ -361,15 +361,15 @@ redis-cli ping
 ```
 #specs at a glance
 ```
-        	{
-        	clear
-        	 df -h | head -n2
-        	 free -m
-        	 grep -i 'cpu family' /proc/cpuinfo | head -n1
-        	 hostname ; hostname -i
-        	 cat /etc/redhat-release && /usr/local/cpanel/cpanel -V
-        	 ls /etc/cpanel/ea4/is_ea4
-        	}
+{
+clear
+df -h | head -n2 |column -t
+free -mh | head -n1| column -t
+grep -i 'model name' /proc/cpuinfo | head -n1 |column -t
+hostname |column -t; hostname -i |column -t
+cat /etc/redhat-release |column -t && /usr/local/cpanel/cpanel -V |column -t
+ls /etc/cpanel/ea4/is_ea4 |column -t
+ }
 ```
 
 #Yet another wrapper. (it crashes when indented, one of these days I'll figure out why)
