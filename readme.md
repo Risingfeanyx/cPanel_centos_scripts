@@ -112,6 +112,10 @@ bounce_vps_CTID ()
 ```
 clear ;  sudo cat  /usr/local/cpanel/logs/access_log | grep "POST\|$userna5\|pass" | grep -v .ip.add.ress
 ```
+#ditto, in a root env, as shell
+```
+for i in $(cat /home/*/.lastlogin | awk '{ print $1 }' | uniq -c); do curl ipinfo.io/"$i" ; done
+```
 
 
 #restart all cpanel services
