@@ -125,7 +125,7 @@ bounce_vps_CTID ()
 #IPs connecting/accessing your cpanel in a non-root env
 
 ```
-clear ;  sudo cat  /usr/local/cpanel/logs/access_log | grep "POST\|$userna5\|pass" | grep -v .ip.add.ress
+sudo cat  /usr/local/cpanel/logs/access_log | grep "POST\|captme5\|pass" | awk {'print $1,$4'} | uniq -c
 ```
 #ditto, in a root env, as shell
 ```
@@ -293,7 +293,7 @@ err()
 
 ```
 (
-mv /var/cpanel/userdata /var/cpanel/userdata.orig
+mv /var/cpanel/userdata /var/cpanel/userdata.orig.$(date +%F)
 mkdir /var/cpanel/userdata
 /usr/local/cpanel/bin/userdata_update --reset
 /usr/local/cpanel/bin/fix_userdata_perms
