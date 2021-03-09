@@ -59,6 +59,21 @@ for i in $(cat userlist); do /scripts/delpop "$i"@domain.com ; done
 	}
 ```
 
+#As of cPanel 94, a known glitch which randomly kills dnsadmin.. This can be identifyed by the following error in the /usr/local/cpanel/whostmgr/bin/dnsadmin log
+
+
+```
+(internal error) Timed out while running GETZONES
+Died at /usr/local/cpanel/whostmgr/bin/dnsadmin line 794, <$mysock> line 2.
+Smartmatch is experimental at /usr/local/cpanel/Cpanel/NameServer/Remote/IMH.pm line 254, <$mysock> line 4.
+```
+
+```
+whmapi1 set_tweaksetting key='dormant_services'  value='dnsadmin'
+```
+Then go ahead and restart dnsadmin
+
+
 
 
 
