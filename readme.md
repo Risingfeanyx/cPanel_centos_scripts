@@ -132,6 +132,17 @@ sudo cat  /usr/local/cpanel/logs/access_log | grep "POST\|captme5\|pass" | awk {
 for i in $(cat /home/*/.lastlogin | awk '{ print $1 }' | uniq -c); do curl ipinfo.io/"$i" ; done
 ```
 
+#What's taking up "Other space" within your  user. Change threshold as needed.
+
+```
+du -cahS --threshold=25M --exclude="{cache,etc,logs,perl5, public_ftp,mail,public_html,quarantine,ssl,tmp}"  | sort -hr 
+```
+
+#What's taking up "Other Space" for all your users
+
+```
+du -cahS --threshold=25M --exclude="{cache,etc,logs,perl5, public_ftp,mail,public_html,quarantine,ssl,tmp}" /home/* | sort -hr
+```
 
 #restart all cpanel services
 ```
