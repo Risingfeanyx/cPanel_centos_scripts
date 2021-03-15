@@ -131,7 +131,7 @@ bounce_vps_CTID ()
 #IPs connecting/accessing your cpanel in a non-root env
 
 ```
-sudo cat  /usr/local/cpanel/logs/access_log | grep "POST\|captme5\|pass" | awk {'print $1,$4'} | uniq -c
+sudo cat  /usr/local/cpanel/logs/access_log | grep "POST\|userna5\|pass" | awk {'print $1,$4'} | uniq -c
 ```
 #ditto, in a root env, as shell
 ```
