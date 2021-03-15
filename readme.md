@@ -91,6 +91,12 @@ backup_update_email()
 	}
 ```
 
+#check processes for only your users
+
+```
+for i in $(cat /etc/userdomains | awk {'print $2'} | grep -v nobody | sort -n | uniq); do ps aux | grep -i $i  | grep -v grep; done
+```
+
 #generates bandwidth logs for each user, saves to /home/*/tmp/webalizer
 
 ```
