@@ -44,6 +44,12 @@ email_creation()
 ```
 for i in $(cat userlist); do /scripts/delpop "$i"@domain.com ; done
 ```
+#non-root, view IPs connecting to site.
+
+```
+sudo cat /usr/local/apache/domlogs/userna5/domain.com | awk {'print $1'}| uniq -c | tail -n100
+```
+
 
 #As of cPanel 86, a known glitch spawning massive amounts of build_locale_da processes. This will kill that, and force an upgrade to $latest_supported version. Glitch went away in 88
 
