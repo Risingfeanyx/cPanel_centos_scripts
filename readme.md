@@ -155,6 +155,10 @@ du -cahS --threshold=25M --exclude="{cache,etc,logs,perl5, public_ftp,mail,publi
 ```
 du -cahS --threshold=25M --exclude="{cache,etc,logs,perl5, public_ftp,mail,public_html,quarantine,ssl,tmp}" /home/* | sort -hr
 ```
+#ditto, trash
+```
+du -cahS --threshold=25M  /home/*/.trash | sort -hr
+```
 
 #restart all cpanel services
 ```
