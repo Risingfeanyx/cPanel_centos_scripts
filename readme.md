@@ -100,7 +100,7 @@ backup_update_email()
 #drop into .bashrc to generate a warning for any users logging in via ssh. will email out from w/e user has been logged in 
 
 ```
-echo -e "This IP has logged into  $(whoami) at $(who | awk {'print $3,$4,$5'}) \n $(echo $(dig a  $(who  | awk '{gsub(/\(|\)/,"");print $5}') +short)) " | mail -s  "$(whoami) SSH alert" -r "$(whoami).alert@$(hostname)" your@email.address
+echo -e "This IP has logged into  $(whoami) at $(who | awk {'print $3,$4'})  \n $(echo $(curl -s ipinfo.io/$(dig a  $(who  | awk '{gsub(/\(|\)/,"");print $5}') +short))) " | mail -s  "$(whoami) SSH alert" -r "$(whoami).alert@$(hostname)" your@email.address
 
 ```
 
