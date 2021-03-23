@@ -97,10 +97,11 @@ backup_update_email()
 	}
 ```
 
-#drop into .bashrc to generate a warning for any users logging in via ssh
+#drop into .bashrc to generate a warning for any users logging in via ssh. will email out from w/e user has been logged in 
 
 ```
-echo "This IP has logged into $(whoami). $(who | awk {'print $3,$4,$5'})." | mail -s  "$(whoami) SSH alert" -r "rootalert@$(hostname)" your@email.address
+echo "This IP has logged into  $(whoami). $(who | awk {'print $3,$4,$5'})." | mail -s  "$(whoami) SSH alert" -r "$(whoami).alert@$(hostname)" your@email.address
+
 ```
 
 #check processes for only your users
