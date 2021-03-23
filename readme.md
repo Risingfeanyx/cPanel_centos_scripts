@@ -234,7 +234,7 @@ for i in $(sort /usr/local/cpanel/logs/session_log | grep "$(date +%F)" | awk '{
 ```
 
 #sends mail out to a test email of your choosing from a mailbox of your chooseing, and watches the logs for it. creates an email account for testing.#Syntax: 
-localdomain.com to@domain.com. spits out dns information on the test email as well. 
+localdomain.com to@domain.com. spits out dns information on the test email as well. Stops tailing log after 1 minutes. 
 
 ```
 mailtest()
@@ -245,7 +245,7 @@ mailtest()
  \nReplies are not monitored. Please ignore." | mail -s  "Email Test Support" -r test@"$1" "$2"
          	clear ;
          		echo "sending mail from ""$1"" to ""$2"""
-         			sudo tail -f /var/log/exim_mainlog | grep "$2"
+         			sudo timeout 1m tail -f /var/log/exim_mainlog | grep "$2"
          			  }
 ```
 #excludes DNS records 
