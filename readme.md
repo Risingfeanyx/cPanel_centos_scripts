@@ -248,6 +248,21 @@ mailtest()
          			sudo tail -f /var/log/exim_mainlog | grep "$2"
          			  }
 ```
+#excludes DNS records 
+```
+mailtest()
+  {
+    clear
+      /scripts/addpop "$1" $(date | md5sum) 50
+         echo "This is a test email sent on $(date '+%Y-%m-%d') by a member of the Technical Support team. Replies are not monitored. Please ignore." | mail -s  "Email Test Support" -r "$1" "$2"
+	 	clear ;
+			echo "sending mail from ""$1"" to ""$2"""
+				sudo tail -f /var/log/exim_mainlog | grep "$1"
+				  }
+
+```
+				  
+
 use /scripts/delpop to remove test account after
 
 
