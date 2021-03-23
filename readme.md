@@ -240,14 +240,14 @@ for i in $(sort /usr/local/cpanel/logs/session_log | grep "$(date +%F)" | awk '{
 ```
 
 #sends mail out to a test email of your choosing from a mailbox of your chooseing, and watches the logs for it. creates an email account for testing.#Syntax: 
-localdomain.com to@domain.com. spits out dns information on the test email as well. Stops tailing log after 1 minutes. 
+localdomain.com to@domain.com. spits out dns information on the test email as well. Stops tailing log after 1 minutes. includes link to multirbl to cover any blacklisting
 
 ```
 mailtest()
   {
     clear
       /scripts/addpop test@"$1" "$(date | md5sum)" 50
-         echo -e "This is a test email sent on $(date '+%Y-%m-%d') by a member of the Technical Support team. \nThese are  the DNS records for ""$1""  \n$(dig any "$1" +short). \nThis is the MX record: $(dig a $(dig mx captmemelord.com +short) +short)
+         echo -e "This is a test email sent on $(date '+%Y-%m-%d') by a member of the Technical Support team. \nThese are  the DNS records for ""$1""  \n$(dig any "$1" +short). \nThis is the MX records IP address: $(dig a $(dig mx "$1" +short) +short). \nBlacklisted? $(echo http://multirbl.valli.org/lookup/$(hostname -i).html)
  \nReplies are not monitored. Please ignore." | mail -s  "Email Test Support" -r test@"$1" "$2"
          	clear ;
          		echo "sending mail from ""$1"" to ""$2"""
