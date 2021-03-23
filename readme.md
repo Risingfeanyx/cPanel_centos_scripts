@@ -139,9 +139,15 @@ bounce_vps_CTID ()
 ```
 sudo cat  /usr/local/cpanel/logs/access_log | grep "POST\|userna5\|pass" | awk {'print $1,$4'} | uniq -c
 ```
-#ditto, in a root env, as shell
+#ditto, in a root env, as shell, curls to ipinfo to pull geo info
 ```
 for i in $(cat /home/*/.lastlogin | awk '{ print $1 }' | uniq -c); do curl ipinfo.io/"$i" ; done
+```
+
+#just pulls IPs, date and timestamps
+
+```
+cat /home/*/.lastlogin | awk '{ print $1,$3,$4 }' | uniq -c)
 ```
 
 #What's taking up "Other space" within your  user. Change threshold as needed.
