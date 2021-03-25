@@ -173,6 +173,12 @@ du -cahS --threshold=25M --exclude="{cache,etc,logs,perl5, public_ftp,mail,publi
 du -cahS --threshold=25M  /home/*/.trash | sort -hr
 ```
 
+#largest files  for all your users in genereal, capped at 25M
+
+```
+for i in $(awk '{print $2}' /etc/trueuserdomains); do echo $i; du -cahS --threshold=25M /home/$i | sort -hr; done
+```
+
 #restart all cpanel services
 ```
 for f in /scripts/restartsrv_*; do "$f" -H ; done
