@@ -3,6 +3,11 @@
 #To be used in a root env; you'd create a targz of a cpanel account, and move it to a sites public_html. 
 #Usage back userna5 domain.tld email@domain.com
 
+#save manpages for every command your user can run in one file
+```
+for i in $(compgen -c | sort -h); do man "$i" >> man.pages."$(date +%F)"; done
+```
+
 ```
 back(){
 	/scripts/pkgacct "$1"
