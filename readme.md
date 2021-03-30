@@ -167,7 +167,7 @@ du -cahS --threshold=25M --exclude="{cache,etc,logs,perl5, public_ftp,mail,publi
 #What's taking up "Other Space" for all your users
 
 ```
-du -cahS --threshold=25M --exclude="{cache,etc,logs,perl5, public_ftp,mail,public_html,quarantine,ssl,tmp}" /home/* | sort -hr
+du -cahS --threshold=25M --exclude="{virtfs,cache,etc,logs,perl5, public_ftp,mail,public_html,quarantine,ssl,tmp}" /home/* | sort -hr
 ```
 #ditto, trash
 ```
