@@ -14,7 +14,21 @@ back(){
 	}
 ```
 
+#creates dmarc records for all your domains
+
+```
+(
+tar -czvf /root/named_backup_$(date +%Y.%m.%d_%k:%M:%S).tar.gz /var/named
+for domain in /var/named/*.db; do
+domain=$(basename $domain .db)
+whmapi1 addzonerecord domain="${domain}" name="_dmarc.${domain}." class=IN ttl=86400 type=TXT txtdata='v=DMARC1; p=none'
+done
+for i in $(for a in /var/named/*.db; do echo $(basename "$a" .db); done); do echo "$i";  dig txt _dmarc."$i" +short  ; echo https://www.whatsmydns.net/#TXT/_dmarc."$i";  done
+)
+```
+
 #Want to back up all your  <a href="https://documentation.cpanel.net/display/84Docs/The+cpconftool+Script#ThecpconftoolScript-BackupBackupaconfigurationmodule" target="_blank">Root WHM Configs</a> and  <a href="https://documentation.cpanel.net/display/CKB/How+to+Run+a+Manual+Backup" target="_blank">cPanel users</a>?
+
 
 
 ```
