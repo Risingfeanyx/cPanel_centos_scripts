@@ -237,6 +237,8 @@ f2b(){
 	sudo cat /usr/local/apache/logs/error_log | grep -E 'id "(13052|13051|13504|90334)"' | grep "$1"
 	#cPanel blocks
 	sudo cat  /usr/local/cpanel/logs/login_log | grep "FAILED LOGIN" | grep "$1"
+	#apf/csf logs, requires root
+	sudo grep "$1" /etc/*/*.deny
 	}
 
 ```
