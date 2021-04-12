@@ -567,3 +567,19 @@ Temporarily block those attempting to access cPanel. Make sure you're not blocki
 ```
 for i in $(sort /usr/local/cpanel/logs/access_log  | awk '{print $1}' | uniq -u) ; do csf -td $i "Attempted cPanel Access, blocked on $(date +%F)"; done
 ```
+#reinventing the "email out update status" function in cPanel
+
+```
+ sudo echo "cPanel recent update" | mailx -s "Update logs for $(/usr/local/cpanel/cpanel -V)" -a /var/cpanel/updatelogs/last  -r server@$(hostname) $email
+```
+#same, but for yum logs 
+
+```
+sudo echo "yum recent update" | mailx -s "Update logs for $(/usr/local/cpanel/cpanel -V)" -a /var/log/yum.log  -r server@$(hostname) $email
+```
+
+#reinventing lfd ip sign=in warning
+
+```
+echo -e " $(dig a $(who |  awk '/net/{gsub(/\(|\)/,"");print $5}') +short) has logged into  $(whoami) at  $(who | awk {'print $3,$4'})" | mail -s  "$(whoami) SSH alert" -r "$(whoami).alert@$(hostname)" $email
+```
