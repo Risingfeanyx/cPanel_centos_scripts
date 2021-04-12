@@ -294,6 +294,20 @@ mailtest()
 				  }
 
 ```
+
+##emails out disk usage, top 20 files, and saves to text file
+
+```
+  mailusage()
+  {
+  du -cahS --threshold=500M / --exclude="/proc" | sort -hr | head -n20 > usage.$(date +%F)
+    clear
+         echo -e "This is the  current disk usage  for ""$(hostname)""  \n$(cat usage.$(date +%F)).
+         \n Disk Usage as of $(date +%F)
+         \n $(df -h | head -n2)
+ 		\nReplies are not monitored." | mail -s  "Disk Usage Report" -r usage@"$(hostname)" "$1"
+    }
+ ```
 				  
 
 use /scripts/delpop to remove test account after
