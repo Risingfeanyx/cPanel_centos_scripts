@@ -410,7 +410,7 @@ clear ; whmapi1 create_user_session user=root service=whostmgrd | grep "url:" | 
 
 #how about a non-root cpanel login? It will loop through each user on the server, the 'session=' section will give away which user it is. 
 ```
-clear ; whmapi1 create_user_session user=$(cat /etc/userdomains | awk {'print $2'} | grep -v nobody | sort -n | uniq) service=cpaneld | grep "url:" | awk '{print $2}'
+for i in $(ls /var/cpanel/users |grep -v 'system'); do clear ; echo $i;  whmapi1 create_user_session user=$i service=cpaneld  app=FileManager_Home| grep "url:" | awk '{print $2}' ; done
 ```
 
 
