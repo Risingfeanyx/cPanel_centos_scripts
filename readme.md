@@ -225,22 +225,25 @@ for i in $(ls /home/) ; do du -cahS --threshold=500M $i | sort -hr ; done
 
 ```
 f2b(){
-	clear;
-	unblock "$1"
-	#fail2ban log
-	tail -n5 /var/log/fail2ban.log | grep "$1"
-	#mail client login fails
-	sudo cat /var/log/maillog | grep 'auth failed' | grep "$1"
-	#failing exim
-	sudo cat /var/log/exim_mainlog | grep 'authenticator failed' | grep "$1"
-	#Modsec blocks
-	sudo cat /usr/local/apache/logs/error_log | grep -E 'id "(13052|13051|13504|90334)"' | grep "$1"
-	#cPanel blocks
-	sudo cat  /usr/local/cpanel/logs/login_log | grep "FAILED LOGIN" | grep "$1"
-	#apf/csf logs, requires root
-	sudo grep "$1" /etc/*/*.deny
-	}
-
+    clear;
+    unblock "$1"
+    #root required
+    whmapi1 flush_cphulk_login_history_for_ips ip="$1"
+    /scripts/cphulkdwhitelist "$1"
+    [ -f /etc/csf/csf.conf ] && csf -a "$1" || apf -a "$1"
+    #fail2ban log
+    tail -n5 /var/log/fail2ban.log | grep "$1"
+    #mail client login fails
+    sudo cat /var/log/maillog | grep 'auth failed' | grep "$1"
+    #failing exim
+    sudo cat /var/log/exim_mainlog | grep 'authenticator failed' | grep "$1"
+    #Modsec blocks
+    sudo cat /usr/local/apache/logs/error_log | grep -E 'id "(13052|13051|13504|90334)"' | grep "$1"
+    #cPanel blocks
+    sudo cat  /usr/local/cpanel/logs/login_log | grep "FAILED LOGIN" | grep "$1"
+    #apf/csf logs, requires root
+    sudo grep "$1" /etc/*/*.deny
+}
 ```
 
 #History of all IPs that have accessed your cPanel
