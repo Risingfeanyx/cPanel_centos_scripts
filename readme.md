@@ -597,3 +597,16 @@ sudo echo "yum recent update" | mailx -s "Update logs for $(/usr/local/cpanel/cp
 ```
 echo -e " $(dig a $(who |  awk '/net/{gsub(/\(|\)/,"");print $5}') +short) has logged into  $(whoami) at  $(who | awk {'print $3,$4'})" | mail -s  "$(whoami) SSH alert" -r "$(whoami).alert@$(hostname)" $email
 ```
+
+##scans for rootkits/ssh keys as root, greps for any users w/ a GUID of 0, outputs all ssh keybased logins recorded. 
+```
+(
+yum install rkhunter -y
+screen -dmS rkhunter_$(date +%F) rkhunter -c 
+clear
+grep -i "Accepted publickey " /var/log/secure | awk {'print $1,$2,$3,$11'} >> ssh_key_logins.$(date +%F)
+grep -i " 0 " /etc/group 
+ls -lah /dev/shm/
+ls -lah /tmp
+)
+```
