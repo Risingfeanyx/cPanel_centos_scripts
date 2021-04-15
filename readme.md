@@ -529,7 +529,7 @@ traceroute "$1"
 	awk -F"'" '/DB_/{print $4}' wp-config.php;
 	cat wp-config.php | grep is_multisite
 	pwd ; ls *bak_* *.sql
-	mv *.sql ..
+	mv *.sql ~/
 }
 ```
 
