@@ -399,6 +399,11 @@ mkdir /var/cpanel/userdata
 )
 ```
 
+#what IPs are accessing nginx?
+
+```
+ cat /var/log/nginx/access.log  | awk '{print $1}' | uniq -u
+```
 
 
 #need a root WHM login?
