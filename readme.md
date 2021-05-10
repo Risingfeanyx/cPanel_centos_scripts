@@ -300,9 +300,7 @@ mailtest()
 ```
   mailusage()
   {
-    du -cahS --threshold=500M --exclude="{virtfs,cache,etc,logs,perl5, public_ftp,mail,public_html,quarantine,ssl,tmp}" /home/* /backup /home/*/.trash| sort -hr
-
-> usage.$(date +%F)
+    du -cahS --threshold=500M --exclude="{virtfs,cache,etc,logs,perl5, public_ftp,mail,public_html,quarantine,ssl,tmp}" /home/* /backup /home/*/.trash| sort -hr > usage.$(date +%F)
     clear
          echo -e "This is the  current disk usage  for ""$(hostname)""  \n$(cat usage.$(date +%F)).
          \n Disk Usage as of $(date +%F)
