@@ -194,6 +194,10 @@ grep -i passwd_pop /usr/local/cpanel/logs/access_log | awk '{print $1,$3}' | sor
 ) | column -t
 ```
 
+#Block IPs attempting to access cPanel
+```
+for i in $(cat /usr/local/cpanel/logs/login_log | awk '{print $6}' | sort -u | uniq); do  csf -d "$i" || apf -d "$i"; done
+```
 
 #What's taking up "Other space" within your  user. Change threshold as needed.
 
