@@ -156,21 +156,44 @@ bounce_vps_CTID ()
 ```
 
 
-#IPs connecting/accessing your cpanel in a non-root env
+#overview of cPanel access. Includes cPanel,Root, Password Changes, Webmail and Webmail password changes. 
 
 ```
-sudo cat  /usr/local/cpanel/logs/access_log | grep "POST\|userna5\|pass" | awk {'print $1,$4'} | uniq -c
-```
-#ditto, in a root env, as shell, curls to ipinfo to pull geo info
-```
-for i in $(cat /home/*/.lastlogin | awk '{ print $1 }' | uniq -c); do curl ipinfo.io/"$i" ; done
+(
+clear
+echo -e "IP User/Email_User Date Operating-System Browser"
+echo -e "cPanel_Access"
+grep -e "paper_lantern/index.html" /usr/local/cpanel/logs/access_log | awk '{print $1,$3,$4,$13,$20}' | sort -u | uniq
+echo -e "Root_WHM_Access"
+grep -e "login=1&post_login" /usr/local/cpanel/logs/access_log | awk '{print $1,$3,$4,$13,$20}' | sort -u | uniq
+echo -e "cPanel_Password_Changes"
+grep -i "passwd" /usr/local/cpanel/logs/access_log  |   awk '{print $1}' | sort -u | uniq
+echo -e "Webmail_Access" 
+grep "%40" /usr/local/cpanel/logs/access_log | awk '{print $1,$3,$4}' | sort -u | uniq
+echo -e "Webmail_Password_changes"
+grep -i passwd_pop /usr/local/cpanel/logs/access_log | awk '{print $1,$3}' | sort -u | uniq
+) | column -t
 ```
 
-#just pulls IPs, date and timestamps
+#Same thing, but excludes the date, which makes the output extremely verbose. 
 
 ```
-cat /home/*/.lastlogin | awk '{ print $1,$3,$4 }' | uniq -c)
+(
+clear
+echo -e "IP User/Email_User Operating-System Browser"
+echo -e "cPanel_Access"
+grep -e "paper_lantern/index.html" /usr/local/cpanel/logs/access_log | awk '{print $1,$3,$13,$20}' | sort -u | uniq
+echo -e "Root_WHM_Access"
+grep -e "login=1&post_login" /usr/local/cpanel/logs/access_log | awk '{print $1,$3,$13,$20}' | sort -u | uniq
+echo -e "cPanel_Password_Changes"
+grep -i "passwd" /usr/local/cpanel/logs/access_log  |   awk '{print $1}' | sort -u | uniq
+echo -e "Webmail_Access" 
+grep "%40" /usr/local/cpanel/logs/access_log | awk '{print $1,$3}' | sort -u | uniq
+echo -e "Webmail_Password_changes"
+grep -i passwd_pop /usr/local/cpanel/logs/access_log | awk '{print $1,$3}' | sort -u | uniq
+) | column -t
 ```
+
 
 #What's taking up "Other space" within your  user. Change threshold as needed.
 
@@ -245,14 +268,6 @@ f2b(){
     sudo grep "$1" /etc/*/*.deny
 }
 ```
-
-#History of all IPs that have accessed your cPanel
-
-```
-for i in $(sort /usr/local/cpanel/logs/session_log | grep "$(date +%F)" | awk '{print $6}' | uniq -u) ; do curl ipinfo.io/"$i" ; done
-```
-
-
 
 #Force HTTPS in a .htaccess file
 
@@ -553,12 +568,6 @@ Learn who is attempting to access your site
 for i in $(sort /usr/local/apache/domlogs/*.com  | awk '{print $1}' | uniq -u) ; do  curl ipinfo.io/$i ; done
 ```
 
-cPanel Attempts
-
-```
-for i in $(sort /usr/local/cpanel/logs/access_log  | awk '{print $1}' | uniq -u) ; do  curl ipinfo.io/$i ; done
-
-```
 
 
 Successfull cPanel logins from today
