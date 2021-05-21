@@ -507,7 +507,9 @@ clear
  grep -i 'model name' /proc/cpuinfo | head -n1 |column -t
  hostname |column -t; hostname -i |column -t
  cat /etc/redhat-release |column -t && /usr/local/cpanel/cpanel -V |column -t
- ls /etc/cpanel/ea4/is_ea4 |column -t
+ ls /etc/cpanel/ea4/is_ea4
+ mysql --version
+ php --version
 }
 ```
 
