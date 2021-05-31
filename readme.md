@@ -287,6 +287,7 @@ f2b(){
 
 #sends mail out to a test email of your choosing from a mailbox of your chooseing, and watches the logs for it. creates an email account for testing.#Syntax: 
 localdomain.com to@domain.com. spits out dns information on the test email as well. Stops tailing log after 1 minutes. includes link to multirbl to cover any blacklisting
+#replace $2 with your test recipient email; can take multiple recipents, just seperate with commas
 
 ```
 mailtest()
@@ -297,7 +298,7 @@ mailtest()
  \nReplies are not monitored. Please ignore." | mail -s  "Email Test Support" -r test@"$1" "$2"
          	clear ;
          		echo "sending mail from ""$1"" to ""$2"""
-         			sudo timeout 1m tail -f /var/log/exim_mainlog | grep "$2"
+         			sudo timeout 1m tail -f /var/log/exim_mainlog | grep "$1"
          			  }
 ```
 #excludes DNS records 
