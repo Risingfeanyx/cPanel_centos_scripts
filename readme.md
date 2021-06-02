@@ -156,43 +156,47 @@ bounce_vps_CTID ()
 ```
 
 
-#overview of cPanel access. Includes cPanel,Root, Password Changes, Webmail and Webmail password changes. 
 
-```
+
+
+#overview of cPanel access. Includes cPanel,Root, Password Changes, Webmail and Webmail password changes.
+
+````
 (
 clear
 echo -e "IP User/Email_User Date Operating-System Browser"
 echo -e "cPanel_Access"
-grep -e "paper_lantern/index.html" /usr/local/cpanel/logs/access_log | awk '{print $1,$3,$4,$13,$20}' | sort -u | uniq
+grep -a "paper_lantern/index.html" /usr/local/cpanel/logs/access_log | awk '{print $1,$3,$4,$13,$20}' | sort -u | uniq
 echo -e "Root_WHM_Access"
-grep -e "login=1&post_login" /usr/local/cpanel/logs/access_log | awk '{print $1,$3,$4,$13,$20}' | sort -u | uniq
+grep -a "login=1&post_login" /usr/local/cpanel/logs/access_log | awk '{print $1,$3,$4,$13,$20}' | sort -u | uniq
 echo -e "cPanel_Password_Changes"
-grep -i "passwd" /usr/local/cpanel/logs/access_log  |   awk '{print $1}' | sort -u | uniq
+grep -a "passwd" /usr/local/cpanel/logs/access_log  |   awk '{print $1}' | sort -u | uniq
 echo -e "Webmail_Access" 
 grep "%40" /usr/local/cpanel/logs/access_log | awk '{print $1,$3,$4}' | sort -u | uniq
 echo -e "Webmail_Password_changes"
-grep -i passwd_pop /usr/local/cpanel/logs/access_log | awk '{print $1,$3}' | sort -u | uniq
+grep -a passwd_pop /usr/local/cpanel/logs/access_log | awk '{print $1,$3}' | sort -u | uniq
 ) | column -t
-```
+````
 
-#Same thing, but excludes the date, which makes the output extremely verbose. 
+#Same thing, but excludes the date, which makes the output extremely verbose.
 
 ```
 (
 clear
 echo -e "IP User/Email_User Operating-System Browser"
 echo -e "cPanel_Access"
-grep -e "paper_lantern/index.html" /usr/local/cpanel/logs/access_log | awk '{print $1,$3,$13,$20}' | sort -u | uniq
+grep -a "paper_lantern/index.html" /usr/local/cpanel/logs/access_log | awk '{print $1,$3,$13,$20}' | sort -u | uniq
 echo -e "Root_WHM_Access"
-grep -e "login=1&post_login" /usr/local/cpanel/logs/access_log | awk '{print $1,$3,$13,$20}' | sort -u | uniq
+grep -a "login=1&post_login" /usr/local/cpanel/logs/access_log | awk '{print $1,$3,$13,$20}' | sort -u | uniq
 echo -e "cPanel_Password_Changes"
-grep -i "passwd" /usr/local/cpanel/logs/access_log  |   awk '{print $1}' | sort -u | uniq
+grep -a "passwd" /usr/local/cpanel/logs/access_log  |   awk '{print $1}' | sort -u | uniq
 echo -e "Webmail_Access" 
 grep "%40" /usr/local/cpanel/logs/access_log | awk '{print $1,$3}' | sort -u | uniq
 echo -e "Webmail_Password_changes"
-grep -i passwd_pop /usr/local/cpanel/logs/access_log | awk '{print $1,$3}' | sort -u | uniq
+grep -a passwd_pop /usr/local/cpanel/logs/access_log | awk '{print $1,$3}' | sort -u | uniq
 ) | column -t
 ```
+
 
 #Block IPs attempting to access cPanel
 ```
