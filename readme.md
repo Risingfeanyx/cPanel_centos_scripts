@@ -567,10 +567,13 @@ traceroute "$1"
 ##Checks for new autossl certs, creates a nightly cron to do so, moves current cpanel queue and forces a restart
 ```
 (
+clear
+echo "$(($RANDOM%60)) $(($RANDOM%24)) * * * root /usr/local/cpanel/bin/autossl_check --all" > /etc/cron.d/cpanel_autossl && /scripts/restartsrv_crond
 mv -v /var/cpanel/autossl_queue_cpanel.sqlite{,_old}
+clear
 /usr/local/cpanel/bin/autossl_check_cpstore_queue --force
 /usr/local/cpanel/bin/autossl_check --all
-echo "$(($RANDOM%60)) $(($RANDOM%24)) * * * root /usr/local/cpanel/bin/autossl_check --all" > /etc/cron.d/cpanel_autossl && /scripts/restartsrv_crond
+tail  `/bin/ls -1td /var/cpanel/logs/autossl/*/txt| /usr/bin/head -n1`
 )
 ```
 
