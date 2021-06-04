@@ -80,23 +80,6 @@ sudo cat /usr/local/apache/domlogs/userna5/domain.com | awk {'print $1'}| uniq -
 	}
 ```
 
-#As of cPanel 94, a known glitch which randomly kills dnsadmin.. This can be identifyed by the following error in the /usr/local/cpanel/whostmgr/bin/dnsadmin log
-
-
-```
-(internal error) Timed out while running GETZONES
-Died at /usr/local/cpanel/whostmgr/bin/dnsadmin line 794, <$mysock> line 2.
-Smartmatch is experimental at /usr/local/cpanel/Cpanel/NameServer/Remote/IMH.pm line 254, <$mysock> line 4.
-```
-
-```
-whmapi1 set_tweaksetting key='dormant_services'  value='dnsadmin'
-```
-Then go ahead and restart dnsadmin
-
-
-
-
 
 #Creates two s, one to spin up a backup for all your users, and another to run cPanel updates, both email you out once finished.
 #usage $email@address
@@ -583,15 +566,6 @@ tail  `/bin/ls -1td /var/cpanel/logs/autossl/*/txt| /usr/bin/head -n1`
 ```
 
 
-#Reinstalls DNS admin, Update dns zone for all domains on server, shows all domains
-
-```
-(
-yum -y remove imh-cpanel-dnsadmin;rpm -e --nopostun imh-cpanel-dnsadmin;yum clean;yum -y install imh-cpanel-dnsadmin; /usr/local/cpanel/whostmgr/bin/dnsadmin --start; rm -f /var/cpanel/clusterqueue/status/imh{,-down};/usr/local/cpanel/cpkeyclt; 
-clear; for a in /var/named/*.db; do /scripts/dnscluster synczone $(basename $a .db); done; 
-clear ; for a in /var/named/*.db; do echo $(basename $a .db); done
-)
-```
 
 Learn who is attempting to access your site
 ```
