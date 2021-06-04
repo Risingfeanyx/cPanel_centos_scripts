@@ -573,8 +573,13 @@ mv -v /var/cpanel/autossl_queue_cpanel.sqlite{,_old}
 clear
 /usr/local/cpanel/bin/autossl_check_cpstore_queue --force
 /usr/local/cpanel/bin/autossl_check --all
-tail  `/bin/ls -1td /var/cpanel/logs/autossl/*/txt| /usr/bin/head -n1`
 )
+```
+
+##Need to manually view themost recent AutoSSL log?
+
+```
+tail  `/bin/ls -1td /var/cpanel/logs/autossl/*/txt| /usr/bin/head -n1`
 ```
 
 
