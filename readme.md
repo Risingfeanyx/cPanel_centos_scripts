@@ -578,7 +578,11 @@ Learn who is attempting to access your site
 ```
 for i in $(sort /usr/local/apache/domlogs/*.com  | awk '{print $1}' | uniq -u) ; do  curl ipinfo.io/$i ; done
 ```
+sort by connections
 
+```
+ cat /usr/local/apache/domlogs/*.com  | awk '{print $1}'| uniq -c | sort -hr
+```
 
 
 Successfull cPanel logins from today
