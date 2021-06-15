@@ -22,6 +22,12 @@ netstat -tn 2>/dev/null | grep :443 | awk '{print $5}' | cut -d: -f1 | sort | un
 }
 ````
 
+Use the following to get stats for all sites
+
+```
+for i in $(for a in /var/named/*.db; do echo $(basename $a .db); done); do quick_review $i; done
+```
+
 #To be used in a root env; you'd create a targz of a cpanel account, and move it to a sites public_html. 
 #Usage back userna5 domain.tld email@domain.com
 
