@@ -1,5 +1,27 @@
 <h2>A collection of my commonly used cPanel/Centos scripts </h2>
 
+#quick overview of server/connections. Can be used with/without site arguments. 
+
+```
+quick_review()
+{
+echo "Processes involving $1"
+pgrep  "$1"
+echo "PHP-FPM maxxing out from $1"
+tail -n2 /opt/cpanel/ea-php*/root/usr/var/log/php-fpm/error.log | grep max
+echo "Apache Errors involving $1"
+tail -n2 /usr/local/apache/logs/error_log | grep "$1"
+echo "Nginx Errors involving $1"
+tail -n2 /var/log/nginx/error.log | grep "$1"
+echo "Server load for past 10 minutes"
+sar -q | tail -n5
+echo "top Apache Connections"
+netstat -tn 2>/dev/null | grep :80 | awk '{print $5}' | cut -d: -f1 | sort | uniq -c | sort -nr | head
+echo "Top Nginx connections"
+netstat -tn 2>/dev/null | grep :443 | awk '{print $5}' | cut -d: -f1 | sort | uniq -c | sort -nr | head
+}
+````
+
 #To be used in a root env; you'd create a targz of a cpanel account, and move it to a sites public_html. 
 #Usage back userna5 domain.tld email@domain.com
 
