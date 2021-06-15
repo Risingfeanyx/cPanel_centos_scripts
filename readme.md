@@ -1,4 +1,5 @@
-<h2>A collection of my commonly used cPanel/Centos scripts </h2>
+<h1>A collection of my commonly used cPanel/Centos scripts </h1>
+<h2>Larger scripts</h2>
 
 #quick overview of server/connections. Can be used with/without site arguments. 
 
@@ -26,164 +27,15 @@ netstat -tn 2>/dev/null | grep :443 | awk '{print $5}' | cut -d: -f1 | sort | un
 }
 ````
 
-Use the following to get stats for all sites
+#To perform every site on server, use the following
 
 ```
 for i in $(for a in /var/named/*.db; do echo $(basename $a .db); done); do quick_review $i; done
 ```
 
-#To be used in a root env; you'd create a targz of a cpanel account, and move it to a sites public_html. 
-#Usage back userna5 domain.tld email@domain.com
-
-
-```
-back(){
-	/scripts/pkgacct "$1"f
-	mv /home/cpmove-"$1".tar.gz /home/"$1"/public_html
-	chmod 644 /home/"$1"/public_html/cpmove-"$1".tar.gz
-	echo "$2/cpmove-$1.tar.gz" | mail -s "Backup Generated" "$3"
-	clear
-	}
-```
-
-#creates dmarc records for all your domains
-
-```
-(
-tar -czvf /root/named_backup_$(date +%Y.%m.%d_%k:%M:%S).tar.gz /var/named
-for domain in /var/named/*.db; do
-domain=$(basename $domain .db)
-whmapi1 addzonerecord domain="${domain}" name="_dmarc.${domain}." class=IN ttl=86400 type=TXT txtdata='v=DMARC1; p=none'
-done
-for i in $(for a in /var/named/*.db; do echo $(basename "$a" .db); done); do echo "$i";  dig txt _dmarc."$i" +short  ; echo https://www.whatsmydns.net/#TXT/_dmarc."$i";  done
-)
-```
-
-#Want to back up all your  <a href="https://documentation.cpanel.net/display/84Docs/The+cpconftool+Script#ThecpconftoolScript-BackupBackupaconfigurationmodule" target="_blank">Root WHM Configs</a> and  <a href="https://documentation.cpanel.net/display/CKB/How+to+Run+a+Manual+Backup" target="_blank">cPanel users</a>?
-
-
-
-```
-(
-	clear
-	for i in $(/usr/local/cpanel/bin/cpconftool --list-modules); do  /usr/local/cpanel/bin/cpconftool --backup --modules="$i" ; done
-	/usr/local/cpanel/bin/backup --force
-)
-```
-
-#Creates a list of email accounts based on an existing text file. The text files only need the 'user' section of user@domain.com. 
-#usage email_creation domain.com
-
-```
-email_creation()
-{
- for i in $(cat userlist); do /scripts/addpop "$i"@$1 $(date | md5sum) 50 ; done
- }
-```
-#The same thing, but for all domains on your server
-
-```
- for i in $(cat userlist); do /scripts/addpop "$i"@$(for a in /var/named/*.db; do echo $(basename $a .db); done) $(date | md5sum) 50 ; done
-```
-
-#And to remove them as well, solely for testing purposes
-
-```
-for i in $(cat userlist); do /scripts/delpop "$i"@domain.com ; done
-```
-#non-root, view IPs connecting to site.
-
-```
-sudo cat /usr/local/apache/domlogs/userna5/domain.com | awk {'print $1'}| uniq -c | tail -n100
-```
-
-
-#As of cPanel 86, a known glitch spawning massive amounts of build_locale_da processes. This will kill that, and force an upgrade to $latest_supported version. Glitch went away in 88
-
-
-```
-	{
-	clear
-	dmesg
-	pkill -9 build_locale_da ;
-	/scripts/upcp --force ;
-	clear
-	ps faux | grep build_locale_da
-	}
-```
-
-
-#Creates two s, one to spin up a backup for all your users, and another to run cPanel updates, both email you out once finished.
-#usage $email@address
-
-
-```
-backup_update_email() 
-	{
-	clear;
-	screen -dmS Backups_$(date +%F) /usr/local/cpanel/bin/backup --force; 
-	screen -dmS Updates_$(date +%F) /scripts/upcp --force && echo -e "$(hostname) bumped up to $(/usr/local/cpanel/cpanel -V). \n See https://docs.cpanel.net/changelogs/ for more information" | mail -s "cPanel Upgraded" $1;
-	screen -ls;
-	}
-```
-
-#drop into .bashrc to generate a warning for any users logging in via ssh. will email out from w/e user has been logged in 
-
-```
-echo -e "This IP has logged into  $(whoami) at $(who | awk {'print $3,$4'})  \n $(echo $(curl -s ipinfo.io/$(dig a  $(who  | awk '{gsub(/\(|\)/,"");print $5}') +short))) " | mail -s  "$(whoami) SSH alert" -r "$(whoami).alert@$(hostname)" your@email.address	
-
-```
-
-#check processes for only your users
-
-```
-for i in $(cat /etc/userdomains | awk {'print $2'} | grep -v nobody | sort -n | uniq); do ps aux | grep -i $i  | grep -v grep; done
-```
-
-##view largest logfiles on server
-
-```
-for i in $(locate *log); do du -cahS $i |sort -hr; done
-
-```
-
-#generates bandwidth logs for each user, saves to /home/*/tmp/webalizer
-
-```
-for username in $(cat /etc/userdomains | awk {'print $2'} | grep -v nobody | sort -n | uniq);do /scripts/runweblogs "$username";done ; clear ; ls  /home/*/tmp/webalizer
-```
-
-
-
-
-#In a Virtuozzo environment, eyeballs the logs relating to a container, waits to reboot if needed.
-
-```
-bounce_vps_CTID ()
-{
-	clear
-	echo "##What's that VPS$1 doing"
-	sudo cat /var/log/messages | grep "$1" | tail -5
-	echo "##Is VPS$1 suspended?"
-	grep "$1" /var/log/suspension.log/messages; echo "##Has VPS$1 moved   away?"
-	cat /opt/vzmigrate/"$1".log/messages ; 
-	echo "##Is VPS$1 moving away?"
-	ls -l /opt/vzmigrate/inprogress/"$1"
-	echo "##Is VPS$1 napping?"
-	vzlist -a -o veid,hostname,ip,status,laverage,description,diskspace,diskinodes | grep "$1"
-	read -pr "Press Enter to reboot $1"
-	suspend_vps -r test "$1"
-	unsuspend_vps "$1"
-}
-```
-
-
-
-
-
 #overview of cPanel access. Includes cPanel,Root, Password Changes, Webmail and Webmail password changes.
 
-````
+```
 (
 clear
 echo -e "IP User/Email_User Date Operating-System Browser"
@@ -198,81 +50,87 @@ grep "%40" /usr/local/cpanel/logs/access_log | awk '{print $1,$3,$4}' | sort -u 
 echo -e "Webmail_Password_changes"
 grep -a passwd_pop /usr/local/cpanel/logs/access_log | awk '{print $1,$3}' | sort -u | uniq
 ) | column -t
-````
-
+```
 #Same thing, but excludes the date, which makes the output extremely verbose.
+
 
 ```
 (
+GREEN='\033[0;32m'
+NC='\033[0m' # No Color
 clear
-echo -e "IP User/Email_User Operating-System Browser"
-echo -e "cPanel_Access"
+echo -e "${GREEN}IP User/Email_User Operating-System Browser ${NC}\n"
+echo -e "${GREEN}cPanel_Access${NC}\n" 
 grep -a "paper_lantern/index.html" /usr/local/cpanel/logs/access_log | awk '{print $1,$3,$13,$20}' | sort -u | uniq
-echo -e "Root_WHM_Access"
+echo -e "${GREEN}Root_WHM_Access${NC}\n"
 grep -a "login=1&post_login" /usr/local/cpanel/logs/access_log | awk '{print $1,$3,$13,$20}' | sort -u | uniq
-echo -e "cPanel_Password_Changes"
+echo -e "${GREEN}cPanel_Password_Changes${NC}\n"
 grep -a "passwd" /usr/local/cpanel/logs/access_log  |   awk '{print $1}' | sort -u | uniq
-echo -e "Webmail_Access" 
+echo -e "${GREEN}Webmail_Access${NC}\n"
 grep "%40" /usr/local/cpanel/logs/access_log | awk '{print $1,$3}' | sort -u | uniq
-echo -e "Webmail_Password_changes"
+echo -e "${GREEN}Webmail_Password_changes${NC}\n"
 grep -a passwd_pop /usr/local/cpanel/logs/access_log | awk '{print $1,$3}' | sort -u | uniq
 ) | column -t
 ```
-
-
-#Block IPs attempting to access cPanel
-```
-for i in $(cat /usr/local/cpanel/logs/login_log | awk '{print $6}' | sort -u | uniq); do  csf -d "$i" || apf -d "$i"; done
-```
-
-#What's taking up "Other space" within your  user. Change threshold as needed.
+#skims over common<a href="https://docs.cpanel.net/knowledge-base/cpanel-product/the-cpanel-log-files/">Log Files</a>for an  IP address
 
 ```
-du -cahS --threshold=25M --exclude="{cache,etc,logs,perl5, public_ftp,mail,public_html,quarantine,ssl,tmp}"  | sort -hr 
+err()
+	{
+	GREEN='\033[0;32m'
+	NC='\033[0m' # No Color
+	clear
+	echo -e "\n${GREEN} Server Log${NC}"
+	grep "$1"  /var/log/messages | tail -n3
+	echo -e "\n${GREEN} Apache Error Log${NC}" 
+	grep "$1"  /usr/local/apache/logs/error_log | tail -n3
+	echo -e "\n${GREEN} Nginx Error Log${NC}" 
+	grep "$1"  /var/log/nginx/error.log | tail -n3
+	echo -e "\n${GREEN} cPanel Access Log${NC}" 
+	grep "$1"  /usr/local/cpanel/logs/access_log | tail -n3
+	echo -e "\n${GREEN} SSH/SFTP commands Log${NC}" 
+	grep "$1"  /var/log/secure | tail -n3
+	echo -e "\n${GREEN} cPanel logins ${NC}"
+	grep "$1"  /usr/local/cpanel/logs/login_log | tail -n3
+	}
 ```
 
-#What's taking up "Other Space" for all your users
+#add dmarc/SPF records to one  domain, show proptime
 
-```
-du -cahS --threshold=25M --exclude="{virtfs,cache,etc,logs,perl5, public_ftp,mail,public_html,quarantine,ssl,tmp}" /home/* | sort -hr
-```
-#ditto, trash
-```
-du -cahS --threshold=25M  /home/*/.trash | sort -hr
-```
+#Example <a href="https://support.cpanel.net/hc/en-us/articles/1500000323641-How-to-add-a-DNS-record-to-a-domain-using-the-WHM-API-" target="_blank">Docs</a>
 
-#largest files  for all your users in genereal, capped at 25M
-
+#Full  <a href="https://documentation.cpanel.net/display/DD/WHM+API+1+Functions+-+addzonerecord" target="_blank">API Docs </a>
 ```
-for i in $(awk '{print $2}' /etc/trueuserdomains); do echo $i; du -cahS --threshold=25M /home/$i | sort -hr; done
-```
-
-#restart all cpanel services
-```
-for f in /scripts/restartsrv_*; do "$f" -H ; done
+(
+tar -czvf /root/named_backup_$(date +%F).tar.gz /var/named*
+for domain in /var/named/*.db; do
+domain=$(basename $domain .db)
+whmapi1 addzonerecord domain="${domain}" name="_dmarc.${domain}." class=IN ttl=86400 type=TXT txtdata='v=DMARC1; p=none'
+done
+clear
+echo -e "This will take effect globally between $(date -d "+4 hours") and $( date -d "+24 hours")"
+for i in $(for a in /var/named/*.db; do echo $(basename "$a" .db); done); do echo "$i";  dig txt _dmarc."$i" +short  
+echo https://www.whatsmydns.net/#TXT/_dmarc."$i";  done
+)
 ```
 
-#view last logs for all systemd services. tack on ```>> systemd.log.$(date +%b)``` to save it
+#add dmarc/SPF records to one  domain, show proptime
+
+#Example <a href="https://support.cpanel.net/hc/en-us/articles/1500000323641-How-to-add-a-DNS-record-to-a-domain-using-the-WHM-API-" target="_blank">Docs</a>
+
+#Full  <a href="https://documentation.cpanel.net/display/DD/WHM+API+1+Functions+-+addzonerecord" target="_blank">API Docs </a>
 
 ```
-for i in $( ls /etc/systemd/system/) ; do systemctl status $i | grep -i "$(date +%b)" ; done
+SPF_DMARC()
+{
+tar -czvf /root/named_backup_$(date +%F).tar.gz /var/named*
+whmapi1 addzonerecord domain="$1" name="_dmarc.$1." class=IN ttl=86400 type=TXT txtdata='v=DMARC1; p=none'
+ whmapi1 addzonerecord domain=$1 name=$1 class=IN ttl=86400 type=TXT txtdata="v=spf1 +a +mx +ip4:$(hostname -i) -all"
+echo -e "This will take effect globally between $(date -d "+4 hours") and $( date -d "+24 hours")"
+for i in $(for a in /var/named/*.db; do echo $(basename "$a" .db); done); do echo "$i";  dig txt _dmarc."$i" +short  
+echo https://www.whatsmydns.net/#TXT/_dmarc."$i";  done
+}
 ```
-
-
-#Test HTTP codes/A records/whois on all domains on your server
-
-https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
-
-```
-for i in $(for a in /var/named/*.db; do echo $(basename "$a" .db); done); do echo "$i" ; curl -o /dev/null --silent --head --write-out '%{http_code}\n' "$i" ; dig @ns ns "$i" +short  ; echo https://www.whatsmydns.net/#NS/"$i";  done
-```
-
-#file breakdown of all users >500M
-```
-for i in $(ls /home/) ; do du -cahS --threshold=500M $i | sort -hr ; done
-```
-
-
 
 #Can't find your blocked ip in a fail2ban env?
 
@@ -299,20 +157,17 @@ f2b(){
 }
 ```
 
-#Force HTTPS in a .htaccess file
+#Sends mail out to a test email of your choosing from a mailbox of your chooseing, and watches the logs for it. creates an email account for testing
 
-```
-	{
-	clear
-	cp .htaccess{,.pre_https_$(date +%F)}
-	sed -i '1 i\RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]' .htaccess
-	sed -i '1 i\RewriteCond %{HTTPS} off ' .htaccess
-	sed -i '1 i\RewriteEngine On' .htaccess
-	}
-```
+Echoes out dns information on the test email as well. 
 
-#sends mail out to a test email of your choosing from a mailbox of your chooseing, and watches the logs for it. creates an email account for testing.#Syntax: 
-localdomain.com to@domain.com. spits out dns information on the test email as well. Stops tailing log after 1 minutes. includes link to multirbl to cover any blacklisting
+Stops tailing log after 1 minutes.
+
+Includes link to multirbl to cover any blacklisting
+
+#Syntax: 
+localdomain.com to@domain.com. 
+
 #replace $2 with your test recipient email; can take multiple recipents, just seperate with commas
 
 ```
@@ -338,7 +193,6 @@ mailtest()
 			echo "sending mail from ""$1"" to ""$2"""
 				sudo tail -f /var/log/exim_mainlog | grep "$1"
 				  }
-
 ```
 
 ##emails out disk usage, top 20 files, and saves to text file
@@ -354,16 +208,14 @@ mailtest()
  		\nReplies are not monitored." | mail -s  "Disk Usage Report" -r usage@"$(hostname)" "$1"
     }
  ```
-				  
-
-use /scripts/delpop to remove test account after
+		
 
 
 
-#What is going on with mysql?
+#clean up InnoDB logfiles. Keep in mind, InnoDB cannot be disabled
+#https://dev.mysql.com/doc/refman/5.7/en/innodb-turning-off.html
 
 ```
-mysql_bandaid()
 	{
 	clear
 	tail -10 /var/lib/mysql/*.err
@@ -393,44 +245,6 @@ systemctl restart mysql ; systemctl status mysql
 
 ```
 
-##loops through all currently existing screens
-
-```
- for i in $(screen -ls | awk '{print $1}') ; do screen -x "$i" ; done
-```
-
-#Glance at all error logs for an IP
-#ROOT/VPS
-#Syntax: 'err $IP_ADDRESS'
-
-```
-err()
-	{
-	clear
-	sudo grep "$1" cat /var/log/messages | tail -1
-	sudo grep "$1" cat /usr/local/apache/logs/error_log | tail -1
-	sudo grep "$1" cat /var/log/nginx/error.log | grep | tail -1
-	sudo grep "$1" cat /usr/local/cpanel/logs/access_log | tail -1
-	sudo grep "$1" cat /var/log/secure | tail -1
-	sudo grep "$1" cat /usr/local/cpanel/logs/login_log | tail -1
-	}
-
-#NON ROOT/SHARED
-
-```
-```
-err()
-	{
-	clear
-	sudo cat /var/log/messages | grep $1 
-	sudo cat /usr/local/apache/logs/error_log | grep $1 
-	sudo cat /var/log/nginx/error.log | grep $1 grep | grep $1 
-	sudo cat /usr/local/cpanel/logs/access_log | grep $1 
-	sudo cat /var/log/secure | grep $1 
-	sudo cat /usr/local/cpanel/logs/login_log | grep $1 
-	}
-```
-
 #rebuild cpanel <a href="https://docs.cpanel.net/knowledge-base/accounts/how-to-rebuild-userdata-files/" target="_blank">userdata files</a>? files
 
 ```
@@ -445,74 +259,8 @@ mkdir /var/cpanel/userdata
 )
 ```
 
-#what IPs are accessing nginx?
 
-```
- cat /var/log/nginx/access.log  | awk '{print $1}' | uniq -u
-```
-
-
-#need a root WHM login?
-
-
-```
-clear ; whmapi1 create_user_session user=root service=whostmgrd | grep "url:" | awk '{print $2}' 
-```
-
-#how about a non-root cpanel login? It will loop through each user on the server, the 'session=' section will give away which user it is. 
-```
-for i in $(ls /var/cpanel/users |grep -v 'system'); do echo $i;  whmapi1 create_user_session user=$i service=cpaneld  app=FileManager_Home| grep "url:" | awk '{print $2}' ; done
-```
-
-
-##To be used within a user; moves site data from one folder to another. 
-USAGE: doc_mover original_site_folder new_site_folder
-
-```
-
-doc_mover()
-	{
-	clear
-	mkdir ~/"$2"
-	cd "$1" || exit
-	tar -cvzf "OG.$1.$(date +%F).tar.gz" *
-	clear
-	rsync -azPv  "OG.$1.$(date +%F).tar.gz" ~/"$2"
-	cd ~/"$2" || exit
-	tar -xvzf "OG.$1.$(date +%F).tar.gz"
-	clear
-	diff ~/"$1" ~/"$2"
-	cd || exit
-	}
-```
-
-#Best run in a screen, watches a domain and outputs to a text file
-
-```
-site_watch()
-	{
-	clear;
-	echo "$1" >> site_watch_"$1".txt;
-	echo "$(date)" >> site_watch_"$1".txt;
-	wget --server-response wget -r -np -R "index.html*" "$1" 2>&1 | awk '/^  HTTP/{print $2}' >> "$HOME"/site_watch_"$1".txt;
-	clear ; 
-	cat "$HOME"/site_watch_"$1".txt;
-	}
-```
-
-
-#Tests serving functionality of server. Be in docroot of site; usage is testpage $domain.tld. As long as both test pages load, then Apache/Nginx is serving correctly. 
-
-```
-testpage()
-	  {
-	 clear
-	 echo "This is a test page created on $(date '+%Y-%m-%d') by a member of the Technical Support team." >> testpage
-	 echo ""https://"$1"/testpage""
-	 curl -LA "foo"  "$1"/testpage
-	 }
-```
-#install redis
+#install <a href="https://redis.io/documentation" target="_blank">Redis</a>? 
 ```
 (
 yum update
@@ -540,134 +288,16 @@ clear
 }
 ```
 
-#Yet another wrapper. (it crashes when indented, one of these days I'll figure out why)
 
+#emails out disk usage, top 20 files, and saves to text file
 ```
-trackDNS()
-{
-clear
-IP=$(dig a "$1" +short)
-NSIP=$(dig ns "$1" +short)
-MX=$(dig mx "$1" +short)
-TXT=$(dig txt "$1" +short)
-RED='\033[0;31m'
-NC='\033[0m' # No Color
-clear
-echo -e "${RED}IP INFORMATION for $1 ${NC}"
-curl ipinfo.io/"$IP"
-echo -e "${RED}Auth A, MX and TXT records  @$NSIP for $1 ${NC}"
-dig a "$1" @"$NSIP"  +short
-dig mx "$1" @"$NSIP" +short
-dig txt "$1" @"$NSIP"  +short
-echo -e "${RED}REGISTRY for $1 ${NC}"
-whois "$1" | grep 'Name Server\|Expiry\|Domain Status'
-curl -IL  "$1" | head -1
-ping -c4 "$1"
-traceroute "$1"
-}
-```
-
-#Wordpress backup/info. I run this before EVER touching a wordpress site; makes all relevent backups and deliberately holds up STDIN until its done
-
-```
-{
-	wp cache flush&
-	wp db repair&	
-	wp core verify-checksums&
-	wp db export&
-	cp .htaccess{,.$(date +%F).bak};
-	cp php.ini{,.$(date +%F).bak};
-	cp wp-config.php{,.$(date +%F).bak};
-	clear
-	awk -F"'" '/DB_/{print $4}' wp-config.php;
-	cat wp-config.php | grep is_multisite
-	pwd ; ls *bak_* *.sql
-	mv *.sql ~/
-}
-```
-
-##Checks for new autossl certs, creates a nightly cron to do so, moves current cpanel queue and forces a restart
-```
-(
-clear
-echo "$(($RANDOM%60)) $(($RANDOM%24)) * * * root /usr/local/cpanel/bin/autossl_check --all" > /etc/cron.d/cpanel_autossl && /scripts/restartsrv_crond
-mv -v /var/cpanel/autossl_queue_cpanel.sqlite{,_old}
-clear
-/usr/local/cpanel/bin/autossl_check_cpstore_queue --force
-/usr/local/cpanel/bin/autossl_check --all
-)
-```
-
-##Need to manually view themost recent AutoSSL log?
-
-```
-tail  `/bin/ls -1td /var/cpanel/logs/autossl/*/txt| /usr/bin/head -n1`
-```
-
-
-
-Learn who is attempting to access your site
-```
-for i in $(sort /usr/local/apache/domlogs/*.com  | awk '{print $1}' | uniq -u) ; do  curl ipinfo.io/$i ; done
-```
-sort by connections
-
-```
- cat /usr/local/apache/domlogs/*.com  | awk '{print $1}'| uniq -c | sort -hr
-```
-
-
-Successfull cPanel logins from today
-
-Want to find out where your blocked IPs are from?
-
-```
-for i in $( cat /etc/*/*.deny | awk '{print $1}') ; do curl ipinfo.io/$i ; done
-```
-
-How about your whitelisted ones?
-
-```
-for i in $( cat /etc/*/*.allow | awk '{print $1}') ; do curl ipinfo.io/$i ; done
-```
-
-
-```
-for i in $(sort /usr/local/cpanel/logs/session_log  | grep  $(date +%F) |  awk '{print $6}' |  uniq -u) ; do  curl ipinfo.io/$i ; done
-```
-
-Temporarily block those attempting to access cPanel. Make sure you're not blocking  <a href="http://fetchip.com/" target="_blank">yourself</a>
-. Might want to run it in a screen/multiplexer. Doesn't exactly require CSF, since it is just firewall rules. Will rewerite for iptables at some point. 
-
-```
-for i in $(sort /usr/local/cpanel/logs/access_log  | awk '{print $1}' | uniq -u) ; do csf -td $i "Attempted cPanel Access, blocked on $(date +%F)"; done
-```
-#reinventing the "email out update status" function in cPanel
-
-```
- sudo echo "cPanel recent update" | mailx -s "Update logs for $(/usr/local/cpanel/cpanel -V)" -a /var/cpanel/updatelogs/last  -r server@$(hostname) $email
-```
-#same, but for yum logs 
-
-```
-sudo echo "yum recent update" | mailx -s "Update logs for $(/usr/local/cpanel/cpanel -V)" -a /var/log/yum.log  -r server@$(hostname) $email
-```
-
-#reinventing lfd ip sign=in warning
-
-```
-echo -e " $(dig a $(who |  awk '/net/{gsub(/\(|\)/,"");print $5}') +short) has logged into  $(whoami) at  $(who | awk {'print $3,$4'})" | mail -s  "$(whoami) SSH alert" -r "$(whoami).alert@$(hostname)" $email
-```
-
-##scans for rootkits/ssh keys as root, greps for any users w/ a GUID of 0, outputs all ssh keybased logins recorded. 
-```
-(
-yum install rkhunter -y
-screen -dmS rkhunter_$(date +%F) rkhunter -c 
-clear
-grep -i "Accepted publickey " /var/log/secure | awk {'print $1,$2,$3,$11'} >> ssh_key_logins.$(date +%F)
-grep -i " 0 " /etc/group 
-ls -lah /dev/shm/
-ls -lah /tmp
-)
+  mailusage()
+  {
+    du -cahS --threshold=500M --exclude="{virtfs,cache,etc,logs,perl5, public_ftp,mail,public_html,quarantine,ssl,tmp}" /home/* /backup /home/*/.trash| sort -hr > usage.$(date +%F)
+    clear
+         echo -e "This is the  current disk usage  for ""$(hostname)""  \n$(cat usage.$(date +%F)).
+         \n Disk Usage as of $(date +%F)
+         \n $(df -h | head -n2)
+ 		\nReplies are not monitored." | mail -s  "Disk Usage Report" -r usage@"$(hostname)" "$1"
+    }
 ```
