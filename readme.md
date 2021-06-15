@@ -5,19 +5,23 @@
 ```
 quick_review()
 {
-echo "Processes involving $1"
+GREEN='\033[0;32m'
+NC='\033[0m' # No Color
+echo -e "${GREEN}Current Processes involving $1 ${NC}\n"
 pgrep  "$1"
-echo "PHP-FPM maxxing out from $1"
+echo -e "${GREEN}PHP-FPM maxing out from $1${NC}\n"
 tail -n2 /opt/cpanel/ea-php*/root/usr/var/log/php-fpm/error.log | grep max
-echo "Apache Errors involving $1"
+echo -e "${GREEN}Apache Errors involving $1${NC}\n"
 tail -n2 /usr/local/apache/logs/error_log | grep "$1"
-echo "Nginx Errors involving $1"
+echo -e "${GREEN}Nginx Errors involving $1${NC}\n"
 tail -n2 /var/log/nginx/error.log | grep "$1"
-echo "Server load for past 10 minutes"
+echo -e "${GREEN}Top 20 site connections to $1${NC}\n"
+sort /usr/local/apache/domlogs/"$1"  | awk '{print $1}'| uniq -c | sort -hr | head -n20
+echo -e "${GREEN}Server load for past 10 minutes${NC}\n"
 sar -q | tail -n5
-echo "top Apache Connections"
+echo -e "${GREEN}Top Apache Connections${NC}\n"
 netstat -tn 2>/dev/null | grep :80 | awk '{print $5}' | cut -d: -f1 | sort | uniq -c | sort -nr | head
-echo "Top Nginx connections"
+echo -e "${GREEN}Top Nginx connections${NC}\n"
 netstat -tn 2>/dev/null | grep :443 | awk '{print $5}' | cut -d: -f1 | sort | uniq -c | sort -nr | head
 }
 ````
