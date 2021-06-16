@@ -95,24 +95,6 @@ err()
 	}
 ```
 
-#add dmarc/SPF records to one  domain, show proptime
-
-#Example <a href="https://support.cpanel.net/hc/en-us/articles/1500000323641-How-to-add-a-DNS-record-to-a-domain-using-the-WHM-API-" target="_blank">Docs</a>
-
-#Full  <a href="https://documentation.cpanel.net/display/DD/WHM+API+1+Functions+-+addzonerecord" target="_blank">API Docs </a>
-```
-(
-tar -czvf /root/named_backup_$(date +%F).tar.gz /var/named*
-for domain in /var/named/*.db; do
-domain=$(basename $domain .db)
-whmapi1 addzonerecord domain="${domain}" name="_dmarc.${domain}." class=IN ttl=86400 type=TXT txtdata='v=DMARC1; p=none'
-done
-clear
-echo -e "This will take effect globally between $(date -d "+4 hours") and $( date -d "+24 hours")"
-for i in $(for a in /var/named/*.db; do echo $(basename "$a" .db); done); do echo "$i";  dig txt _dmarc."$i" +short  
-echo https://www.whatsmydns.net/#TXT/_dmarc."$i";  done
-)
-```
 
 #add dmarc/SPF records to one  domain, show proptime
 
@@ -123,13 +105,21 @@ echo https://www.whatsmydns.net/#TXT/_dmarc."$i";  done
 ```
 SPF_DMARC()
 {
-tar -czvf /root/named_backup_$(date +%F).tar.gz /var/named*
+tar -czf /root/named_backup_$(date +%F).tar.gz /var/named*
+ls -lah /root/named_backup_$(date +%F).tar.gz
 whmapi1 addzonerecord domain="$1" name="_dmarc.$1." class=IN ttl=86400 type=TXT txtdata='v=DMARC1; p=none'
  whmapi1 addzonerecord domain=$1 name=$1 class=IN ttl=86400 type=TXT txtdata="v=spf1 +a +mx +ip4:$(hostname -i) -all"
 echo -e "This will take effect globally between $(date -d "+4 hours") and $( date -d "+24 hours")"
-for i in $(for a in /var/named/*.db; do echo $(basename "$a" .db); done); do echo "$i";  dig txt _dmarc."$i" +short  
-echo https://www.whatsmydns.net/#TXT/_dmarc."$i";  done
+echo "$1"
+dig txt "$1" +short  
+dig txt _dmarc."$1" +short
+echo https://www.whatsmydns.net/#TXT/_dmarc."$1"
+echo https://www.whatsmydns.net/#TXT/_"$1"
 }
+```
+#do for every domain
+```
+for i in $(for a in /var/named/*.db; do echo $(basename $a .db); done); do SPF_DMARC $i; done
 ```
 
 #Can't find your blocked ip in a fail2ban env?
