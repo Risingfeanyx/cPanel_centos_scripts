@@ -296,7 +296,9 @@ clear
 
 
 ##generates keypair
+
 ##usage genkey username username@IP
+
 ```
  genkey()
 {
