@@ -304,6 +304,6 @@ clear
 {
 ssh-keygen -f ~/.ssh/"$1"-ecdsa -t ecdsa -b 521
 ssh-copy-id -i ~/.ssh/"$1"-ecdsa "$2"
-echo "alias "conn_"$1"=\"ssh -i .ssh/"$1"-ecdsa "$2"\" >> .bashrc
+echo "alias "conn_"$1"=\"ssh -i ~/.ssh/"$1"-ecdsa "$2"\" >> .bashrc
 }
 ```
