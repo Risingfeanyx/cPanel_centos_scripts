@@ -102,6 +102,8 @@ err()
 
 #Full  <a href="https://documentation.cpanel.net/display/DD/WHM+API+1+Functions+-+addzonerecord" target="_blank">API Docs </a>
 
+#This does NOT factor in dedicated IP addresses, in other words, it references the servers IP address itself
+
 ```
 SPF_DMARC()
 {
@@ -111,10 +113,10 @@ whmapi1 addzonerecord domain="$1" name="_dmarc.$1." class=IN ttl=86400 type=TXT 
  whmapi1 addzonerecord domain=$1 name=$1 class=IN ttl=86400 type=TXT txtdata="v=spf1 +a +mx +ip4:$(hostname -i) -all"
 echo -e "This will take effect globally between $(date -d "+4 hours") and $( date -d "+24 hours")"
 echo "$1"
-dig txt "$1" +short  
-dig txt _dmarc."$1" +short
+for i in $(dig ns $1 +short |head -n1); do dig @$i txt $1 +short ; done
+for i in $(dig ns $1 +short |head -n1); do dig @$i txt _dmarc.$1 +short ; done
 echo https://www.whatsmydns.net/#TXT/_dmarc."$1"
-echo https://www.whatsmydns.net/#TXT/_"$1"
+echo https://www.whatsmydns.net/#TXT/"$1"
 }
 ```
 #do for every domain
