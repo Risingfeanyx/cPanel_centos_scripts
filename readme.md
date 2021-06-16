@@ -293,3 +293,15 @@ clear
  		\nReplies are not monitored." | mail -s  "Disk Usage Report" -r usage@"$(hostname)" "$1"
     }
 ```
+
+
+##generates keypair
+##usage genkey username username@IP
+```
+ genkey()
+{
+ssh-keygen -f ~/.ssh/"$1"-ecdsa -t ecdsa -b 521
+ssh-copy-id -i ~/.ssh/"$1"-ecdsa "$2"
+echo "alias "ssh_"$1    "=\"ssh -i .ssh/"$1"-ecdsa "$2"\" >> .bashrc
+}
+```
