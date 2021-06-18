@@ -17,7 +17,7 @@ echo -e "${GREEN}Apache Errors involving $1${NC}\n"
 tail -n2 /usr/local/apache/logs/error_log | grep "$1"
 echo -e "${GREEN}Nginx Errors involving $1${NC}\n"
 tail -n2 /var/log/nginx/error.log | grep "$1"
-echo -e "${GREEN}Top 20 site connections to $1${NC}\n"
+echo -e "${GREEN}Top 20 Apache  domain connections to $1${NC}\n"
 sort /usr/local/apache/domlogs/"$1"  | awk '{print $1}'| uniq -c | sort -hr | head -n20
 echo -e "${GREEN}Server load for past 10 minutes${NC}\n"
 sar -q | tail -n5
