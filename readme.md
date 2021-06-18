@@ -9,7 +9,7 @@ quick_review()
 GREEN='\033[0;32m'
 NC='\033[0m' # No Color
 echo -e "${GREEN}Current Processes involving $1 ${NC}\n"
-pgrep  "$1"
+pgrep -lc  "$1"
 echo -e "${GREEN}PHP-FPM maxing out from $1${NC}\n"
 tail -n2 /opt/cpanel/ea-php*/root/usr/var/log/php-fpm/error.log | grep max
 echo -e "${GREEN}Apache Errors involving $1${NC}\n"
@@ -24,6 +24,12 @@ echo -e "${GREEN}Top Apache Connections${NC}\n"
 netstat -tn 2>/dev/null | grep :80 | awk '{print $5}' | cut -d: -f1 | sort | uniq -c | sort -nr | head
 echo -e "${GREEN}Top Nginx connections${NC}\n"
 netstat -tn 2>/dev/null | grep :443 | awk '{print $5}' | cut -d: -f1 | sort | uniq -c | sort -nr | head
+echo -e "${GREEN}PHP-FPM Error logs${NC}\n"
+grep -i "$1" /var/cpanel/php-fpm/*/logs/error.log | tail -n5
+echo -e "${GREEN}Domain Apache  Access Logs${NC}\n"
+tail -n5 /usr/local/apache/domlogs/"$1"
+echo -e "${GREEN}Nginx Access Logs${NC}\n"
+tail -n5 /var/log/nginx/access.log | grep "$1"
 }
 ````
 
