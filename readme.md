@@ -325,3 +325,9 @@ clear
 /usr/local/cpanel/bin/autossl_check --all
 )
 ```
+
+
+##Need to manually view themost recent AutoSSL log?
+```
+tail  `/bin/ls -1td /var/cpanel/logs/autossl/*/txt| /usr/bin/head -n1`
+```
