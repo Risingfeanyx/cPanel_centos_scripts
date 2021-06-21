@@ -9,7 +9,7 @@ quick_review()
 {
 GREEN='\033[0;32m'
 NC='\033[0m' # No Color
-echo -e "${GREEN}Current Processes involving $1 ${NC}\n
+echo -e "${GREEN}Current Processes involving $1 ${NC}\n"
 pgrep  "$1"
 echo -e "${GREEN}PHP-FPM maxing out from $1${NC}\n"
 tail -n2 /opt/cpanel/ea-php*/root/usr/var/log/php-fpm/error.log | grep max
