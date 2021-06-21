@@ -12,7 +12,7 @@ NC='\033[0m' # No Color
 echo -e "${GREEN}Current Processes involving $1 ${NC}\n"
 pgrep  "$1"
 echo -e "${GREEN}PHP-FPM maxing out from $1${NC}\n"
-tail -n2 /opt/cpanel/ea-php*/root/usr/var/log/php-fpm/error.log | grep max
+tail -n2 /opt/cpanel/ea-php*/root/usr/var/log/php-fpm/error.log | grep "$1"
 echo -e "${GREEN}Apache Errors involving $1${NC}\n"
 tail -n2 /usr/local/apache/logs/error_log | grep "$1"
 echo -e "${GREEN}Nginx Errors involving $1${NC}\n"
