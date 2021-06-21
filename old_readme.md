@@ -9,7 +9,7 @@ quick_review()
 {
 GREEN='\033[0;32m'
 NC='\033[0m' # No Color
-echo -e "${GREEN}Current Processes involving $1 ${NC}\n"
+echo -e "${GREEN}Current Processes involving $1 ${NC}\n
 pgrep  "$1"
 echo -e "${GREEN}PHP-FPM maxing out from $1${NC}\n"
 tail -n2 /opt/cpanel/ea-php*/root/usr/var/log/php-fpm/error.log | grep max
@@ -322,7 +322,7 @@ mailtest()
   {
     clear
       /scripts/addpop test@"$1" "$(date | md5sum)" 50
-         echo -e "This is a test email sent on $(date '+%Y-%m-%d') by a member of the Technical Support team. \nThese are  the DNS records for ""$1""  \n$(dig any "$1" +short). \nThis is the MX records IP address: $(dig a $(dig mx "$1" +short) +short). \nBlacklisted? $(echo http://multirbl.valli.org/lookup/$(hostname -i).html)
+         echo -e "This is a test email sent on $(date '+%Y-%m-%d') by a member of the Technical Support team. \nThese are  the DNS records for ""$1""  \n$(dig any "$1" +short). \nThis is the MX records IP address: $(dig a $(dig mx "$1" +short | awk '{print $2}') +short). \nBlacklisted? $(echo http://multirbl.valli.org/lookup/$(hostname -i).html)
  \nReplies are not monitored. Please ignore." | mail -s  "Email Test Support" -r test@"$1" "$2"
          	clear ;
          		echo "sending mail from ""$1"" to ""$2"""
