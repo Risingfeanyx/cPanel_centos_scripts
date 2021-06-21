@@ -30,7 +30,7 @@ echo -e "${GREEN}Domain Apache  Access Logs${NC}\n"
 tail -n5 /usr/local/apache/domlogs/"$1" 2>/dev/null  
 echo -e "${GREEN}Nginx Access Logs${NC}\n"
 tail -n5 /var/log/nginx/access.log | grep "$1" 2>/dev/null 
-echo "MySQL errors today $(for i in $(grep error /etc/my.cnf | sed 's/log-error=//'); do echo $i ; tail -5 $i | grep $(date +%Y-%M-%d) ; done)"
+echo "MySQL errors today $(for i in $(grep error /etc/my.cnf | sed 's/log-error=//'); do echo $i ; tail -5 $i ; done)"
 }
 ````
 
