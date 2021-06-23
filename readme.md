@@ -26,7 +26,7 @@ echo -e "${GREEN}Top Nginx connections${NC}\n"
 netstat -tn 2>/dev/null | grep :443 | awk '{print $5}' | cut -d: -f1 | sort | uniq -c | sort -nr | head 2>/dev/null  
 echo -e "${GREEN}PHP-FPM Error logs${NC}\n"
 grep -i "$1" /var/cpanel/php-fpm/*/logs/error.log | tail -n5 2>/dev/null  
-echo -e "${GREEN}Domain Apache  Access Logs for $${NC}\n"
+echo -e "${GREEN}Domain Apache  Access Logs for ${NC}\n"
 tail -n5 /usr/local/apache/domlogs/"$1" 2>/dev/null  
 echo -e "${GREEN}Nginx Access Logs for ""$1"" Site Asset Site Name ${NC}\n" 
 sort /var/log/nginx/access.log | grep -v "$(hostname -i)" | grep "$1" | awk '{print $1,$7,$27}'| uniq -c | sort -hr | head -n20
