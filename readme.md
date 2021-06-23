@@ -28,8 +28,8 @@ echo -e "${GREEN}PHP-FPM Error logs${NC}\n"
 grep -i "$1" /var/cpanel/php-fpm/*/logs/error.log | tail -n5 2>/dev/null  
 echo -e "${GREEN}Domain Apache  Access Logs for $${NC}\n"
 tail -n5 /usr/local/apache/domlogs/"$1" 2>/dev/null  
-echo -e "${GREEN}Nginx Access Logs for ""$1"" ${NC}\n"
-sort /var/log/nginx/access.log | grep -v "$(hostname -i)" | grep "$1" | awk '{print $1}'| uniq -c | sort -hr | head -n20 2>/dev/null 
+echo -e "${GREEN}Nginx Access Logs for ""$1"" Site Asset Site Name ${NC}\n" 
+sort /var/log/nginx/access.log | grep -v "$(hostname -i)" | grep "$1" | awk '{print $1,$7,$27}'| uniq -c | sort -hr | head -n20
 echo "MySQL errors today $(for i in $(grep error /etc/my.cnf | sed 's/log-error=//'); do echo "$i" ; tail -5 "$i" ; done)"
 }
 ````
