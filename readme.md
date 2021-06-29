@@ -56,7 +56,7 @@ echo -e "Webmail_Access"
 grep "%40" /usr/local/cpanel/logs/access_log | awk '{print $1,$3,$4}' | sort -u | uniq
 echo -e "Webmail_Password_changes"
 grep -a passwd_pop /usr/local/cpanel/logs/access_log | awk '{print $1,$3}' | sort -u | uniq
-echo -i "SSH Access"
+echo -e "SSH Access"
  grep -i accepted /var/log/secure | awk '{print $1,$2,$3,$11}' | sort -u | uniq
 ) | column -t
 ```
@@ -79,7 +79,7 @@ echo -e "${GREEN}Webmail_Access${NC}\n"
 grep "%40" /usr/local/cpanel/logs/access_log | awk '{print $1,$3}' | sort -u | uniq
 echo -e "${GREEN}Webmail_Password_changes${NC}\n"
 grep -a passwd_pop /usr/local/cpanel/logs/access_log | awk '{print $1,$3}' | sort -u | uniq
-echo -i "SSH Access"
+echo -e "SSH Access"
  grep -i accepted /var/log/secure | awk '{print $1,$2,$3,$11}' | sort -u | uniq
 ) | column -t
 ```
