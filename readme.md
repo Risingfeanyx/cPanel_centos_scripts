@@ -248,6 +248,21 @@ systemctl restart mysql ; systemctl status mysql
 
 ```
 
+##Renames ibdata logfiles
+More details here
+https://forums.cpanel.net/resources/innodb-corruption-repair-guide.395/
+
+```
+	{
+	clear
+	tail -10 /var/lib/mysql/*.err
+	systemctl stop mysql;
+	mv /var/lib/mysql/ib_logfile0 /var/lib/mysql/ib_logfile0.bak;
+	mv /var/lib/mysql/ib_logfile1 /var/lib/mysql/ib_logfile1.bak;
+	systemctl start mysql ; systemctl status mysql
+	}
+```
+
 #rebuild cpanel <a href="https://docs.cpanel.net/knowledge-base/accounts/how-to-rebuild-userdata-files/" target="_blank">userdata files</a>? files
 
 ```
