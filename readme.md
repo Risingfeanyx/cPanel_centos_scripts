@@ -20,9 +20,9 @@ echo -e "${GREEN}Top 20 site connections to $1${NC}\n"
 sort /usr/local/apache/domlogs/"$1"  | awk '{print $1}'| uniq -c | sort -hr | head -n20 2>/dev/null  
 echo -e "${GREEN}Server load for past 10 minutes${NC}\n"
 sar -q | tail -n5 2>/dev/null 
-echo -e "${GREEN}Top Apache Connections${NC}\n"
+echo -e "${GREEN}Top Port 80  Connections${NC}\n"
 netstat -tn 2>/dev/null | grep :80 | awk '{print $5}' | cut -d: -f1 | sort | uniq -c | sort -nr | head 2>/dev/null  
-echo -e "${GREEN}Top Nginx connections${NC}\n"
+echo -e "${GREEN}Top P:ort 443 connections${NC}\n"
 netstat -tn 2>/dev/null | grep :443 | awk '{print $5}' | cut -d: -f1 | sort | uniq -c | sort -nr | head 2>/dev/null  
 echo -e "${GREEN}PHP-FPM Error logs${NC}\n"
 grep -i "$1" /var/cpanel/php-fpm/*/logs/error.log | tail -n5 2>/dev/null  
