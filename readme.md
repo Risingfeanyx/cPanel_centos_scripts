@@ -4,42 +4,35 @@
 #quick overview of server/connections. Can be used with/without site arguments. 
 
 ```
-quick_review()
 {
+clear
 GREEN='\033[0;32m'
 NC='\033[0m' # No Color
-echo -e "${GREEN}Current Processes involving $1 ${NC}\n"
-pgrep -l  "$1"
-echo -e "${GREEN}PHP-FPM maxing out from $1${NC}\n"
-tail -n2 /opt/cpanel/ea-php*/root/usr/var/log/php-fpm/error.log | grep max 2>/dev/null  
-echo -e "${GREEN}Apache Errors involving $1${NC}\n"
-tail -n2 /usr/local/apache/logs/error_log | grep "$1" 2>/dev/null 
-echo -e "${GREEN}Nginx Errors involving $1${NC}\n"
-tail -n2 /var/log/nginx/error.log | grep "$1" 2>/dev/null  
-echo -e "${GREEN}Top 20 site connections to $1${NC}\n"
-sort /usr/local/apache/domlogs/"$1"  | awk '{print $1}'| uniq -c | sort -hr | head -n20 2>/dev/null  
+echo -e "${GREEN}Top 5 Processes  ${NC}\n"
+ps aux | sort -nrk 3,3 | head -n 5
+echo -e "${GREEN}PHP-FPM maxing out from ${NC}\n"
+tail -n2 /opt/cpanel/ea-php*/root/usr/var/log/php-fpm/error.log
+echo -e "${GREEN}Apache Errors ${NC}\n"
+tail -n2 /usr/local/apache/logs/error_log 
+echo -e "${GREEN}Nginx Errors${NC}\n"
+tail -n2 /var/log/nginx/error.log
+echo -e "${GREEN}Top 20 Apache  domain connections per site today ${NC}\n"
+for i in $(for a in /var/named/*.db; do echo $(basename $a .db); done
+); do echo $i; sort /usr/local/apache/domlogs/"$i"  | grep $(date +"%d/%b/%Y") | awk '{print $1,$4,$7}'|  uniq -c | sort -hr | head -n20 ; done
 echo -e "${GREEN}Server load for past 10 minutes${NC}\n"
-sar -q | tail -n5 2>/dev/null 
-echo -e "${GREEN}Top Port 80  Connections${NC}\n"
-netstat -tn 2>/dev/null | grep :80 | awk '{print $5}' | cut -d: -f1 | sort | uniq -c | sort -nr | head 2>/dev/null  
-echo -e "${GREEN}Top Port 443 connections${NC}\n"
-netstat -tn 2>/dev/null | grep :443 | awk '{print $5}' | cut -d: -f1 | sort | uniq -c | sort -nr | head 2>/dev/null  
-echo -e "${GREEN}PHP-FPM Error logs${NC}\n"
-grep -i "$1" /var/cpanel/php-fpm/*/logs/error.log | tail -n5 2>/dev/null  
-echo -e "${GREEN}Domain Apache  Access Logs for ${NC}\n"
-sort /usr/local/apache/domlogs/"$1" | grep -v "$(hostname -i)" | grep "$1" | awk '{print $1,$7,$27}'| uniq -c | sort -hr | head -n20
-
-echo -e "${GREEN}Nginx Access Logs for ""$1"" Site Asset Site Name ${NC}\n" 
-sort /var/log/nginx/access.log | grep -v "$(hostname -i)" | grep "$1" | awk '{print $1,$7,$27}'| uniq -c | sort -hr | head -n20
+sar -q | tail -n5
+echo -e "${GREEN}Top current Apache Connections${NC}\n"
+netstat -tn 2>/dev/null | grep :80 | awk '{print $5}' | cut -d: -f1 | sort | uniq -c | sort -nr | head
+echo -e "${GREEN}Top Nginx connections${NC}\n"
+netstat -tn 2>/dev/null | grep :443 | awk '{print $5}' | cut -d: -f1 | sort | uniq -c | sort -nr | head
 echo "MySQL errors today $(for i in $(grep error /etc/my.cnf | sed 's/log-error=//'); do echo "$i" ; tail -5 "$i" ; done)"
+echo "current IP addresses connected"
+netstat -ntu | awk '{print $5}' | cut -d: -f1 | sort | uniq -c | sort -n | grep -v 127.0.0.1
 }
 ````
 
 #To perform every site on server, use the following
 
-```
-for i in $(for a in /var/named/*.db; do echo $(basename $a .db); done); do quick_review $i; done
-```
 
 #overview of cPanel access. Includes cPanel,Root, Password Changes, Webmail and Webmail password changes.
 
