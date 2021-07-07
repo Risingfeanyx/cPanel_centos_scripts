@@ -1,7 +1,7 @@
 <h1>A collection of my commonly used cPanel/Centos scripts </h1>
 <h2>Larger scripts</h2>
 
-#quick overview of server/connections. Can be used with/without site arguments. 
+#quick overview of server/connections. Primarily geared towards Apache, will clean up for nginx soon. 
 
 ```
 {
