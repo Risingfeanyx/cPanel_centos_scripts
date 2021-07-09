@@ -345,3 +345,24 @@ clear
 ```
 tail  `/bin/ls -1td /var/cpanel/logs/autossl/*/txt| /usr/bin/head -n1`
 ```
+
+##brief scan of root logins/rootkits
+```
+(
+yum install rkhunter -y
+screen -dmS rkhunter_$(date +%F) rkhunter -c 
+clear
+echo "Root logins using ssh keys"
+grep -i "Accepted publickey " /var/log/secure | awk {'print $1,$2,$3,$11'}
+echo "Root logins using password"
+grep -i "Accepted password " /var/log/secure | awk {'print $1,$2,$3,$11'}
+echo "remote servers that have created authorized keys. "
+cat .ssh/authorized_keys | awk '{print $3}'
+echo "current processes"
+pstree 
+echo "users that have  UID/GID of 0"
+grep -i " 0 " /etc/group
+echo "Exploits in /dev/shm or /tmp" 
+ls -lah /dev/shm/ /tmp
+)
+```
