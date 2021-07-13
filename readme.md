@@ -358,11 +358,13 @@ cat /var/cpanel/logs/autossl/$(date +%F)*/txt
 <h2>Non Root</h2>
 
 #checks for all conns in cpanel acess logs
+```
 domain_access()
 {
 echo "IP_Address Date/Time Site_Page for $1" | column -t
 cat access-logs/$1 | awk {'print $1,$4,$7'} | uniq -c | sort -hr
 }
+```
 
 #Same thing, but for all domains
 ```
