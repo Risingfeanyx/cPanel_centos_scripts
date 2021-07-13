@@ -31,8 +31,6 @@ netstat -ntu | awk '{print $5}' | cut -d: -f1 | sort | uniq -c | sort -n | grep 
 }
 ````
 
-#To perform every site on server, use the following
-
 
 #overview of cPanel access. Includes cPanel,Root, Password Changes, Webmail and Webmail password changes.
 
@@ -315,18 +313,7 @@ clear
 ```
 
 
-##generates keypair
 
-##usage genkey username username@IP
-
-```
- genkey()
-{
-ssh-keygen -f ~/.ssh/"$1"-ecdsa -t ecdsa -b 521
-ssh-copy-id -i ~/.ssh/"$1"-ecdsa "$2"
-echo "alias "conn_"$1"=\"ssh -i ~/.ssh/"$1"-ecdsa "$2"\" >> .bashrc
-}
-```
 
 ##Checks for new autossl certs, creates a nightly cron to do so, moves current cpanel queue and forces a restart
 ```
@@ -343,8 +330,68 @@ clear
 
 ##Need to manually view themost recent AutoSSL log?
 ```
-tail  `/bin/ls -1td /var/cpanel/logs/autossl/*/txt| /usr/bin/head -n1`
+tail  `/bin/ls -1td /var/cpanel/logs/autossl/*/txt| /usr/bin/head -n1` 
 ```
+alternatively
+
+```
+cat /var/cpanel/logs/autossl/$(date +%F)*/txt
+
+```
+
+
+
+<h2>Non Root</h2>
+
+#checks for all conns in cpanel acess logs
+domain_access()
+{
+echo "IP_Address Date/Time Site_Page for $1" | column -t
+cat access-logs/$1 | awk {'print $1,$4,$7'} | uniq -c | sort -hr
+}
+
+#Same thing, but for all domains
+```
+all_domain_access()
+{
+echo "$1" | column -t
+cat access-logs/*.com | awk {'print $1,$4,$7'} | uniq -c | sort -hr
+}
+clear ; for i in $(ls -lah access-logs/ | awk {'print $9'}); do all_domain_access $i  ; done
+```
+
+
+#view bots on all sites 
+```
+for i in $(ls -l access-logs/ | awk {'print $9'}); do  echo $i  ; grep -i bot access-logs/$i   2>/dev/null| awk {'print $1'} | uniq; done
+```
+
+
+#creates deny rule based on any useragent identifying as a bot
+
+```
+{
+	cp -v .htaccess{,.bak_$(date +%F)}
+	for i in $(cat access-logs/*  | grep -i bot | awk {'print $1'} | uniq); do echo "deny from $i" >> .htaccess ; done
+	tail .htaccess | grep deny
+}
+```
+
+<h2>Misc</h2>
+##generates keypair
+
+##usage genkey username username@IP
+
+```
+ genkey()
+{
+ssh-keygen -f ~/.ssh/"$1"-ecdsa -t ecdsa -b 521
+ssh-copy-id -i ~/.ssh/"$1"-ecdsa "$2"
+echo "alias "conn_"$1"=\"ssh -i ~/.ssh/"$1"-ecdsa "$2"\" >> .bashrc
+}
+```
+
+
 
 ##brief scan of root logins/rootkits
 ```
@@ -366,3 +413,4 @@ echo "Exploits in /dev/shm or /tmp"
 ls -lah /dev/shm/ /tmp
 )
 ```
+
