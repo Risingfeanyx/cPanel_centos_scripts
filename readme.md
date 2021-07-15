@@ -174,7 +174,7 @@ mailtest()
  \nReplies are not monitored. Please ignore." | mail -s  "Email Test Support" -r test@"$1" "$2"
          	clear ;
          		echo "sending mail from ""$1"" to ""$2"""
-         			sudo timeout 1m tail -f /var/log/exim_mainlog | grep "$1"
+         			sudo tail -f /var/log/exim_mainlog | grep "$1"
          			  }
 ```
 #excludes DNS records 
