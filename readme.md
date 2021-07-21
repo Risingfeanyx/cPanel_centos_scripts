@@ -11,7 +11,7 @@ NC='\033[0m' # No Color
 echo -e "${GREEN}Top 5 Processes  ${NC}\n"
 ps aux | sort -nrk 3,3 | head -n 5
 echo -i "${GREEN}Top Processes from each user ${NC}\n"
-for i in $(cat /etc/userdomains  | awk {'print $2'} | grep -v nobody | uniq ); do echo "Processes for $i"; ps aux --sort -pmem  |grep $i; done
+for i in $(cat /etc/userdomains  | awk {'print $2'} | grep -v nobody | uniq ); do echo "Processes for $i"; ps cax --sort -pmem  |grep $i; done
 echo -e "${GREEN}PHP-FPM maxing out from ${NC}\n"
 tail -n2 /opt/cpanel/ea-php*/root/usr/var/log/php-fpm/error.log
 echo -e "${GREEN}Apache Errors ${NC}\n"
