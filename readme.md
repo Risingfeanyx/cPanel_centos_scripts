@@ -207,7 +207,22 @@ mailtest()
     }
  ```
  
- #sepearted into categories. 
+ #sepearted into categories.
+
+
+#emails out disk usage, top 20 files, and saves to text file
+```
+  mailusage()
+  {
+    du -cahS --threshold=500M --exclude="{virtfs,cache,etc,logs,perl5, public_ftp,mail,public_html,quarantine,ssl,tmp}" /home/* /backup /home/*/.trash| sort -hr > usage.$(date +%F)
+    clear
+         echo -e "This is the  current disk usage  for ""$(hostname)""  \n$(cat usage.$(date +%F)).
+         \n Disk Usage as of $(date +%F)
+         \n $(df -h | head -n2)
+ 		\nReplies are not monitored." | mail -s  "Disk Usage Report" -r usage@"$(hostname)" "$1"
+    }
+```
+ 
 ```
 sorted_diskusage()
 {
@@ -220,6 +235,20 @@ sorted_diskusage()
 }
 ```
 
+narrow down highest amount of inode usage, change directory to that folder
+```
+{
+    cd || exit
+    clear
+	for run in {1..10}
+	do for i in $(du --inodes | sort -hr | head -n2 | sed -n '2 p' | awk {'print $2'})
+	do cd "$i" || exit
+	done
+	echo "Highest inodes are in  $(pwd)"
+	ls | wc -l 
+	done
+} 
+```
 		
 
 
@@ -314,22 +343,6 @@ clear
  php --version
 }
 ```
-
-
-#emails out disk usage, top 20 files, and saves to text file
-```
-  mailusage()
-  {
-    du -cahS --threshold=500M --exclude="{virtfs,cache,etc,logs,perl5, public_ftp,mail,public_html,quarantine,ssl,tmp}" /home/* /backup /home/*/.trash| sort -hr > usage.$(date +%F)
-    clear
-         echo -e "This is the  current disk usage  for ""$(hostname)""  \n$(cat usage.$(date +%F)).
-         \n Disk Usage as of $(date +%F)
-         \n $(df -h | head -n2)
- 		\nReplies are not monitored." | mail -s  "Disk Usage Report" -r usage@"$(hostname)" "$1"
-    }
-```
-
-
 
 
 ##Checks for new autossl certs, creates a nightly cron to do so, moves current cpanel queue and forces a restart
