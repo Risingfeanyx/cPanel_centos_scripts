@@ -467,6 +467,10 @@ echo "alias "conn_"$1"=\"ssh -i ~/.ssh/"$1"-ecdsa "$2"\" >> .bashrc
 }
 ```
 
+
+##runs 2 applications at the same time
+#usage split_em command_1 command_2
+```
 split_em()
 {
 tmux new-session \; \
@@ -474,6 +478,7 @@ tmux new-session \; \
   split-window -v \; \
   send-keys "$2" C-m \;
 }
+```
 
 
 
