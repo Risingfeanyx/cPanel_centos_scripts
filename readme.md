@@ -467,6 +467,14 @@ echo "alias "conn_"$1"=\"ssh -i ~/.ssh/"$1"-ecdsa "$2"\" >> .bashrc
 }
 ```
 
+split_em()
+{
+tmux new-session \; \
+  send-keys "$1" C-m \; \
+  split-window -v \; \
+  send-keys "$2" C-m \;
+}
+
 
 
 ##brief scan of root logins/rootkits
