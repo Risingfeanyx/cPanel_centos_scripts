@@ -415,16 +415,16 @@ The purpose of this is to echo out the database credentials for any CMS and the 
 
 #enable slow query logging in mysql
 ```
-	enable_logging()
-	{
-		cp -v /etc/my.cnf{,.pre_slow_query.bak_$(date +%F)}
-		touch $1
-		echo "slow_query_log = 1" >> /etc/my.cnf
-		echo "slow_query_log_file = $1" >> /etc/my.cnf
-	    chown mysql: $1
-	    service mysql restart
-	}
-	enable_logging /var/log/$(hostname)_slow_queries.$(date +%F)
+enable_logging()
+{
+  cp -v /etc/my.cnf{,.pre_slow_query.bak_$(date +%F)}
+  touch $1
+  echo "slow_query_log = 1" >> /etc/my.cnf
+  echo "slow_query_log_file = $1" >> /etc/my.cnf
+  chown mysql: $1
+  service mysql restart
+}
+enable_logging /var/log/$(hostname)_slow_queries.$(date +%F)
 ```
 
 
