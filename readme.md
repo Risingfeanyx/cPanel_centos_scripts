@@ -450,7 +450,7 @@ enable_logging /var/log/$(hostname)_slow_queries.$(date +%F)
 domain_access()
 {
 echo "IP_Address Date/Time Site_Page for $1" | column -t
-cat access-logs/$1 | awk {'print $1,$4,$7'} | uniq -c | sort -hr
+cat ~/access-logs/$1 | awk {'print $1,$4,$7'} | uniq -c | sort -hr
 }
 ```
 
@@ -459,16 +459,15 @@ cat access-logs/$1 | awk {'print $1,$4,$7'} | uniq -c | sort -hr
 all_domain_access()
 {
 echo "$1" | column -t
-cat access-logs/*.com | awk {'print $1,$4,$7'} | uniq -c | sort -hr
+cat ~/access-logs/*.com | awk {'print $1,$4,$7'} | uniq -c | sort -hr
 }
-clear ; for i in $(ls -lah access-logs/ | awk {'print $9'}); do all_domain_access $i  ; done
+clear ; for i in $(ls -lah ~/access-logs/ | awk {'print $9'}); do all_domain_access $i  ; done
 ```
 
 
 #view bots on all sites 
 ```
-for i in $(ls -l access-logs/ | awk {'print $9'}); do  echo $i  ; grep -i bot access-logs/$i   2>/dev/null| awk {'print $1,$14'} | uniq; done
-```
+for i in $(ls -l ~/access-logs/ | awk {'print $9'}); do  echo $i  ; grep -i bot ~/access-logs/$i   2>/dev/null| awk {'print $1,$14'} | uniq; done```
 
 
 #creates deny rule based on any useragent identifying as a bot
@@ -476,7 +475,7 @@ for i in $(ls -l access-logs/ | awk {'print $9'}); do  echo $i  ; grep -i bot ac
 ```
 {
 	cp -v .htaccess{,.bak_$(date +%F)}
-	for i in $(cat access-logs/*  | grep -i bot | awk {'print $1'} | uniq); do echo "deny from $i" >> .htaccess ; done
+	for i in $(cat ~/access-logs/*  | grep -i bot | awk {'print $1'} | uniq); do echo "deny from $i" >> .htaccess ; done
 	tail .htaccess | grep deny
 }
 ```
