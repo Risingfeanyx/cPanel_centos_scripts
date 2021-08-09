@@ -368,6 +368,20 @@ alternatively
 cat /var/cpanel/logs/autossl/$(date +%F)*/txt
 
 ```
+Wordpress general info/backup crit files
+```
+{
+wp cache flush&
+wp db repair&
+wp core verify-checksums&
+wp db export --skip-{plugins,themes}
+for i in .htaccess php.ini  wp-config.php ; do cp $i{,.$(date +%F).bak}; done
+clear
+awk -F"'" '/DB_/{print $4}' wp-config.php;
+for i in theme plugin user ; do echo $i for $(wp option get siteurl --skip-{plugins,themes} );  wp $i list --skip-{plugins,themes} ; done
+mv *.sql ..
+}
+```
 
 
 The purpose of this is to echo out the database credentials for any CMS and the instructions on how to do it correctly, instead of guessing at database/username combos, or potentially fat-fingering a sql command, everything is filled in. Copy and paste the raw file to get those functions started. 
