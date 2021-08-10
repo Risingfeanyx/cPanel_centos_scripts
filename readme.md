@@ -170,28 +170,23 @@ localdomain.com to@domain.com.
 
 ```
 mailtest()
-  {
-    clear
-      /scripts/addpop test@"$1" "$(date | md5sum)" 50
-         echo -e "This is a test email sent on $(date '+%Y-%m-%d') by a member of the Technical Support team. \nThese are  the DNS records for ""$1""  \n$(dig any "$1" +short). \nThis is the MX records IP address: $(dig a $(dig mx "$1" +short) +short). \nBlacklisted? $(echo http://multirbl.valli.org/lookup/$(hostname -i).html)
- \nReplies are not monitored. Please ignore." | mail -s  "Email Test Support" -r test@"$1" "$2"
-         	clear ;
-         		echo "sending mail from ""$1"" to ""$2"""
-         			sudo tail -f /var/log/exim_mainlog | grep "$1"
-         			  }
+{
+clear
+/scripts/addpop test@"$1" "$(date | md5sum)" 50
+mail -s "Email Test Support" -r test@"$1" "$2" << END
+This is a test email sent on $(date '+%Y-%m-%d') by a member of the Technical Support team. 
+These are the DNS records for ""$1""
+$(dig any "$1" +short)
+This is the MX records IP address: $(dig a $(dig mx "$1" +short) +short)
+Blacklisted? $(echo http://multirbl.valli.org/lookup/$(hostname -i).html)
+Replies are not monitored. Please ignore. 
+END
+clear
+echo "sending mail from ""test@$1"" to ""$2"""
+sudo tail -f /var/log/exim_mainlog | grep "$1"
+}
 ```
-#excludes DNS records 
-```
-mailtest()
-  {
-    clear
-      /scripts/addpop "$1" $(date | md5sum) 50
-         echo "This is a test email sent on $(date '+%Y-%m-%d') by a member of the Technical Support team. Replies are not monitored. Please ignore." | mail -s  "Email Test Support" -r "$1" "$2"
-	 	clear ;
-			echo "sending mail from ""$1"" to ""$2"""
-				sudo tail -f /var/log/exim_mainlog | grep "$1"
-				  }
-```
+
 
 ##emails out disk usage, top 20 files, and saves to text file
 
