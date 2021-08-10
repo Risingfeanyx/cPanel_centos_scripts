@@ -443,7 +443,7 @@ slow_query()
   touch /var/log/slowqueries
   echo "slow_query_log = /var/log/slowqueries" >> /etc/my.cnf
   echo "slow_query_log_file = /var/log/slowqueries" >> /etc/my.cnf
-  chown mysql: /var/log/slowqueries
+  chown mysql:mysql /var/log/slowqueries
   service mysql restart
   at now + 24 hour <<END
 cp -fv /etc/my.cnf{.bak_$(date +%F),}
