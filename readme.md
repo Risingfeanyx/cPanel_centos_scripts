@@ -1,5 +1,21 @@
 <h1>A collection of my commonly used cPanel/Centos scripts </h1>
-<h2>Larger scripts</h2>
+<h2>General Overview</h2>
+
+
+#specs at a glance
+```
+{
+clear
+ df -h | head -n2 |column -t
+ free -mh | head -n2| column -t
+ grep -i 'model name' /proc/cpuinfo | head -n1 |column -t
+ hostname |column -t; hostname -i |column -t
+ cat /etc/redhat-release |column -t && /usr/local/cpanel/cpanel -V |column -t
+ ls /etc/cpanel/ea4/is_ea4
+ mysql --version
+ php --version
+}
+```
 
 #quick overview of server/connections. Primarily geared towards Apache, will clean up for nginx soon. 
 
@@ -101,6 +117,7 @@ err()
 	}
 ```
 
+<h2>DNS</h2>
 
 #add dmarc/SPF records to one  domain, show proptime
 
@@ -130,6 +147,7 @@ echo https://www.whatsmydns.net/#TXT/"$1"
 for i in $(for a in /var/named/*.db; do echo $(basename $a .db); done); do SPF_DMARC $i; done
 ```
 
+<h2>Firewall</h2>
 #Can't find your blocked ip in a fail2ban env?
 
 ```
@@ -155,6 +173,7 @@ f2b(){
 }
 ```
 
+<h2>Email</h2>
 #Sends mail out to a test email of your choosing from a mailbox of your chooseing, and watches the logs for it. creates an email account for testing
 
 Echoes out dns information on the test email as well. 
@@ -187,6 +206,7 @@ sudo tail -f /var/log/exim_mainlog | grep "$1"
 }
 ```
 
+<h2>Disk Usage</h2>
 
 ##emails out disk usage, top > 500M files
 
@@ -228,7 +248,7 @@ narrow down highest amount of inode usage, change directory to that folder
 		
 
 
-
+<h2>SQL</h2>
 #clean up InnoDB logfiles. Keep in mind, InnoDB cannot be disabled
 #https://dev.mysql.com/doc/refman/5.7/en/innodb-turning-off.html
 
@@ -292,6 +312,27 @@ END
 }
 ```
 
+#enable query logging in mysql for 24 hours, email out to $1
+```
+slow_query()
+{
+  cp -fv /etc/my.cnf{,.bak_$(date +%F)}
+  touch /var/log/slowqueries
+  echo "slow_query_log = /var/log/slowqueries" >> /etc/my.cnf
+  echo "slow_query_log_file = /var/log/slowqueries" >> /etc/my.cnf
+  chown mysql:mysql /var/log/slowqueries
+  service mysql restart
+  at now + 24 hour <<END
+cp -fv /etc/my.cnf{.bak_$(date +%F),}
+service mysql restart
+cat /var/log/slowqueries  |   mail -s "SQL Slow Query logs" -r root@"$(hostname)" "$1"
+END
+}	
+```
+
+
+
+<h2>cPanel</h2>
 
 #rebuild cpanel <a href="https://docs.cpanel.net/knowledge-base/accounts/how-to-rebuild-userdata-files/" target="_blank">userdata files</a>? files
 
@@ -321,20 +362,7 @@ chkconfig –add redis
 redis-cli ping
 )
 ```
-#specs at a glance
-```
-{
-clear
- df -h | head -n2 |column -t
- free -mh | head -n2| column -t
- grep -i 'model name' /proc/cpuinfo | head -n1 |column -t
- hostname |column -t; hostname -i |column -t
- cat /etc/redhat-release |column -t && /usr/local/cpanel/cpanel -V |column -t
- ls /etc/cpanel/ea4/is_ea4
- mysql --version
- php --version
-}
-```
+
 
 
 ##Checks for new autossl certs, creates a nightly cron to do so, moves current cpanel queue and forces a restart
@@ -360,8 +388,11 @@ alternatively
 
 ```
 cat /var/cpanel/logs/autossl/$(date +%F)*/txt
-
 ```
+
+<h2>Wordpress</h2>
+
+
 Wordpress general info/backup crit files
 ```
 {
@@ -435,43 +466,9 @@ The purpose of this is to echo out the database credentials for any CMS and the 
 	}
 ```
 
-#enable query logging in mysql for 24 hours, email out to $1
-```
-slow_query()
-{
-  cp -fv /etc/my.cnf{,.bak_$(date +%F)}
-  touch /var/log/slowqueries
-  echo "slow_query_log = /var/log/slowqueries" >> /etc/my.cnf
-  echo "slow_query_log_file = /var/log/slowqueries" >> /etc/my.cnf
-  chown mysql:mysql /var/log/slowqueries
-  service mysql restart
-  at now + 24 hour <<END
-cp -fv /etc/my.cnf{.bak_$(date +%F),}
-service mysql restart
-cat /var/log/slowqueries  |   mail -s "SQL Slow Query logs" -r root@"$(hostname)" "$1"
-END
-}	
-```
-
-enable general logging for mysql, disabled after 1 hour
 
 
-```
-{
-  cp -fv /etc/my.cnf{,.bak_$(date +%F)}
-  echo "general_log" >> /etc/my.cnf
-  service mysql restart
-  echo "general MySQL log is /var/lib/mysql/$(hostname | cut -d"." -f1).log"
-  at now + 1 hour <<END
-  cp -fv /etc/my.cnf{.bak_$(date +%F),}
-  service mysql restart
-END
-}
-```
-
-
-
-<h2>Non Root</h2>
+<h1>Non Root</h1>
 
 #checks for all conns in cpanel acess logs
 ```
