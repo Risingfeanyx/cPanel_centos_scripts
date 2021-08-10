@@ -468,7 +468,7 @@ clear ; for i in $(ls -lah ~/access-logs/ | awk {'print $9'}); do all_domain_acc
 #view bots on all sites 
 ```
 for i in $(ls -l ~/access-logs/ | awk {'print $9'}); do  echo $i  ; grep -i bot ~/access-logs/$i   2>/dev/null| awk {'print $1,$14'} | uniq; done```
-
+```
 
 #creates deny rule based on any useragent identifying as a bot
 
