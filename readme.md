@@ -435,18 +435,38 @@ The purpose of this is to echo out the database credentials for any CMS and the 
 	}
 ```
 
-#enable slow query logging in mysql
+#enable query logging in mysql for 24 hours, email out to $1
 ```
-enable_logging()
+slow_query()
 {
-  cp -v /etc/my.cnf{,.pre_slow_query.bak_$(date +%F)}
-  touch $1
-  echo "slow_query_log = 1" >> /etc/my.cnf
-  echo "slow_query_log_file = $1" >> /etc/my.cnf
-  chown mysql: $1
+  cp -fv /etc/my.cnf{,.bak_$(date +%F)}
+  touch /var/log/slowqueries
+  echo "slow_query_log = /var/log/slowqueries" >> /etc/my.cnf
+  echo "slow_query_log_file = /var/log/slowqueries" >> /etc/my.cnf
+  chown mysql: /var/log/slowqueries
   service mysql restart
+  at now + 24 hour <<END
+cp -fv /etc/my.cnf{.bak_$(date +%F),}
+service mysql restart
+cat /var/log/slowqueries  |   mail -s "SQL Slow Query logs" -r root@"$(hostname)" "$1"
+END
+}	
+```
+
+enable general logging for mysql, disabled after 1 hour
+
+
+```
+{
+  cp -fv /etc/my.cnf{,.bak_$(date +%F)}
+  echo "general_log" >> /etc/my.cnf
+  service mysql restart
+  echo "general MySQL log is /var/lib/mysql/$(hostname | cut -d"." -f1).log"
+  at now + 1 hour <<END
+  cp -fv /etc/my.cnf{.bak_$(date +%F),}
+  service mysql restart
+END
 }
-enable_logging /var/log/$(hostname)_slow_queries.$(date +%F)
 ```
 
 
