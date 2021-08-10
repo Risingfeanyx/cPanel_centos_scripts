@@ -188,21 +188,8 @@ sudo tail -f /var/log/exim_mainlog | grep "$1"
 ```
 
 
-##emails out disk usage, top 20 files, and saves to text file
+##emails out disk usage, top > 500M files
 
-```
-  diskusage()
-  {
-    du -cahS --threshold=500M --exclude="{virtfs,cache,etc,logs,perl5, public_ftp,mail,public_html,quarantine,ssl,tmp}" /home/* /backup /home/*/.trash| sort -hr > usage.$(date +%F)
-    clear
-         echo -e "This is the  current disk usage  for ""$(hostname)""  \n$(cat usage.$(date +%F)).
-         \n Disk Usage as of $(date +%F)
-         \n $(df -h | head -n2)
- 		\nReplies are not monitored." | mail -s  "Disk Usage Report" -r usage@"$(hostname)" "$1"
-    }
- ```
- 
- #sepearted into categories.
 
  
 ```
@@ -210,6 +197,7 @@ diskusage()
 {
 clear
 mail -s  "Disk Usage Report" -r usage@"$(hostname)" "$1" << END
+This is the  current disk usage  for $(hostname) as of $(date +%F) above 500M
 Logs
 $(du -cahS --threshold=500M /var/log/ | sort -hr)
 Home Directories
