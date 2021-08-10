@@ -301,6 +301,22 @@ https://forums.cpanel.net/resources/innodb-corruption-repair-guide.395/
 	}
 ```
 
+Enable General MySQL Logging for one hour
+
+```
+{
+  cp -fv /etc/my.cnf{,.bak_$(date +%F)}
+  echo "general_log" >> /etc/my.cnf
+  service mysql restart
+  echo "general MySQL log is /var/lib/mysql/$(hostname | cut -d"." -f1).log"
+  at now + 1 hour <<END
+  cp -fv /etc/my.cnf{.bak_$(date +%F),}
+  service mysql restart
+END
+}
+```
+
+
 #rebuild cpanel <a href="https://docs.cpanel.net/knowledge-base/accounts/how-to-rebuild-userdata-files/" target="_blank">userdata files</a>? files
 
 ```
