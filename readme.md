@@ -399,6 +399,20 @@ mv *.sql ..
 }
 ```
 
+loop through each plugin, and curl site. replace plugins with theme for themes.  
+```
+{
+wp db export plugins.$(date +%F).sql
+clear
+for i in $(wp plugin list --skip-{plugins,themes} | awk {'print $1'})
+ do echo "disabling $i for $(wp option get siteurl)"
+ wp plugin deactivate "$i" --skip-{plugins,themes}
+ curl -sLA "foo" $(wp option get siteurl) | grep -i error
+ done
+ wp db import plugins.$(date +%F).sql
+}
+```
+
 
 The purpose of this is to echo out the database credentials for any CMS and the instructions on how to do it correctly, instead of guessing at database/username combos, or potentially fat-fingering a sql command, everything is filled in. Copy and paste the raw file to get those functions started. 
 	#Joomla coming soon™
