@@ -204,29 +204,22 @@ sudo tail -f /var/log/exim_mainlog | grep "$1"
  
  #sepearted into categories.
 
-
-#emails out disk usage, top 20 files, and saves to text file
-```
-  mailusage()
-  {
-    du -cahS --threshold=500M --exclude="{virtfs,cache,etc,logs,perl5, public_ftp,mail,public_html,quarantine,ssl,tmp}" /home/* /backup /home/*/.trash| sort -hr > usage.$(date +%F)
-    clear
-         echo -e "This is the  current disk usage  for ""$(hostname)""  \n$(cat usage.$(date +%F)).
-         \n Disk Usage as of $(date +%F)
-         \n $(df -h | head -n2)
- 		\nReplies are not monitored." | mail -s  "Disk Usage Report" -r usage@"$(hostname)" "$1"
-    }
-```
  
 ```
-sorted_diskusage()
+diskusage()
 {
-    for i in /backup /var/log /home/*/.trash ; do echo $i >> clean_usage.$(date +%F) ; du -cahS --threshold=500M --exclude="{virtfs,cache,etc,logs,perl5, public_ftp,mail,public_html,quarantine,ssl,tmp}" $i >> clean_usage.$(date +%F); done
-        clear
-         echo -e "This is the  current disk usage  for ""$(hostname)""  \n$(cat clean_usage.$(date +%F)).
-         \n Disk Usage as of $(date +%F)
-         \n $(df -h | head -n2)
- 		\nReplies are not monitored." | mail -s  "Disk Usage Report" -r usage@"$(hostname)" "$1"
+clear
+mail -s  "Disk Usage Report" -r usage@"$(hostname)" "$1" << END
+Logs
+$(du -cahS --threshold=500M /var/log/ | sort -hr)
+Home Directories
+$(du -cahS --threshold=500M /home/*/ | sort -hr)
+Trash
+$(du -cahS --threshold=500M /home/*/.trash | sort -hr)
+Backups
+$(du -cahS --threshold=500M /backup/ | sort -hr)
+$(df -h)
+END
 }
 ```
 
