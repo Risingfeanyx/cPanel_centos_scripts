@@ -354,10 +354,12 @@ clear
 (
 clear
 echo "$(($RANDOM%60)) $(($RANDOM%24)) * * * root /usr/local/cpanel/bin/autossl_check --all" > /etc/cron.d/cpanel_autossl && /scripts/restartsrv_crond
-mv -v /var/cpanel/autossl_queue_cpanel.sqlite{,_old}
-clear
+mv -fv /var/cpanel/autossl_queue_cpanel.sqlite{,_old}
 /usr/local/cpanel/bin/autossl_check_cpstore_queue --force
 /usr/local/cpanel/bin/autossl_check --all
+eval "whmapi1 reset_service_ssl_certificate service="{exim,dovecot,ftp,cpanel}";"
+eval "/scripts/restartsrv_"{exim,dovecot,ftpd,cpsrvd}";"
+/usr/local/cpanel/bin/checkallsslcerts --allow-retry --verbose
 )
 ```
 
