@@ -365,9 +365,11 @@ redis-cli ping
 
 
 
-##Checks for new autossl certs, creates a nightly cron to do so, moves current cpanel queue and forces a restart
+##Checks for new autossl certs, creates a nightly cron to do so, moves current cpanel queue and forces a restart. searches todays autossl logs
 ```
 (
+auto_ssl_search()
+{
 clear
 echo "$(($RANDOM%60)) $(($RANDOM%24)) * * * root /usr/local/cpanel/bin/autossl_check --all" > /etc/cron.d/cpanel_autossl && /scripts/restartsrv_crond
 mv -fv /var/cpanel/autossl_queue_cpanel.sqlite{,_old}
@@ -376,18 +378,9 @@ mv -fv /var/cpanel/autossl_queue_cpanel.sqlite{,_old}
 eval "whmapi1 reset_service_ssl_certificate service="{exim,dovecot,ftp,cpanel}";"
 eval "/scripts/restartsrv_"{exim,dovecot,ftpd,cpsrvd}";"
 /usr/local/cpanel/bin/checkallsslcerts --allow-retry --verbose
-)
-```
-
-
-##Need to manually view themost recent AutoSSL log?
-```
-tail  `/bin/ls -1td /var/cpanel/logs/autossl/*/txt| /usr/bin/head -n1` 
-```
-alternatively
-
-```
-cat /var/cpanel/logs/autossl/$(date +%F)*/txt
+clear
+grep -C 3 $1 /var/cpanel/logs/autossl/$(date +%F)*/txt
+}
 ```
 
 <h2>Wordpress</h2>
