@@ -379,7 +379,7 @@ eval "whmapi1 reset_service_ssl_certificate service="{exim,dovecot,ftp,cpanel}";
 eval "/scripts/restartsrv_"{exim,dovecot,ftpd,cpsrvd}";"
 /usr/local/cpanel/bin/checkallsslcerts --allow-retry --verbose
 clear
-grep -C 3 $1 /var/cpanel/logs/autossl/$(date +%F)*/txt
+grep -C3 $1 /var/cpanel/logs/autossl/$(date +%F)*/txt
 }
 ```
 
