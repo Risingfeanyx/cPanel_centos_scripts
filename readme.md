@@ -191,7 +191,7 @@ localdomain.com to@domain.com.
 mailtest()
 {
 clear
-/scripts/addpop test@"$1" "$(date | md5sum)" 50
+/scripts/addpop test@"$1" "$(head -c32 /dev/urandom | md5sum)" 50
 mail -s "Email Test Support" -r test@"$1" "$2" << END
 This is a test email sent on $(date '+%Y-%m-%d') by a member of the Technical Support team. 
 These are the DNS records for ""$1""
