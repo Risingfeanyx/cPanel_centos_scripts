@@ -1,6 +1,6 @@
 <h1>A collection of my commonly used cPanel/Centos scripts </h1>
 
-<a href="https://github.com/Risingfeanyx/cPanel_centos_scripts/blob/master/readme.md#dns/" 
+<a href="https://github.com/Risingfeanyx/cPanel_centos_scripts/blob/master/readme.md#dns" 
 target="_blank">DNS</a>
 
 <a href="https://github.com/Risingfeanyx/cPanel_centos_scripts/blob/master/readme.md#firewall" 
