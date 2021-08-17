@@ -415,6 +415,33 @@ for i in $(wp plugin list --skip-{plugins,themes} | awk {'print $1'})
 }
 ```
 
+Reset all your Wordpress users passwords. creates a database backup jic
+```
+{
+wp db export
+for i in $(wp user list | awk {'print $1'})
+do
+wp user update $i --user_pass=$(head -c32 /dev/urandom | md5sum | awk {'print $1'})
+done
+}
+```
+
+		
+
+Adds 50 random users for testing. creates db backup as well
+```
+{
+wp db export
+for run in {1..50}
+do
+for a in $(xxd -l 6 -c 32 -p < /dev/random)
+do
+wp user create $a --role=administrator $a@$a.com --skip-{plugins,themes}&
+done
+done
+wp user list --skip-{plugins,themes}
+}
+```
 
 The purpose of this is to echo out the database credentials for any CMS and the instructions on how to do it correctly, instead of guessing at database/username combos, or potentially fat-fingering a sql command, everything is filled in. Copy and paste the raw file to get those functions started. 
 	#Joomla coming soon™
