@@ -1,4 +1,32 @@
 <h1>A collection of my commonly used cPanel/Centos scripts </h1>
+
+<a href="https://github.com/Risingfeanyx/cPanel_centos_scripts/blob/master/readme.md#dns/" 
+target="_blank">DNS</a>
+
+<a href="https://github.com/Risingfeanyx/cPanel_centos_scripts/blob/master/readme.md#firewall" 
+target="_blank">Firewall</a>
+
+<a href="https://github.com/Risingfeanyx/cPanel_centos_scripts/blob/master/readme.md#email/" 
+target="_blank">Email</a>
+
+<a href="https://github.com/Risingfeanyx/cPanel_centos_scripts/blob/master/readme.md#disk-usage/" 
+target="_blank">Disk Usage</a>
+
+<a href="https://github.com/Risingfeanyx/cPanel_centos_scripts/blob/master/readme.md#sql/" 
+target="_blank">SQL</a>
+
+<a href="https://github.com/Risingfeanyx/cPanel_centos_scripts/blob/master/readme.md#cpanel/" 
+target="_blank">cPanel</a>
+
+<a href="https://github.com/Risingfeanyx/cPanel_centos_scripts/blob/master/readme.md#wordpress/" 
+target="_blank">Wordpress</a>
+
+<a href="https://github.com/Risingfeanyx/cPanel_centos_scripts/blob/master/readme.md#non-root/" 
+target="_blank">Non-Root</a>
+
+<a href="https://github.com/Risingfeanyx/cPanel_centos_scripts/blob/master/readme.md#misc/" 
+target="_blank">Miscelanous</a>
+
 <h2>General Overview</h2>
 
 
