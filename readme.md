@@ -229,6 +229,24 @@ END
 }
 ```
 
+Top 20 largest files
+```
+{
+clear
+echo "This is the top 20 largest files  for $(hostname) as of $(date +%F)"
+echo "Logs"
+du -cahS  /var/log/ | sort -hr  | head -n20
+echo "Home Directories"
+du -cahS  /home/*/ | sort -hr  | head -n20
+echo "Trash"
+du -cahS  /home/*/.trash | sort -hr  | head -n20
+echo "Backups"
+du -cahS  /backup/ | sort -hr  | head -n20
+find /* -type f -name "*.tar.gz" -size +1G -exec du -sh {} \; | grep -vE "(/var|/usr|/root|/opt|cpbackup|\.cpanm|\.cpan)" |sort -h
+df -h
+}
+```
+
 narrow down highest amount of inode usage, change directory to that folder
 ```
 {
