@@ -4,34 +4,34 @@
 <a href="#cpanel" 
 target="_blank">cPanel</a>
 
-<a href="https://github.com/Risingfeanyx/cPanel_centos_scripts/blob/master/readme.md#disk-usage" 
+<a href="#disk-usage" 
 target="_blank">Disk Usage</a>
 
-<a href="https://github.com/Risingfeanyx/cPanel_centos_scripts/blob/master/readme.md#dns" 
+<a href="#dns" 
 target="_blank">DNS</a>
 
-<a href="https://github.com/Risingfeanyx/cPanel_centos_scripts/blob/master/readme.md#email" 
+<a href="#email" 
 target="_blank">Email</a>
 
 
-<a href="https://github.com/Risingfeanyx/cPanel_centos_scripts/blob/master/readme.md#firewall" 
+<a href="#firewall" 
 target="_blank">Firewall</a>
 
-<a href="https://github.com/Risingfeanyx/cPanel_centos_scripts/blob/master/readme.md#non-root" 
+<a href="#non-root" 
 target="_blank">Non-Root</a>
 
-<a href="https://github.com/Risingfeanyx/cPanel_centos_scripts/blob/master/readme.md#php" 
+<a href="#php" 
 target="_blank">PHP</a>
 
-<a href="https://github.com/Risingfeanyx/cPanel_centos_scripts/blob/master/readme.md#sql" 
+<a href="#sql" 
 target="_blank">SQL</a>
 
 
-<a href="https://github.com/Risingfeanyx/cPanel_centos_scripts/blob/master/readme.md#wordpress" 
+<a href="#wordpress" 
 target="_blank">Wordpress</a>
 
 
-<a href="https://github.com/Risingfeanyx/cPanel_centos_scripts/blob/master/readme.md#misc" 
+<a href="#misc" 
 target="_blank">Miscelanous</a>
 
 <h2>General Overview</h2>
@@ -640,7 +640,3 @@ tmux new-session \; \
   send-keys "$2" C-m \;
 }
 ```
-
-
-
-
