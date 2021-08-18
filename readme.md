@@ -617,7 +617,7 @@ to restore OG file
 cp -v php.ini{,.bak_$(date +%F)}
 cat <<EOT >> php.ini
 display_errors = On
-error_log = $(pwd)error_log
+error_log = $(pwd)/error_log
 max_execution_time = 60
 max_input_time = 60
 max_input_vars = 1000
