@@ -603,3 +603,29 @@ ls -lah /dev/shm/ /tmp
 )
 ```
 
+<h2>PHP</h2>
+
+Beef up PHP settings, run in sites docroot
+
+```
+	mv -v php.ini{.bak_$(date +%F),}
+```
+to restore OG file
+
+```
+{
+cp -v php.ini{,.bak_$(date +%F)}
+cat <<EOT >> php.ini
+display_errors = On
+error_log = $(pwd)error_log
+max_execution_time = 60
+max_input_time = 60
+max_input_vars = 1000
+memory_limit = 512M
+post_max_size = 512M
+session.gc_maxlifetime = 1440
+session.save_path = /tmp
+upload_max_filesize =  512M
+EOT
+}
+```
