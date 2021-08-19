@@ -712,3 +712,18 @@ tmux new-session \; \
   send-keys "$2" C-m \;
 }
 ```
+
+creates a backup of the file you're working with
+```
+bak()
+{
+cp -v $1{,.bak_$(date +%F)}; nano $1
+}
+```
+restores that backup
+```
+unbak()
+{
+	mv -v $1{.bak_$(date +%F),}
+		}
+```
