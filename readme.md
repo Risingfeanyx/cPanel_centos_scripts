@@ -600,6 +600,14 @@ wp user list --skip-{plugins,themes}
 }
 ```
 
+Know your database, but not the WP site using it?
+(will rewrite to do all DBs soon)
+
+```
+for i in $(find /home/*/ -type f -name "*wp-config.php"); do echo $i; grep $database $i; done
+```
+
+
 The purpose of this is to echo out the database credentials for any CMS and the instructions on how to do it correctly, instead of guessing at database/username combos, or potentially fat-fingering a sql command, everything is filled in. Copy and paste the raw file to get those functions started. 
 	#Joomla coming soon™
 	#Moodle coming soon™
