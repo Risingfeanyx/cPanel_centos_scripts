@@ -541,6 +541,12 @@ END
 
 
 <h2>Wordpress</h2>
+Does require knowledge of the  <a href="https://developer.wordpress.org/cli/commands/" 
+target="_blank">WP CLI</a>
+
+
+
+
 
 
 Wordpress general info/backup crit files
@@ -612,6 +618,24 @@ for i in $(find /home/*/ -name wp-config.php | grep -v virtfs)
 	done
 )
 ```
+
+Gets Admin URLS for the following
+iThemes 
+Cerber Security
+WPS 
+All In One WP Security
+Easy Hide Login
+rename-wp-login
+```
+(
+wp option pluck itsec-storage hide-backend slug 
+wp option pluck cerber-main loginpath
+wp option get whl_page 
+wp option pluck aio_wp_security_configs aiowps_login_page_slug 
+wp option pluck wpseh_l01gnhdlwp slug 
+wp option pluck rwl_page 
+)2>/dev/null
+)
 
 
 The purpose of this is to echo out the database credentials for any CMS and the instructions on how to do it correctly, instead of guessing at database/username combos, or potentially fat-fingering a sql command, everything is filled in. Copy and paste the raw file to get those functions started. 
