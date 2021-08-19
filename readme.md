@@ -32,7 +32,7 @@ target="_blank">Wordpress</a>
 
 
 <a href="#misc" 
-target="_blank">Miscelanous</a>
+target="_blank">miscellaneous</a>
 
 <h2>General Overview</h2>
 
