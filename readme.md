@@ -626,7 +626,7 @@ WPS
 All In One WP Security
 Easy Hide Login
 rename-wp-login
-
+```
 (
 wp option pluck itsec-storage hide-backend slug 
 wp option pluck cerber-main loginpath
