@@ -717,7 +717,7 @@ creates a backup of the file you're working with
 ```
 bak()
 {
-cp -v $1{,.bak_$(date +%F)}; nano $1
+cp -v $1{,.bak_$(date +%F)}
 }
 ```
 restores that backup
