@@ -725,5 +725,5 @@ restores that backup
 unbak()
 {
 	mv -v $1{.bak_$(date +%F),}
-		}
+}
 ```
