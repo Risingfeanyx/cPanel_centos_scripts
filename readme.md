@@ -600,11 +600,17 @@ wp user list --skip-{plugins,themes}
 }
 ```
 
-Know your database, but not the WP site using it?
-(will rewrite to do all DBs soon)
+lists all dbs+wp docroots using them
 
 ```
-for i in $(find /home/*/ -type f -name "*wp-config.php"); do echo $i; grep $database $i; done
+(
+clear
+database=$(mysql -e 'show databases;' | awk {'print $1'} | grep -v Database)
+for i in $(find /home/*/ -name wp-config.php | grep -v virtfs)
+	do echo "$i"
+	grep "$database" "$i" |awk {'print $3'}
+	done
+)
 ```
 
 
