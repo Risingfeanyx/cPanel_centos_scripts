@@ -273,6 +273,20 @@ narrow down highest amount of inode usage, change directory to that folder
 
 #This does NOT factor in dedicated IP addresses, in other words, it references the servers IP address itself
 
+
+    v=DMARC1 specifies the DMARC version
+    p=none specifies the preferred treatment, or DMARC policy
+	
+    none: treat the mail the same as it would be without any DMARC validation
+    quarantine: accept the mail but place it somewhere other than the recipient’s inbox (typically the spam folder)
+    reject: reject the message outright
+
+    rua=mailto:dmarc-user@tld.com is the mailbox to which aggregate reports should be sent
+    ruf=mailto:dmarc-yser@tld.com is the mailbox to which forensic reports should be sent
+    pct=# is the percentage of mail to which the domain owner would like to have its policy applied
+
+
+
 ```
 SPF_DMARC()
 {
