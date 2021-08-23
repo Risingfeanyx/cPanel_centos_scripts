@@ -65,6 +65,8 @@ echo -e "${GREEN}Top Processes from each user ${NC}\n"
 for i in $(cat /etc/userdomains  | awk {'print $2'} | grep -v nobody | uniq ); do echo "Processes for $i"; ps cax --sort -pmem  |grep $i; done
 echo -e "${GREEN}PHP-FPM maxing out from ${NC}\n"
 tail -n2 /opt/cpanel/ea-php*/root/usr/var/log/php-fpm/error.log
+echo -e "${GREEN}Current PHP-FPM Values${NC}\n"
+for i in pm_max_children pm_max_requests pm_process_idle_timeout ; do grep $i /var/cpanel/ApachePHPFPM/system_pool_defaults.yaml; done
 echo -e "${GREEN}Apache Errors ${NC}\n"
 tail -n2 /usr/local/apache/logs/error_log 
 echo -e "${GREEN}Nginx Errors${NC}\n"
