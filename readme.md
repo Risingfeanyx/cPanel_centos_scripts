@@ -652,7 +652,6 @@ wp option pluck aio_wp_security_configs aiowps_login_page_slug
 wp option pluck wpseh_l01gnhdlwp slug 
 wp option pluck rwl_page 
 )2>/dev/null
-)
 ```
 
 
