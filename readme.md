@@ -570,7 +570,7 @@ Wordpress general info/backup crit files/replaces core files
 {
 wp cache flush&
 wp db repair&
-wp core download --version=$(wp core version) --force
+#wp core download --version=$(wp core version) --force
 wp core verify-checksums&
 wp db export --skip-{plugins,themes}
 for i in .htaccess php.ini  wp-config.php ; do cp $i{,.$(date +%F).bak}; done
