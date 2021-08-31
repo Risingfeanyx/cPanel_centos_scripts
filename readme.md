@@ -160,6 +160,19 @@ err()
 
 <h2>cPanel</h2>
 
+
+#list all domains
+
+```
+for a in /var/named/*.db; do echo $(basename $a .db); done
+```
+
+#list all users
+
+```
+ cat /etc/userdomains | awk {'print $2'} | grep -v nobody
+ ```
+
 #rebuild cpanel <a href="https://docs.cpanel.net/knowledge-base/accounts/how-to-rebuild-userdata-files/" target="_blank">userdata files</a>? files
 
 ```
