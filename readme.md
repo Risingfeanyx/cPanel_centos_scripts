@@ -234,28 +234,6 @@ clear
  )
  ```
 
- Need it emailed out? 
- arguements are mailtest fromdomain.tld recipient@domain.tld
-
- ```
- mailtest()
-{
-clear
-/scripts/addpop logins@"$1" "$(head -c32 /dev/urandom | md5sum)" 50
-mail -s "Direct Logins for $(hostname)" -r logins@"$1" "$2" << END
- for i in $(ls /var/cpanel/users |grep -v 'system')
- do echo $i
- $(whmapi1 create_user_session user=$i service=cpaneld  app=FileManager_Home| grep "url:" | awk '{print $2}' )
- done
-Replies are not monitored. Please ignore. 
-END
-clear
-echo "sending mail from ""logins@$1"" to ""$2"""
-}
-
-```
-
-
 <h2>Disk Usage</h2>
 
 ##emails out disk usage, top > 500M files
