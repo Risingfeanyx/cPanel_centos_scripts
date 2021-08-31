@@ -282,6 +282,13 @@ narrow down highest amount of inode usage, change directory to that folder
 
 <h2>DNS</h2>
 
+
+#test HTTP codes for all domains on server (will rebuuld as a function to take in arguments to specify dns record types 
+
+```
+for i in $(for a in /var/named/*.db; do echo $(basename "$a" .db); done); do echo "$i" ; curl -o /dev/null --silent --head --write-out '%{http_code}\n' "$i" ; dig @ns ns "$i" +short  ; echo https://www.whatsmydns.net/#NS/"$i";  done
+```
+
 #add dmarc/SPF records to one  domain, show proptime
 
 #Example <a href="https://support.cpanel.net/hc/en-us/articles/1500000323641-How-to-add-a-DNS-record-to-a-domain-using-the-WHM-API-" target="_blank">Docs</a>
