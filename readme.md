@@ -366,6 +366,24 @@ echo https://www.whatsmydns.net/#TXT/"$1"
 for i in $(for a in /var/named/*.db; do echo $(basename $a .db); done); do SPF_DMARC $i; done
 ```
 
+Test/generates DNS information for all domains on server
+
+```
+
+{
+clear
+for i in $(for a in /var/named/*.db; do echo $(basename "$a" .db); done)
+do echo -e " \n $i"
+curl -Is $i | head -n 1
+dig  any $i
+for d in A CNAME MX NS PTR SOA SRV TXT CAS ; do  echo https://www.whatsmydns.net/#$d/"$i" ; done 
+done
+}
+
+
+```
+
+
 <h2>Email</h2>
 #Sends mail out to a test email of your choosing from a mailbox of your chooseing, and watches the logs for it. creates an email account for testing
 
