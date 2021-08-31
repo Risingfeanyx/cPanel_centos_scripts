@@ -221,6 +221,41 @@ clear
 grep -C3 $1 /var/cpanel/logs/autossl/$(date +%F)*/txt
 }
 ```
+
+Generate cPAnel logins for each user on server
+
+```
+(
+clear
+ for i in $(ls /var/cpanel/users |grep -v 'system')
+ do echo $i
+ whmapi1 create_user_session user=$i service=cpaneld  app=FileManager_Home| grep "url:" | awk '{print $2}' 
+ done
+ )
+ ```
+
+ Need it emailed out? 
+ arguements are mailtest fromdomain.tld recipient@domain.tld
+
+ ```
+ mailtest()
+{
+clear
+/scripts/addpop logins@"$1" "$(head -c32 /dev/urandom | md5sum)" 50
+mail -s "Direct Logins for $(hostname)" -r logins@"$1" "$2" << END
+ for i in $(ls /var/cpanel/users |grep -v 'system')
+ do echo $i
+ $(whmapi1 create_user_session user=$i service=cpaneld  app=FileManager_Home| grep "url:" | awk '{print $2}' )
+ done
+Replies are not monitored. Please ignore. 
+END
+clear
+echo "sending mail from ""logins@$1"" to ""$2"""
+}
+
+```
+
+
 <h2>Disk Usage</h2>
 
 ##emails out disk usage, top > 500M files
@@ -764,4 +799,51 @@ unbak()
 {
 	mv -v $1{.bak_$(date +%F),}
 }
+```
+
+Todays status for all SystemD modules
+```
+(
+clear
+for i in $( ls /etc/systemd/system/) 
+do 
+echo $i
+systemctl status $i | grep -i "$(date +%b)" 2>/dev/null
+done
+)
+```
+
+
+Loop through existing screens 
+```
+(
+ for i in $(screen -ls | awk '{print $1}') 
+ do screen -x "$i"
+ done
+)
+ ```
+ 
+ 
+
+
+
+#Work in progress, will implement databases
+clones data from one folder to another
+doc_mover Origin Destination
+
+```
+doc_mover()
+	{
+	clear
+	mkdir ~/"$2"
+	cd "$1" || exit
+	tar -cvzf "OG.$1.$(date +%F).tar.gz" *
+	clear
+	rsync -azPv  "OG.$1.$(date +%F).tar.gz" ~/"$2"
+	cd ~/"$2" || exit
+	tar -xvzf "OG.$1.$(date +%F).tar.gz"
+	clear
+	diff ~/"$1" ~/"$2"
+	cd || exit
+	}
 ```
