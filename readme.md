@@ -481,6 +481,32 @@ for i in $(ls -l ~/access-logs/ | awk {'print $9'}); do  echo $i  ; grep -i bot 
 }
 ```
 
+Show all IPs connecting to site(s) today
+
+```
+{
+clear
+for i in ~/access-logs/*
+do echo -e "\n $i"
+grep $(date +%d/%b/%Y) $i | awk {'print $1'}| uniq -c | sort -hr
+done
+}
+```
+
+Show all IPs connecting to site(s) today, along with their browser agents/pages connected
+```
+{
+clear
+for i in ~/access-logs/*
+do echo -e "\n $i"
+grep $(date +%d/%b/%Y) $i | awk {'print $1,$4,$7,$12,$13,$14,$15'}
+done
+}
+```
+
+
+
+
 <h2>PHP</h2>
 
 Beef up PHP settings, run in sites docroot
