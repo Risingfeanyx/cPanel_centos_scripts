@@ -67,8 +67,10 @@ echo -e "${GREEN}Last 5 Out of Memory Errors${NC}\n"
 grep OOM /var/log/messages | tail -n5
 echo -e "${GREEN}PHP-FPM maxing out from ${NC}\n"
 tail -n2 /opt/cpanel/ea-php*/root/usr/var/log/php-fpm/error.log
-echo -e "${GREEN}Current PHP-FPM Values${NC}\n"
+echo -e "${GREEN}Current Server-wide PHP-FPM Values${NC}\n"
 grep 'pm_max_children\|pm_max_requests\|pm_process_idle_timeout' /var/cpanel/ApachePHPFPM/system_pool_defaults.yaml
+echo -e "${GREEN}Current Domain-Specific PHP-FPM Values${NC}\n" 
+egrep "max_children|max_requests|idle_timeout" /var/cpanel/userdata/*/*.php-fpm.yaml
 echo -e "${GREEN}Apache Errors ${NC}\n"
 tail -n2 /usr/local/apache/logs/error_log 
 echo -e "${GREEN}Nginx Errors${NC}\n"
