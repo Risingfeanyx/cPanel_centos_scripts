@@ -31,7 +31,7 @@ target="_blank">SQL</a>
 target="_blank">Wordpress</a>
 
 <a href="#vz" 
-target="_blank">VZ</a>
+target="_blank">vz</a>
 
 
 <a href="#misc" 
@@ -784,7 +784,7 @@ The purpose of this is to echo out the database credentials for any CMS and the 
 
 
 
-<h2>cPanel</h2>
+<h2>vz</h2>
 ```
 
 Restarts CT, checks proc logs following restart
