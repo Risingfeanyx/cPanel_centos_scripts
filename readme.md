@@ -30,6 +30,9 @@ target="_blank">SQL</a>
 <a href="#wordpress" 
 target="_blank">Wordpress</a>
 
+<a href="#vz" 
+target="_blank">VZ</a>
+
 
 <a href="#misc" 
 target="_blank">Miscellaneous</a>
@@ -780,6 +783,40 @@ The purpose of this is to echo out the database credentials for any CMS and the 
 ```
 
 
+
+<h2>cPanel</h2>
+```
+
+Restarts CT, checks proc logs following restart
+vps_bounce()
+{  
+  clear
+  suspend_vps "$1" -r billing
+  unsuspend_vps "$1"
+  vzctl enter "$1"
+  ps aux | grep "$1"
+  ps aux|grep '/vz/root/$1'
+}
+```
+
+```
+checks all logs for CT issues. 
+vps_logs()
+{
+  clear
+  echo "/var/log/messages for $1"
+  sudo cat /var/log/messages | grep "$1" | tail -5
+  echo "suspension log for $1"
+  sudo cat /var/log/messages | grep "$1" | tail -5
+  echo "migration logs for $1"
+  cat /opt/vzmigrate/"$1".log/messages
+  ls -l /opt/vzmigrate/inprogress/"$1"
+  echo "status for $1"
+  vzlist -a -o veid,hostname,ip,status,laverage,description,diskspace,diskinodes | grep "$1"&
+  ps aux | grep "$1"
+  ps aux|grep '/vz/root/$1'
+}
+```
 
 
 
