@@ -786,8 +786,9 @@ The purpose of this is to echo out the database credentials for any CMS and the 
 
 <h2>vz</h2>
 
-```
+
 Restarts CT, checks proc logs following restart
+```
 vps_bounce()
 {  
   clear
@@ -799,8 +800,9 @@ vps_bounce()
 }
 ```
 
-```
+
 checks all logs for CT issues. 
+```
 vps_logs()
 {
   clear
