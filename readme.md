@@ -740,11 +740,16 @@ wp option pluck rwl_page
 
 
 The purpose of this is to echo out the database credentials for any CMS and the instructions on how to do it correctly, instead of guessing at database/username combos, or potentially fat-fingering a sql command, everything is filled in. Copy and paste the raw file to get those functions started. 
+Wordpress ✓
+Prestashop ✓
+Joomla ✓
+Laravel ✓
 	#Joomla coming soon™
 	#Moodle coming soon™
 	#Drupal coming soon™ 
 ```
 	{
+	clear
 	if test -f wp-config.php;
 	then
 		clear
@@ -773,6 +778,7 @@ The purpose of this is to echo out the database credentials for any CMS and the 
 	    echo -e "$(grep  'public $db = ' configuration.php)" | awk {'print $4'}
 	 }
 	fi
+		if test -f config/database.php; then echo -e "This is Laravel \n $(grep 'DB_DATABASE\|DB_PASSWORD\|DB_USERNAME' config/database.php)"; fi
 		if test -f "moodle/config.php"; then echo "This is Moodle. I got nothin as of $(date +%F) yet ¯\_(ツ)_/¯ " ;fi
 		if test -f "app/etc/env.php"; then echo "This is Magento. I got nothin as of $(date +%F) yet ¯\_(ツ)_/¯ " ;fi
 		if test -f "include/connect.php"; then echo "This is PHP. I got nothin as of $(date +%F) yet ¯\_(ツ)_/¯ " ;fi
@@ -780,6 +786,7 @@ The purpose of this is to echo out the database credentials for any CMS and the 
 	   fi
 	   echo "mysqldump -p -u user database_name > backup.sql" 
 	}
+
 ```
 
 
