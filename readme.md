@@ -328,12 +328,18 @@ for i in $(for a in /var/named/*.db; do echo $(basename "$a" .db); done); do ech
     pct=# is the percentage of mail to which the domain owner would like to have its policy applied
 
 
+Back up your zone file before running this.
+
+```
+tar -czf /root/named_backup_$(date +%F).tar.gz /var/named*
+ls -lah /root/named_backup_$(date +%F).tar.gz
+```
+
+
 
 ```
 SPF_DMARC()
 {
-tar -czf /root/named_backup_$(date +%F).tar.gz /var/named*
-ls -lah /root/named_backup_$(date +%F).tar.gz
 whmapi1 addzonerecord domain="$1" name="_dmarc.$1." class=IN ttl=86400 type=TXT txtdata='v=DMARC1; p=none'
  whmapi1 addzonerecord domain=$1 name=$1 class=IN ttl=86400 type=TXT txtdata="v=spf1 +a +mx +ip4:$(hostname -i) -all"
 echo -e "This will take effect globally between $(date -d "+4 hours") and $( date -d "+24 hours")"
