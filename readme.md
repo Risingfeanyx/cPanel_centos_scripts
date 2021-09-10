@@ -210,7 +210,6 @@ redis-cli ping
 
 ##Checks for new autossl certs, creates a nightly cron to do so, moves current cpanel queue and forces a restart. searches todays autossl logs
 ```
-(
 auto_ssl_search()
 {
 clear
