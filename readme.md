@@ -836,6 +836,18 @@ vps_logs()
 }
 ```
 
+makes a snapshot,  enters CT, makes things a bit smoother
+
+```
+vps_enter()
+{
+  clear
+  snapshot --create $1
+  vzctl enter $1
+  exit
+}
+```
+
 
 
 <h2>Misc</h2>
