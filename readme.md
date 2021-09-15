@@ -843,9 +843,11 @@ vps_enter()
 {
   clear
   snapshot --create $1
+  snapshot --list $1
   vzctl enter $1
   exit
 }
+
 ```
 
 
