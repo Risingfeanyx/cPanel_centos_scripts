@@ -848,7 +848,6 @@ vps_enter()
   vzctl enter $1
   exit
 }
-}
 
 ```
 
