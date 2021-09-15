@@ -844,8 +844,10 @@ vps_enter()
   clear
   snapshot --create $1
   snapshot --list $1
+  vzlist $1 -o veid,hostname,ip,status,laverage,description,diskspace,diskinodes 
   vzctl enter $1
   exit
+}
 }
 
 ```
