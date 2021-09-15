@@ -598,14 +598,14 @@ https://forums.cpanel.net/resources/innodb-corruption-repair-guide.395/
 	}
 ```
 
-Enable General MySQL Logging for one hour
+Enable  MySQL error Logging for one hour
 
 ```
 {
   cp -fv /etc/my.cnf{,.bak_$(date +%F)}
-  echo "general_log" >> /etc/my.cnf
+  echo "log-error=/var/log/mysql_error_log" >> /etc/my.cnf
   service mysql restart
-  echo "general MySQL log is /var/lib/mysql/$(hostname | cut -d"." -f1).log"
+  echo "general MySQL log is /var/log/mysql_error_log"
   at now + 1 hour <<END
   cp -fv /etc/my.cnf{.bak_$(date +%F),}
   service mysql restart
