@@ -230,16 +230,17 @@ grep -C3 $1 /var/cpanel/logs/autossl/$(date +%F)*/txt
 }
 ```
 
-Generate cPAnel logins for each user on server
+Generate cPanel logins for each user on server
 
 ```
 (
 clear
  for i in $(ls /var/cpanel/users |grep -v 'system')
- do echo $i
- whmapi1 create_user_session user=$i service=cpaneld  app=FileManager_Home| grep "url:" | awk '{print $2}' 
+ do echo -e "\n Cpanel login for $i"
+ whmapi1 create_user_session user=$i service=cpaneld | grep "url:" | awk '{print $2}' 
  done
  )
+
  ```
 
 <h2>Disk Usage</h2>
