@@ -268,7 +268,7 @@ END
 }
 ```
 
-Top 20 largest files
+Top 20 largest files (edit to do homedir last as it takes longest)
 ```
 {
 clear
