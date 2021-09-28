@@ -417,24 +417,27 @@ sudo tail -f /var/log/exim_mainlog | grep "$1"&
 ```
 f2b(){
     clear;
-    unblock "$1"
-    #root required
+    #see https://api.docs.cpanel.net/openapi/whm/operation/flush_cphulk_login_history_for_ips/
     whmapi1 flush_cphulk_login_history_for_ips ip="$1"
     /scripts/cphulkdwhitelist "$1"
     [ -f /etc/csf/csf.conf ] && csf -a "$1" || apf -a "$1"
     #fail2ban log
     tail -n5 /var/log/fail2ban.log | grep "$1"
+    # ssh/FTP logs
+    grep $1 /var/log/messages | tail -n5
+    grep $1 /var/log/secure | tail -n5
     #mail client login fails
-    sudo cat /var/log/maillog | grep 'auth failed' | grep "$1"
+    grep "$1" /var/log/maillog | grep 'auth failed'  
     #failing exim
-    sudo cat /var/log/exim_mainlog | grep 'authenticator failed' | grep "$1"
+    grep "$1" /var/log/exim_mainlog | grep 'authenticator failed' 
     #Modsec blocks
-    sudo cat /usr/local/apache/logs/error_log | grep -E 'id "(13052|13051|13504|90334)"' | grep "$1"
+    grep "$1" /usr/local/apache/logs/error_log | grep -E 'id "(13052|13051|13504|90334)"' 
     #cPanel blocks
-    sudo cat  /usr/local/cpanel/logs/login_log | grep "FAILED LOGIN" | grep "$1"
+    grep "$1" /usr/local/cpanel/logs/login_log | grep "FAILED LOGIN" 
     #apf/csf logs, requires root
-    sudo grep "$1" /etc/*/*.deny
+    grep "$1" /etc/*/*.deny
 }
+
 ```
 
 
