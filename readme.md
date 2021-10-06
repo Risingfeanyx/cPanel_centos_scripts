@@ -269,14 +269,14 @@ Top 20 largest files (edit to do homedir last as it takes longest)
 ```
 {
 clear
-echo "This is the top 20 largest files  for $(hostname) as of $(date +%F)"
-echo "Logs"
+echo -e "This is the top 20 largest files  for $(hostname) as of $(date +%F)"
+echo -e "\n Logs"
 du -cahS  /var/log/ | sort -hr  | head -n20
-echo "Home Directories"
+echo -e "\n Home Directories"
 du -cahS  /home/*/ | sort -hr  | head -n20
-echo "Trash"
+echo -e "\n Trash"
 du -cahS  /home/*/.trash | sort -hr  | head -n20
-echo "Backups"
+echo -e "\n Backups"
 du -cahS  /backup/ | sort -hr  | head -n20
 find /* -type f -name "*.tar.gz" -size +1G -exec du -sh {} \; | grep -vE "(/var|/usr|/root|/opt|cpbackup|\.cpanm|\.cpan)" |sort -h
 df -h
