@@ -240,6 +240,25 @@ clear
 
  ```
 
+
+installs  <a href="https://docs.imunify360.com/command_line_interface/#malware" target="_blank">Imunify</a> , enables scanning for users, starts a scan, outputs details of the scan
+
+
+
+```
+(
+clear
+curl -sL https://repo.imunify360.cloudlinux.com/defence360/imav-deploy.sh | bash -
+/usr/share/av-userside-plugin.sh
+imunify-antivirus malware user scan
+imunify-antivirus malware user list
+)
+```
+
+
+
+
+
 <h2>Disk Usage</h2>
 
 ##emails out disk usage, top > 500M files
