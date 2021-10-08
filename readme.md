@@ -274,9 +274,9 @@ This is the  current disk usage  for $(hostname) as of $(date +%F) above 500M
 Logs
 $(du -cahS --threshold=500M /var/log/ | sort -hr)
 Home Directories
-$(du -cahS --threshold=500M /home/*/ | sort -hr)
+$(du -cahS --threshold=500M /home*/*/ | sort -hr)
 Trash
-$(du -cahS --threshold=500M /home/*/.trash | sort -hr)
+$(du -cahS --threshold=500M /home*/*/.trash | sort -hr)
 Backups
 $(du -cahS --threshold=500M /backup/ | sort -hr)
 $(df -h)
@@ -295,9 +295,9 @@ echo -e "\n Backups"
 du -cahS  /backup/ | sort -hr  | head -n20
 find /* -type f -name "*.tar.gz" -size +1G -exec du -sh {} \; | grep -vE "(/var|/usr|/root|/opt|cpbackup|\.cpanm|\.cpan)" |sort -h
 echo -e "\n Home Directories"
-du -cahS  /home/*/ | sort -hr  | head -n20
+du -cahS  /home*/*/ | sort -hr  | head -n20
 echo -e "\n Trash"
-du -cahS  /home/*/.trash | sort -hr  | head -n20
+du -cahS  /home*/*/.trash | sort -hr  | head -n20
 df -h
 }
 
