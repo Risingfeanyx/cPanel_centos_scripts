@@ -291,15 +291,16 @@ clear
 echo -e "This is the top 20 largest files  for $(hostname) as of $(date +%F)"
 echo -e "\n Logs"
 du -cahS  /var/log/ | sort -hr  | head -n20
+echo -e "\n Backups"
+du -cahS  /backup/ | sort -hr  | head -n20
+find /* -type f -name "*.tar.gz" -size +1G -exec du -sh {} \; | grep -vE "(/var|/usr|/root|/opt|cpbackup|\.cpanm|\.cpan)" |sort -h
 echo -e "\n Home Directories"
 du -cahS  /home/*/ | sort -hr  | head -n20
 echo -e "\n Trash"
 du -cahS  /home/*/.trash | sort -hr  | head -n20
-echo -e "\n Backups"
-du -cahS  /backup/ | sort -hr  | head -n20
-find /* -type f -name "*.tar.gz" -size +1G -exec du -sh {} \; | grep -vE "(/var|/usr|/root|/opt|cpbackup|\.cpanm|\.cpan)" |sort -h
 df -h
 }
+
 ```
 
 narrow down highest amount of inode usage, change directory to that folder
