@@ -280,8 +280,16 @@ $(du -cahS --threshold=500M /home*/*/.trash | sort -hr)
 Backups
 $(du -cahS --threshold=500M /backup/ | sort -hr)
 $(df -h)
+Current Database sizes
+$(mysql << EOF
+SELECT table_schema AS "Database", 
+ROUND(SUM(data_length + index_length) / 1024 / 1024, 2) AS "Size (MB)" 
+FROM information_schema.TABLES 
+GROUP BY table_schema;
+EOF)
 END
 }
+
 ```
 
 Top 20 largest files (edit to do homedir last as it takes longest)
