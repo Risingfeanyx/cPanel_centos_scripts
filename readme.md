@@ -303,12 +303,20 @@ du -cahS  /var/log/ | sort -hr  | head -n20
 echo -e "\n Backups"
 du -cahS  /backup/ | sort -hr  | head -n20
 find /* -type f -name "*.tar.gz" -size +1G -exec du -sh {} \; | grep -vE "(/var|/usr|/root|/opt|cpbackup|\.cpanm|\.cpan)" |sort -h
+echo -e "\n Databases"
+mysql << EOF
+SELECT table_schema AS "Database", 
+ROUND(SUM(data_length + index_length) / 1024 / 1024, 2) AS "Size (MB)" 
+FROM information_schema.TABLES 
+GROUP BY table_schema;
+EOF
 echo -e "\n Home Directories"
 du -cahS  /home*/*/ | sort -hr  | head -n20
 echo -e "\n Trash"
 du -cahS  /home*/*/.trash | sort -hr  | head -n20
 df -h
 }
+
 
 ```
 
