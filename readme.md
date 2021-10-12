@@ -685,6 +685,19 @@ END
 }
 ```
 
+Need to search ALL your databases for a certain string?
+
+```
+search_db()
+{
+for i in $(mysql -e 'show databases;' | awk {'print $1'} | grep -v Database)
+do 
+echo -e "\n All instances of $1 in $i"
+mysqldump  "$i" | grep "$1"
+done
+}
+```
+
 
 
 <h2>Wordpress</h2>
