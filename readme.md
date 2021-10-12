@@ -830,7 +830,7 @@ Laravel ✓
 		if test -f "app/etc/env.php"; then echo "This is Magento. I got nothin as of $(date +%F) yet ¯\_(ツ)_/¯ " ;fi
 		if test -f "include/connect.php"; then echo "This is PHP. I got nothin as of $(date +%F) yet ¯\_(ツ)_/¯ " ;fi
 		if test -f "index.html"; then echo "This is HTML. I got nothin as of $(date +%F)  ¯\_(ツ)_/¯ " ;fi
-	   fi
+	   fi}
 	   echo "mysqldump -p -u user database_name > backup.sql" 
 	}
 
