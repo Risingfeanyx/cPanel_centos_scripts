@@ -446,31 +446,42 @@ sudo tail -f /var/log/exim_mainlog | grep "$1"&
 
 
 <h2>Firewall</h2>
-#Can't find your blocked ip in a fail2ban env?
+#Can't find why the firewall blocked your IP?
 
 ```
 f2b(){
     clear;
     #see https://api.docs.cpanel.net/openapi/whm/operation/flush_cphulk_login_history_for_ips/
+    echo -e "\n Cphulk Firewall"
     whmapi1 flush_cphulk_login_history_for_ips ip="$1"
     /scripts/cphulkdwhitelist "$1"
+    echo -e "\n APF/CSF"
     [ -f /etc/csf/csf.conf ] && csf -a "$1" || apf -a "$1"
     #fail2ban log
-    tail -n5 /var/log/fail2ban.log | grep "$1"
+    echo -e "\n Fail2ban"
+    tail -n2 /var/log/fail2ban.log | grep "$1"
     # ssh/FTP logs
-    grep $1 /var/log/messages | tail -n5
-    grep $1 /var/log/secure | tail -n5
+    echo -e "\n SSH/FTP"
+    grep $1 /var/log/messages | tail -n2
+    grep $1 /var/log/secure | tail -n2
     #mail client login fails
-    grep "$1" /var/log/maillog | grep 'auth failed'  
+    echo -e "\n Failed Email Logins"
+    grep "$1" /var/log/maillog | grep 'auth failed' | tail -n2| awk {'print $1,$2,$3,$5,$10,$11,$12,$13,$14 $15'}
     #failing exim
-    grep "$1" /var/log/exim_mainlog | grep 'authenticator failed' 
+    echo -e "\n Failed Exim Authentication"
+    grep "$1" /var/log/exim_mainlog | grep 'authenticator failed' | tail -n2  | awk  {'print $1,$2,$4,$5,$6,$9,$15'}
+ 
     #Modsec blocks
-    grep "$1" /usr/local/apache/logs/error_log | grep -E 'id "(13052|13051|13504|90334)"' 
+    echo -e "\n ModSecurity blocks"
+    grep "$1" /usr/local/apache/logs/error_log | grep -E 'id "(13052|13051|13504|90334)"' | tail -n2
     #cPanel blocks
-    grep "$1" /usr/local/cpanel/logs/login_log | grep "FAILED LOGIN" 
+    echo -e "\n Cpanel Login Failures"
+     grep "$1" /usr/local/cpanel/logs/login_log | grep "FAILED LOGIN" | tail -n2 | awk {'print $1,$2,$3,$5,$6,$8,$14,$15,$16,$17'}
     #apf/csf logs, requires root
-    grep "$1" /etc/*/*.deny
+    grep "$1" /etc/*/*.deny| tail -n2
 }
+
+
 
 ```
 
