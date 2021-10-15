@@ -465,8 +465,12 @@ f2b(){
     grep $1 /var/log/messages | tail -n2
     grep $1 /var/log/secure | tail -n2
     #mail client login fails
+    #LFD blocks
+    echo -e "\n LFD Logs"
+    grep $1 /var/log/lfd.log| tail -n2
     echo -e "\n Failed Email Logins"
     grep "$1" /var/log/maillog | grep 'auth failed' | tail -n2| awk {'print $1,$2,$3,$5,$10,$11,$12,$13,$14 $15'}
+    
     #failing exim
     echo -e "\n Failed Exim Authentication"
     grep "$1" /var/log/exim_mainlog | grep 'authenticator failed' | tail -n2  | awk  {'print $1,$2,$4,$5,$6,$9,$15'}
@@ -474,14 +478,14 @@ f2b(){
     #Modsec blocks
     echo -e "\n ModSecurity blocks"
     grep "$1" /usr/local/apache/logs/error_log | grep -E 'id "(13052|13051|13504|90334)"' | tail -n2
+
     #cPanel blocks
     echo -e "\n Cpanel Login Failures"
      grep "$1" /usr/local/cpanel/logs/login_log | grep "FAILED LOGIN" | tail -n2 | awk {'print $1,$2,$3,$5,$6,$8,$14,$15,$16,$17'}
+
     #apf/csf logs, requires root
     grep "$1" /etc/*/*.deny| tail -n2
 }
-
-
 
 ```
 
