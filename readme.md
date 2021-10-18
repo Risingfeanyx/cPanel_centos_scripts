@@ -297,7 +297,7 @@ Top 20 largest files (edit to do homedir last as it takes longest)
 ```
 {
 clear
-echo -e "This is the top 20 largest files  for $(hostname) as of $(date +%F)"
+echo -e "These are the top 20 largest files  for $(hostname) as of $(date +%F)"
 echo -e "\n Logs"
 du -cahS  /var/log/ | sort -hr  | head -n20
 echo -e "\n Backups"
