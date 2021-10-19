@@ -482,9 +482,10 @@ f2b(){
     #cPanel blocks
     echo -e "\n Cpanel Login Failures"
      grep "$1" /usr/local/cpanel/logs/login_log | grep "FAILED LOGIN" | tail -n2 | awk {'print $1,$2,$3,$5,$6,$8,$14,$15,$16,$17'}
-
+   
     #apf/csf logs, requires root
-    grep "$1" /etc/*/*allow* /etc/*/*deny*| tail -n2
+   echo -e "\n CSF/APF Deny/Allow Rules"
+   grep "$1" /etc/*/*allow* /etc/*/*deny*| tail -n2
     }
 
 ```
