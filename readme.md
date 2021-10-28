@@ -162,7 +162,16 @@ Bots hitting server-wide
 for i in $(for user in $(awk -F: '{print $1}' /etc/trueuserowners); do uapi --user="$user" DomainInfo list_domains; done | awk '/ -/ || /main_domain/{print $2}');  do echo -e "\n $i"; sort /home/*/access-logs/* | grep $i  | grep 'bot\|crawl\|spider\|80logs'| grep $(date +"%d/%b/%Y") | awk '{print $1,$4,$7,$11}'|  uniq -c | sort -hr | head -n20 ; done
 ```
 
+Scan for anonfox meddled contact emails
+```
+ for i in $( find /home*/*/.contactemail); do echo -e "\n $i"; cat $i | grep -i anon; done
+ ```
 
+Scan for anonfox created emails
+```
+cat /etc/userdomains | sed "s/://g" | awk {'system("ls -1d /home/"$2"/mail/"$1"/* 2> /dev/null")'} | sed "s/\// /g" | awk {'print $5"@"$4'} | grep anon
+```
+Go <a href="https://support.cpanel.net/hc/en-us/articles/360058051173-What-is-the-anonymousfox-address-on-my-system-" target="_blank">here</a>
 
 <h2>cPanel</h2>
 
