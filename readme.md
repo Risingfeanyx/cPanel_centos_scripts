@@ -260,12 +260,15 @@ Back up Ea4 Profile
 
 <a href="https://docs.cpanel.net/ea4/basics/the-ea-cpanel-tools-package-scripts/" target="_blank">Back up Ea4 Profile</a> 
 
-
+```
 ea_current_to_profile file.json
+```
 
 Restore existing Ea4 Profile, excellent to use post migration to a new server. 
-ea_install_profile --install file.json
 
+```
+ea_install_profile --install file.json
+```
 
 
 <h2>Disk Usage</h2>
