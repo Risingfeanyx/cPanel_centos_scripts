@@ -317,6 +317,7 @@ mail -s  "Disk Usage Report" -r usage@"$(hostname)" "$1" << END
 This is the  current disk usage  for $(hostname) as of $(date +%F) above 500M
 Logs
 $(du -cahS --threshold=500M /var/log/ | sort -hr)
+journalctl --disk-usage
 Home Directories
 $(du -cahS --threshold=500M /home*/*/ | sort -hr)
 Trash
