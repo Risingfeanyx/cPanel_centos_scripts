@@ -501,12 +501,20 @@ f2b(){
     #cPanel blocks
     echo -e "\n Cpanel Login Failures"
      grep "$1" /usr/local/cpanel/logs/login_log | grep "FAILED LOGIN" | tail -n2 | awk {'print $1,$2,$3,$5,$6,$8,$14,$15,$16,$17'}
-   
+
+     #imunify blocks
+
+     echo -e "\n Whitelisting in Imunify"
+    imunify360-agent whitelist ip add $1
+
+    #iptables
+    echo -e "\n Whitelisting in iptables"
+    iptables -A INPUT -s $1 -j ACCEPT
+
     #apf/csf logs, requires root
    echo -e "\n CSF/APF Deny/Allow Rules"
    grep "$1" /etc/*/*allow* /etc/*/*deny*| tail -n2
     }
-
 ```
 
 
