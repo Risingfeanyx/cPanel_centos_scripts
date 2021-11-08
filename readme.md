@@ -277,6 +277,38 @@ ea_install_profile --install file.json
 
 
  
+
+Top 20 largest files (edit to do homedir last as it takes longest)
+
+See <a href="https://unix.stackexchange.com/a/194058" target="_blank">this</a> for more info on clearing the journal logs based on size/days in usage
+
+
+```
+{
+clear
+echo -e "These are the top 20 largest files  for $(hostname) as of $(date +%F)"
+echo -e "\n Logs"
+du -cahS  /var/log/ | sort -hr  | head -n20
+journalctl --disk-usage
+echo -e "\n Backups"
+du -cahS  /backup/ | sort -hr  | head -n20
+find /* -type f -name "*.tar.gz" -size +1G -exec du -sh {} \; | grep -vE "(/var|/usr|/root|/opt|cpbackup|\.cpanm|\.cpan)" |sort -h
+echo -e "\n Databases"
+mysql << EOF
+SELECT table_schema AS "Database", 
+ROUND(SUM(data_length + index_length) / 1024 / 1024, 2) AS "Size (MB)" 
+FROM information_schema.TABLES 
+GROUP BY table_schema;
+EOF
+echo -e "\n Home Directories"
+du -cahS  /home*/*/ | sort -hr  | head -n20
+echo -e "\n Trash"
+du -cahS  /home*/*/.trash | sort -hr  | head -n20
+df -h
+}
+
+
+```
 ```
 diskusage()
 {
@@ -305,37 +337,11 @@ END
 
 ```
 
-Top 20 largest files (edit to do homedir last as it takes longest)
-```
-{
-clear
-echo -e "These are the top 20 largest files  for $(hostname) as of $(date +%F)"
-echo -e "\n Logs"
-du -cahS  /var/log/ | sort -hr  | head -n20
-echo -e "\n Backups"
-du -cahS  /backup/ | sort -hr  | head -n20
-find /* -type f -name "*.tar.gz" -size +1G -exec du -sh {} \; | grep -vE "(/var|/usr|/root|/opt|cpbackup|\.cpanm|\.cpan)" |sort -h
-echo -e "\n Databases"
-mysql << EOF
-SELECT table_schema AS "Database", 
-ROUND(SUM(data_length + index_length) / 1024 / 1024, 2) AS "Size (MB)" 
-FROM information_schema.TABLES 
-GROUP BY table_schema;
-EOF
-echo -e "\n Home Directories"
-du -cahS  /home*/*/ | sort -hr  | head -n20
-echo -e "\n Trash"
-du -cahS  /home*/*/.trash | sort -hr  | head -n20
-df -h
-}
 
-
-```
 
 narrow down highest amount of inode usage, change directory to that folder
 ```
 {
-    cd || exit
     clear
 	for run in {1..10}
 	do for i in $(du --inodes | sort -hr | head -n2 | sed -n '2 p' | awk {'print $2'})
