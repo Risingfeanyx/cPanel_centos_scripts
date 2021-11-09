@@ -696,6 +696,21 @@ https://forums.cpanel.net/resources/innodb-corruption-repair-guide.395/
 	}
 ```
 
+
+Getting this error?
+ The Aria engine must be enabled to continue as mysqld was configured with --with-aria-tmp-tables
+ rename them aria log files 
+
+```
+(
+clear
+mkdir /var/lib/mysql/aria_old.$(date +%F)/
+mv /var/lib/mysql/aria_log* /var/lib/mysql/aria_old.$(date +%F)
+systemctl restart mysql
+systemctl status mysql
+)
+```
+
 Enable  MySQL error Logging for one hour
 
 ```
