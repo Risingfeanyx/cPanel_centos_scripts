@@ -111,28 +111,30 @@ echo -e "SSH Access"
  grep -i accepted /var/log/secure | awk '{print $1,$2,$3,$11}' | sort -u | uniq
 ) | column -t
 ```
-#Same thing, but excludes the date, which makes the output extremely verbose.
+#Same thing, searches by date, format 2 digit month/day/year, as in ##/##
 
 
 ```
-(
+login_dates()
+{
 GREEN='\033[0;32m'
 NC='\033[0m' # No Color
 clear
 echo -e "${GREEN}IP User/Email_User Operating-System Browser ${NC}\n"
 echo -e "${GREEN}cPanel_Access${NC}\n" 
-grep -a "paper_lantern/index.html" /usr/local/cpanel/logs/access_log | awk '{print $1,$3,$13,$20}' | sort -u | uniq
+grep -a "paper_lantern/index.html" /usr/local/cpanel/logs/access_log | grep "$1" | awk '{print $1,$3,$13,$20}' 
 echo -e "${GREEN}Root_WHM_Access${NC}\n"
-grep -a "login=1&post_login" /usr/local/cpanel/logs/access_log | awk '{print $1,$3,$13,$20}' | sort -u | uniq
+grep -a "login=1&post_login" /usr/local/cpanel/logs/access_log | grep "$1" | awk '{print $1,$3}' 
 echo -e "${GREEN}cPanel_Password_Changes${NC}\n"
-grep -a "passwd" /usr/local/cpanel/logs/access_log  |   awk '{print $1}' | sort -u | uniq
+grep -a "passwd" /usr/local/cpanel/logs/access_log  | grep "$1" | awk '{print $1,$3,$4}' 
 echo -e "${GREEN}Webmail_Access${NC}\n"
-grep "%40" /usr/local/cpanel/logs/access_log | awk '{print $1,$3}' | sort -u | uniq
+grep "%40" /usr/local/cpanel/logs/access_log |grep "$1" | awk '{print $1,$3,$4}' 
 echo -e "${GREEN}Webmail_Password_changes${NC}\n"
-grep -a passwd_pop /usr/local/cpanel/logs/access_log | awk '{print $1,$3}' | sort -u | uniq
-echo -e "SSH Access"
- grep -i accepted /var/log/secure | awk '{print $1,$2,$3,$11}' | sort -u | uniq
-) | column -t
+grep -a passwd_pop /usr/local/cpanel/logs/access_log | grep "$1"| awk '{print $1,$3,$4}' 
+echo -e "${GREEN}SSH Access${NC}\n"
+ grep -i accepted /var/log/secure | awk '{print $1,$2,$3,$11}' 
+} 
+
 ```
 #skims over common<a href="https://docs.cpanel.net/knowledge-base/cpanel-product/the-cpanel-log-files/">Log Files</a>for an  IP address
 
