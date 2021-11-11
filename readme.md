@@ -309,8 +309,34 @@ du -cahS  /home*/*/.trash | sort -hr  | head -n20
 df -h
 }
 
+```
+
+Uses find, largest files over 500M
 
 ```
+{
+clear
+echo -e "These are the top 20 largest files  for $(hostname) as of $(date +%F)"
+echo -e "\n Logs"
+find /var/log/ -size +500M -exec ls -hsS1 {} +
+journalctl --disk-usage
+echo -e "\n Backups"
+find /backup*/ -size +500M -exec ls -hsS1 {} +
+find /* -type f -name "*.tar.gz" -size +1G -exec du -sh {} \; | grep -vE "(/var|/usr|/root|/opt|cpbackup|\.cpanm|\.cpan)" |sort -h
+echo -e "\n Databases"
+mysql << EOF
+SELECT table_schema AS "Database", 
+ROUND(SUM(data_length + index_length) / 1024 / 1024, 2) AS "Size (MB)" 
+FROM information_schema.TABLES 
+GROUP BY table_schema;
+EOF
+echo -e "\n Home Directories"
+find /home*/ -size +500M -exec ls -hsS1 {} +
+df -h
+}
+```
+
+
 ```
 diskusage()
 {
