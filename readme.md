@@ -224,6 +224,8 @@ eval "/scripts/restartsrv_"{exim,dovecot,ftpd,cpsrvd}";"
 /usr/local/cpanel/bin/checkallsslcerts --allow-retry --verbose
 clear
 grep -C10 $1 /var/cpanel/logs/autossl/*/txt | tail -n10
+/usr/local/cpanel/bin/autossl_check_cpstore_queue
+dig a $1 +short
 }
 ```
 
