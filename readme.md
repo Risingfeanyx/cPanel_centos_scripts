@@ -275,41 +275,7 @@ ea_install_profile --install file.json
 
 <h2>Disk Usage</h2>
 
-##emails out disk usage, top > 500M files
-
-
- 
-
-Top 20 largest files (edit to do homedir last as it takes longest)
-
 See <a href="https://unix.stackexchange.com/a/194058" target="_blank">this</a> for more info on clearing the journal logs based on size/days in usage
-
-
-```
-{
-clear
-echo -e "These are the top 20 largest files  for $(hostname) as of $(date)"
-echo -e "\n Logs"
-du -cahS  /var/log/ | sort -hr  | head -n20
-journalctl --disk-usage
-echo -e "\n Backups"
-du -cahS  /backup/ | sort -hr  | head -n20
-find /* -type f -name "*.tar.gz" -size +1G -exec du -sh {} \; | grep -vE "(/var|/usr|/root|/opt|cpbackup|\.cpanm|\.cpan)" |sort -h
-echo -e "\n Databases"
-mysql << EOF
-SELECT table_schema AS "Database", 
-ROUND(SUM(data_length + index_length) / 1024 / 1024, 2) AS "Size (MB)" 
-FROM information_schema.TABLES 
-GROUP BY table_schema;
-EOF
-echo -e "\n Home Directories"
-du -cahS  /home*/*/ | sort -hr  | head -n20
-echo -e "\n Trash"
-du -cahS  /home*/*/.trash | sort -hr  | head -n20
-df -h
-}
-
-```
 
 Uses find, largest files over 500M
 
@@ -335,6 +301,8 @@ find /home*/ -size +500M -exec ls -hsS1 {} +
 df -h
 }
 ```
+
+
 
 Uses find, largest files over a pre-set amount, #M or #G
 
@@ -363,22 +331,28 @@ df -h
 
 ```
 
+
+##same as above, just emails out 
+diskusage $size $email
+
 ```
 diskusage()
 {
 clear
-mail -s  "Disk Usage Report" -r usage@"$(hostname)" "$1" << END
-This is the  current disk usage  for $(hostname) as of $(date +%F) above 500M
+mail -s  "Disk Usage Report" -r usage@"$(hostname)" "$2" << END
+This is the  current disk usage  for $(hostname) as of $(date) above $1
+
 Logs
-$(du -cahS --threshold=500M /var/log/ | sort -hr)
+$(find /var/log/* -size +$1 -exec ls -hsS1 {} +)
 journalctl --disk-usage
+
 Home Directories
-$(du -cahS --threshold=500M /home*/*/ | sort -hr)
-Trash
-$(du -cahS --threshold=500M /home*/*/.trash | sort -hr)
+$(find /home*/ -size +$1 -exec ls -hsS1 {} +)
+
 Backups
-$(du -cahS --threshold=500M /backup/ | sort -hr)
+$(find /backup*/* -size +$1 -exec ls -hsS1 {} +)
 $(df -h)
+
 Current Database sizes
 $(mysql << EOF
 SELECT table_schema AS "Database", 
@@ -389,6 +363,7 @@ EOF
 )
 END
 }
+
 
 ```
 
