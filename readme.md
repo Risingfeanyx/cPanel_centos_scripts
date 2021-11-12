@@ -576,10 +576,11 @@ Scan for anonfox meddled contact emails + created emails
 (
 clear
 echo -e "\n Contact emails modified by AnonymousFox"
- for i in $( find /home*/*/.contactemail); do echo -e "\n $i"; cat $i | grep -i 'anonymousfox \|smtpfox'; done
+ for i in $( find /home*/*/.contactemail); do echo -e "\n $i"; cat $i | grep -E 'anonymousfox|smtpfox'; done
 echo -e "\n Emails created by AnonymousFox"
-cat /etc/userdomains | sed "s/://g" | awk {'system("ls -1d /home/"$2"/mail/"$1"/* 2> /dev/null")'} | sed "s/\// /g" | awk {'print $5"@"$4'} | grep -i 'anonymousfox \|smtpfox' 
+cat /etc/userdomains | sed "s/://g" | awk {'system("ls -1d /home/"$2"/mail/"$1"/* 2> /dev/null")'} | sed "s/\// /g" | awk {'print $5"@"$4'} | grep -E 'anonymousfox|smtpfox'
 )
+
 
 ```
 Go <a href="https://support.cpanel.net/hc/en-us/articles/360058051173-What-is-the-anonymousfox-address-on-my-system-" target="_blank">here</a>
