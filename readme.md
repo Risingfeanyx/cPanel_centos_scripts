@@ -490,7 +490,7 @@ Replies are not monitored. Please ignore.
 END
 clear
 echo "sending mail from ""test@$1"" to ""$2"""
-sudo tail -f /var/log/exim_mainlog | grep "$1"&
+sudo tail -n10 /var/log/exim_mainlog | grep "$2"&
 }
 ```
 
