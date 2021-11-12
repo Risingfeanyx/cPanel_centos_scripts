@@ -224,7 +224,6 @@ eval "/scripts/restartsrv_"{exim,dovecot,ftpd,cpsrvd}";"
 /usr/local/cpanel/bin/checkallsslcerts --allow-retry --verbose
 clear
 grep -hC10 $1 /var/cpanel/logs/autossl/*/txt | tail -n10
-/usr/local/cpanel/bin/autossl_check_cpstore_queue
 if [ "$(dig $1 +short)" == "$(hostname -i )" ]; then
     echo -e "\n$1 points here $(hostname -i)"
 else
