@@ -223,10 +223,16 @@ eval "whmapi1 reset_service_ssl_certificate service="{exim,dovecot,ftp,cpanel}";
 eval "/scripts/restartsrv_"{exim,dovecot,ftpd,cpsrvd}";"
 /usr/local/cpanel/bin/checkallsslcerts --allow-retry --verbose
 clear
-grep -C10 $1 /var/cpanel/logs/autossl/*/txt | tail -n10
+grep -hC10 $1 /var/cpanel/logs/autossl/*/txt | tail -n10
 /usr/local/cpanel/bin/autossl_check_cpstore_queue
-dig a $1 +short
+if [ "$(dig $1 +short)" == "$(hostname -i )" ]; then
+    echo -e "\n$1 points here $(hostname -i)"
+else
+    echo -e "\n$1 does not point here, it points to  $(dig $1 +short)"
+fi
+curl -v --stderr - https://www.$1 | grep -A10 "Server certificate"
 }
+
 ```
 
 Generate cPanel logins for each user on server
