@@ -576,9 +576,9 @@ Scan for anonfox meddled contact emails + created emails
 (
 clear
 echo -e "\n Contact emails modified by AnonymousFox"
- for i in $( find /home*/*/.contactemail); do echo -e "\n $i"; cat $i | grep -i anon; done
+ for i in $( find /home*/*/.contactemail); do echo -e "\n $i"; cat $i | grep -i 'anonymousfox \|smtpfox'; done
 echo -e "\n Emails created by AnonymousFox"
-cat /etc/userdomains | sed "s/://g" | awk {'system("ls -1d /home/"$2"/mail/"$1"/* 2> /dev/null")'} | sed "s/\// /g" | awk {'print $5"@"$4'} | grep anon
+cat /etc/userdomains | sed "s/://g" | awk {'system("ls -1d /home/"$2"/mail/"$1"/* 2> /dev/null")'} | sed "s/\// /g" | awk {'print $5"@"$4'} | grep -i 'anonymousfox \|smtpfox' 
 )
 
 ```
