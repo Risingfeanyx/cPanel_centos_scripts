@@ -909,6 +909,22 @@ wp option pluck rwl_page
 ```
 
 
+WP CLI failing to return results for a search/search replace?
+Creates a database backup, uses sed to run that replacement manually
+search_replace old new
+```
+search_replace()
+{
+      clear
+      wp db search $1
+      wp db export  --skip-{plugins,themes} --porcelain ../pre_search.sql
+      sed -i 's/$1/$2/g' ../pre_search.sql
+      wp db import ../pre_search.sql
+      wp db search $1 
+}
+```
+
+
 (BROKEN AT THE MOMENT) The purpose of this is to echo out the database credentials for any CMS and the instructions on how to do it correctly, instead of guessing at database/username combos, or potentially fat-fingering a sql command, everything is filled in. Copy and paste the raw file to get those functions started. 
 Wordpress ✓
 Prestashop ✓
