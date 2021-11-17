@@ -75,8 +75,8 @@ echo -e "${GREEN}Apache Errors ${NC}\n"
 tail -n2 /usr/local/apache/logs/error_log 
 echo -e "${GREEN}Nginx Errors${NC}\n"
 tail -n2 /var/log/nginx/error.log
-echo -e "${GREEN}Top 20 Apache  domain connections per site today ${NC}\n"
-for i in $(for user in $(awk -F: '{print $1}' /etc/trueuserowners); do uapi --user="$user" DomainInfo list_domains; done | awk '/ -/ || /main_domain/{print $2}');  do echo -e "\n $i"; sort /home/*/access-logs/* | grep $i  | grep $(date +"%d/%b/%Y") | awk '{print $1,$4,$7,$11}'|  uniq -c | sort -hr | head -n20 ; done
+echo -e "${GREEN}Top 5 Apache  domain connections per site today ${NC}\n"
+for i in $(for user in $(awk -F: '{print $1}' /etc/trueuserowners); do uapi --user="$user" DomainInfo list_domains; done | awk '/ -/ || /main_domain/{print $2}');  do echo -e "\n $i"; sort /home/*/access-logs/* | grep $i  | grep $(date +"%d/%b/%Y") | awk '{print $1,$4,$7,$11}'|  uniq -c | sort -hr | head -n5 ; done
 echo -e "${GREEN}Server load for past 10 minutes${NC}\n"
 sar -q | tail -n5
 echo -e "${GREEN}Top current Apache Connections${NC}\n"
