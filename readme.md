@@ -760,8 +760,7 @@ Enable  MySQL error Logging for one hour
 END
 }
 ```
-
-#enable query logging in mysql for 24 hours, email out to $1
+enable slow query logs for $1 hours email results to $2
 ```
 slow_query()
 {
@@ -770,11 +769,11 @@ slow_query()
   echo "slow_query_log = /var/log/slowqueries" >> /etc/my.cnf
   echo "slow_query_log_file = /var/log/slowqueries" >> /etc/my.cnf
   chown mysql:mysql /var/log/slowqueries
-  service mysql restart
-  at now + 24 hour <<END
+  systemctl restart mysqld
+  at now + $1 hour <<END
 cp -fv /etc/my.cnf{.bak_$(date +%F),}
-service mysql restart
-cat /var/log/slowqueries  |   mail -s "SQL Slow Query logs" -r root@"$(hostname)" "$1"
+systemctl restart mysqld 
+cat /var/log/slowqueries  |   mail -s "SQL Slow Query logs for $(hostname)" -r root@"$(hostname)" "$2"
 END
 }	
 ```
