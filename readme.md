@@ -159,6 +159,18 @@ err()
 	}
 ```
 
+
+explode nginx/apache stack. Or "why aren't my changes pushing out?"
+```
+(
+    /scripts/rebuildhttpdconf
+    service httpd restart
+    /scripts/php_fpm_config --rebuild
+    /scripts/restartsrv_apache_php_fpm
+	ngxconf -RrdF && ngxutil -Z
+)
+```
+
 Bots hitting server-wide
 ```
 for i in $(for user in $(awk -F: '{print $1}' /etc/trueuserowners); do uapi --user="$user" DomainInfo list_domains; done | awk '/ -/ || /main_domain/{print $2}');  do echo -e "\n $i"; sort /home/*/access-logs/* | grep $i  | grep 'bot\|crawl\|spider\|80logs'| grep $(date +"%d/%b/%Y") | awk '{print $1,$4,$7,$11}'|  uniq -c | sort -hr | head -n20 ; done
