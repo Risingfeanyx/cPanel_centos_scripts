@@ -746,7 +746,7 @@ systemctl status mysql
 )
 ```
 
-Enable  MySQL error Logging for one hour
+Enable  MySQL error Logging for $1  hour
 
 ```
 {
@@ -754,7 +754,7 @@ Enable  MySQL error Logging for one hour
   echo "log-error=/var/log/mysql_error_log" >> /etc/my.cnf
   service mysql restart
   echo "general MySQL log is /var/log/mysql_error_log"
-  at now + 1 hour <<END
+  at now + $1 hour <<END
   cp -fv /etc/my.cnf{.bak_$(date +%F),}
   service mysql restart
 END
@@ -778,21 +778,7 @@ END
 }	
 ```
 
-Same thing, but no  email
-```
-{
-  cp -fv /etc/my.cnf{,.bak_$(date +%F)}
-  touch /var/log/slowqueries
-  echo "slow_query_log = /var/log/slowqueries" >> /etc/my.cnf
-  echo "slow_query_log_file = /var/log/slowqueries" >> /etc/my.cnf
-  chown mysql:mysql /var/log/slowqueries
-  service mysql restart
-  at now + 24 hour <<END
-mv -v my.cnf{.bak_$(date +%F),}
-service mysql restart
-END
-}
-```
+
 
 Need to search ALL your databases for a certain string?
 
