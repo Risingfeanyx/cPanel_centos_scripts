@@ -94,7 +94,7 @@ netstat -ntu | awk '{print $5}' | cut -d: -f1 | sort | uniq -c | sort -n | grep 
 Update php-fpm values on the fly 
 https://support.cpanel.net/hc/en-us/articles/360036533754-PHP-FPM-Performance-Tuning-Basics
 ```
-php_fpms()
+change_php_fpms()
 {
   GREEN='\033[0;32m'
   NC='\033[0m' # No Color
