@@ -91,6 +91,36 @@ netstat -ntu | awk '{print $5}' | cut -d: -f1 | sort | uniq -c | sort -n | grep 
 ````
 
 
+Update php-fpm values on the fly 
+https://support.cpanel.net/hc/en-us/articles/360036533754-PHP-FPM-Performance-Tuning-Basics
+```
+php_fpms()
+{
+  GREEN='\033[0;32m'
+  NC='\033[0m' # No Color
+  clear
+  echo -e "${GREEN}Current Server-wide PHP-FPM Values${NC}\n"
+  echo -e "/var/cpanel/ApachePHPFPM/system_pool_defaults.yaml"
+  egrep "max_children|max_requests|idle_timeout" /var/cpanel/ApachePHPFPM/system_pool_defaults.yaml
+  echo -e "${GREEN}Current Domain-Specific PHP-FPM Values${NC}\n" 
+  echo -e "${GREEN}PHP-FPM hitting caps ${NC}\n" 
+  cat /opt/cpanel/ea-*/root/usr/var/log/php-fpm/error.log | grep -i consider
+  egrep "max_children|max_requests|idle_timeout" /var/cpanel/userdata/*/*.php-fpm.yaml
+  read -erp  "Which files did you need to update? Please paste the full file path Max Children, then the Max Requests " fpm_changes max_children max_requests
+  cp -v $fpm_changes{,.bak_$(date +%F)}
+  sed -i "/pm_max_children/c\pm_max_children: $max_children" $fpm_changes 
+  sed -i "/pm_max_requests/c\pm_max_requests: $max_requests" $fpm_changes 
+  /scripts/rebuildhttpdconf
+  service httpd restart
+  /scripts/php_fpm_config --rebuild
+  /scripts/restartsrv_apache_php_fpm
+  ngxconf -RrdF && ngxutil -Z
+  grep 'pm_max_children\|pm_max_requests\|pm_process_idle_timeout' $fpm_changes
+  echo "Backup of that configuration is stored in $fpm_changes.bak_$(date +%F)"
+}
+````
+
+
 #overview of cPanel access. Includes cPanel,Root, Password Changes, Webmail and Webmail password changes.
 
 ```
