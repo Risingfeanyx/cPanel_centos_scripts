@@ -849,10 +849,12 @@ search_db()
 {
 for i in $(mysql -e 'show databases;' | awk {'print $1'} | grep -v Database)
 do 
-echo -e "\n All instances of $1 in $i"
-mysqldump  "$i" | grep -i "$1" 
+echo -e "\n All instances of $1 in $i" >> $1_sql_$(date +%F)
+mysqldump  "$i" | grep -i "$1"  | tee -a $1_sql_$(date +%F)
 done
 }
+
+
 
 ```
 
