@@ -120,6 +120,24 @@ change_php_fpms()
 }
 ````
 
+test said values on a domain, using https://support.cpanel.net/hc/en-us/articles/1500005107141-How-To-display-a-domains-FPM-status-variables
+
+```
+test_php_fpms()
+{
+  clear
+  grep documentroot /var/cpanel/userdata/*/$1 | awk {'print $2'}
+  cp -v /var/cpanel/ApachePHPFPM/system_pool_defaults.yaml{,.bak_$(date +%F)}
+  echo "pm_status_path: /status.phtml" >> /var/cpanel/ApachePHPFPM/system_pool_defaults.yaml
+  /scripts/php_fpm_config --rebuild
+  echo "<html></html>" >> $(grep documentroot /var/cpanel/userdata/*/$1 | awk {'print $2'})/status.phtml
+  /scripts/restartsrv_apache_php_fpm --reload
+  curl -LA "php_test" $1/status.phtml?full
+}
+
+
+```
+
 
 #overview of cPanel access. Includes cPanel,Root, Password Changes, Webmail and Webmail password changes.
 
