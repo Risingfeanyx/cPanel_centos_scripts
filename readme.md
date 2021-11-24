@@ -92,6 +92,10 @@ netstat -ntu | awk '{print $5}' | cut -d: -f1 | sort | uniq -c | sort -n | grep 
 
 
 Update php-fpm values on the fly 
+See also
+https://api.docs.cpanel.net/openapi/whm/operation/php_fpm_config_set/
+https://api.docs.cpanel.net/openapi/whm/operation/php_fpm_config_get/
+
 https://support.cpanel.net/hc/en-us/articles/360036533754-PHP-FPM-Performance-Tuning-Basics
 ```
 change_php_fpms()
@@ -271,6 +275,13 @@ redis-cli ping
 
 
 ##Checks for new autossl certs, creates a nightly cron to do so, moves current cpanel queue and forces a restart. searches todays autossl logs
+See also
+
+https://documentation.cpanel.net/display/DD/WHM+API+1+Functions+-+fetch_ssl_certificates_for_fqdns
+
+https://documentation.cpanel.net/display/DD/UAPI+Functions+-+SSL%3A%3Ainstalled_host
+
+
 ```
 auto_ssl_search()
 {
