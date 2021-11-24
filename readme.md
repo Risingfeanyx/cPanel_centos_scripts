@@ -274,8 +274,7 @@ redis-cli ping
 
 
 
-##Checks for new autossl certs, creates a nightly cron to do so, moves current cpanel queue and forces a restart. searches todays autossl logs
-See also
+##Checks for new autossl certs, creates a nightly cron to do so, moves current cpanel queue and forces a restart. searches todays autossl logs, checks status of latest autossl order 
 
 https://documentation.cpanel.net/display/DD/WHM+API+1+Functions+-+fetch_ssl_certificates_for_fqdns
 
@@ -285,24 +284,27 @@ https://documentation.cpanel.net/display/DD/UAPI+Functions+-+SSL%3A%3Ainstalled_
 ```
 auto_ssl_search()
 {
-clear
-echo "$(($RANDOM%60)) $(($RANDOM%24)) * * * root /usr/local/cpanel/bin/autossl_check --all" > /etc/cron.d/cpanel_autossl && /scripts/restartsrv_crond
-mv -fv /var/cpanel/autossl_queue_cpanel.sqlite{,_old}
-/usr/local/cpanel/bin/autossl_check_cpstore_queue --force
-/usr/local/cpanel/bin/autossl_check --all
-eval "whmapi1 reset_service_ssl_certificate service="{exim,dovecot,ftp,cpanel}";"
-eval "/scripts/restartsrv_"{exim,dovecot,ftpd,cpsrvd}";"
-/usr/local/cpanel/bin/checkallsslcerts --allow-retry --verbose
-clear
-/usr/local/cpanel/cpkeyclt --force
-grep -EhC10 "$1|error" /var/cpanel/logs/autossl/*/txt | tail -n10
-if [ "$(dig $1 +short)" == "$(hostname -i )" ]; then
-    echo -e "\n$1 points here $(hostname -i)"
-else
-    echo -e "\n$1 does not point here, it points to  $(dig $1 +short)"
-fi
-curl -v --stderr - https://www.$1 | grep -A10 "Server certificate"
+  clear
+  echo "$(($RANDOM%60)) $(($RANDOM%24)) * * * root /usr/local/cpanel/bin/autossl_check --all" > /etc/cron.d/cpanel_autossl && /scripts/restartsrv_crond
+  mv -fv /var/cpanel/autossl_queue_cpanel.sqlite{,_old}
+  /usr/local/cpanel/bin/autossl_check_cpstore_queue --force
+  /usr/local/cpanel/bin/autossl_check --all
+  eval "whmapi1 reset_service_ssl_certificate service="{exim,dovecot,ftp,cpanel}";"
+  eval "/scripts/restartsrv_"{exim,dovecot,ftpd,cpsrvd}";"
+  /usr/local/cpanel/bin/checkallsslcerts --allow-retry --verbose
+  clear
+  /usr/local/cpanel/cpkeyclt --force
+  grep -EhC10 "$1|error" /var/cpanel/logs/autossl/*/txt | tail -n10
+
+  if [ "$(dig $1 +short)" == "$(hostname -i )" ]; then
+      echo -e "\n$1 points here $(hostname -i)"
+  else
+      echo -e "\n$1 does not point here, it points to  $(dig $1 +short)"
+  fi
+  echo -e "\n Order Status for $1 $(curl -sLA "foo"  https://store.cpanel.net/json-api/ssl/certificate/order/$(grep -hoP 'ID:\s*\K\d+'   /var/cpanel/logs/autossl/$(date +%F)*/txt | tail -n1) | jq | grep -v certificate)"
+  curl -v --stderr - https://www.$1 | grep -A10 "Server certificate"
 }
+
 
 
 ```
