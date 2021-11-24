@@ -653,13 +653,16 @@ ls -lah /dev/shm/ /tmp
 
 Scan for anonfox meddled contact emails + created emails 
 ```
+
 (
 clear
-echo -e "\n Contact emails modified by AnonymousFox"
-grep -E 'anonymousfox|smtpfox' /home*/*/.contactemail
-echo -e "\n Emails created by AnonymousFox"
+if  grep -EH 'anonymousfox|smtpfox' /home*/*/.contactemail; then
+  echo -e "\n Above cPanel contact emails modified by AnonymousFox"
+fi
 cat /etc/userdomains | sed "s/://g" | awk {'system("ls -1d /home/"$2"/mail/"$1"/* 2> /dev/null")'} | sed "s/\// /g" | awk {'print $5"@"$4'} | grep -E 'anonymousfox|smtpfox'
 )
+
+
 
 
 ```
