@@ -630,6 +630,21 @@ f2b(){
     }
 ```
 
+bulk  change cpanel passwords
+
+```
+(
+clear
+export ALLOW_PASSWORD_CHANGE=1
+newpassword="$(openssl rand -base64 14 | head -c13)";
+for users in $( cat /etc/userdomains | awk {'print $2'} | grep -v nobody | uniq)
+do /scripts/chpass $users $newpassword
+echo "$user changed to $newpassword"
+done
+echo "Test at $(hostname):2083";
+) 
+```
+
 
 ##brief scan of root logins/rootkits
 ```
