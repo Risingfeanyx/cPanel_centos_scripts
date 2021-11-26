@@ -52,6 +52,26 @@ clear
 }
 ```
 
+in progress, watches common logs for string. todo: enable choosing local variables, echo logname
+
+```
+watch_logs()
+{
+  apache=/usr/local/apache/domlogs/* | grep -v -ssl_log
+  apache_err=/usr/local/apache/logs/error_log
+  cpanel_error=/usr/local/cpanel/logs/error_log
+  cpanel=/usr/local/cpanel/logs/access_log
+  email_login=/var/log/maillog
+  exim=/var/log/exim_mainlog
+  nginx=/var/log/nginx/access.log
+  nginx_err=/var/log/nginx/error.log
+  ssh_ftp=/var/log/messages
+  ssh_secure=/var/log/messages
+clear
+  tail -fn1 $apache $apache_err $cpanel_error $cpanel $email_login $exim  $nginx $nginx_err $ssh_ftp $ssh_secure | grep $1
+}
+```
+
 #quick overview of server/connections. Primarily geared towards Apache, will clean up for nginx soon. 
 
 ```
