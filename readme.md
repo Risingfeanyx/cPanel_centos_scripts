@@ -668,20 +668,23 @@ ls -lah /dev/shm/ /tmp
 ```
 
 
-Scan for anonfox meddled contact emails + created emails 
+Scan for anonfox meddled contact emails + created emails, automaticaly removes the contact email entry  and disables cpanel password resets
 ```
 
 (
-##https://support.cpanel.net/hc/en-us/articles/360058051173-What-is-the-anonymousfox-address-on-my-system-
-clear
-if  grep -EH 'anonymousfox|smtpfox' /home*/*/.contactemail; then
+  ##https://support.cpanel.net/hc/en-us/articles/360058051173-What-is-the-anonymousfox-address-on-my-system-
+  modified=$(grep -EHl 'anonymousfox|smtpfox' /home*/*/.contactemail)
+  clear
+  if  grep -EH 'anonymousfox|smtpfox' /home*/*/.contactemail; then
   echo -e "\n cPanel contact emails modified by AnonymousFox"
-   echo $(grep -EH 'anonymousfox|smtpfox' /home*/*/.contactemail)
-  cp -v /var/cpanel/cpanel.config{,.bak_reset_pass_off.$(date +%F)}
-  sed -i "s/resetpass=1/resetpass=0/g" /var/cpanel/cpanel.config
+  echo $modified
+  sed -i.cleared '/anonymousfox/d' $modified
+  sed -i.cleared '/smtpfox/d' $modified
+  sed -i.bak_reset_pass_off "s/resetpass=1/resetpass=0/g" /var/cpanel/cpanel.config
   for i in $( cat /etc/userdomains | awk {'print $2'} | grep -v nobody | uniq); do  uapi --user=$i Email list_pops |grep -E 'anonymousfox|smtpfox'; done
 fi
 )
+
 
 
 
