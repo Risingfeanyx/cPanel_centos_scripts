@@ -685,11 +685,6 @@ Scan for anonfox meddled contact emails + created emails, automaticaly removes t
 fi
 )
 
-
-
-
-
-
 ```
 Go <a href="https://support.cpanel.net/hc/en-us/articles/360058051173-What-is-the-anonymousfox-address-on-my-system-" target="_blank">here</a>
 
