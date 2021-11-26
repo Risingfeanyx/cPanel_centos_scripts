@@ -672,12 +672,17 @@ Scan for anonfox meddled contact emails + created emails
 ```
 
 (
+##https://support.cpanel.net/hc/en-us/articles/360058051173-What-is-the-anonymousfox-address-on-my-system-
 clear
 if  grep -EH 'anonymousfox|smtpfox' /home*/*/.contactemail; then
-  echo -e "\n Above cPanel contact emails modified by AnonymousFox"
+  echo -e "\n cPanel contact emails modified by AnonymousFox"
+   echo $(grep -EH 'anonymousfox|smtpfox' /home*/*/.contactemail)
+  cp -v /var/cpanel/cpanel.config{,.bak_reset_pass_off.$(date +%F)}
+  sed -i "s/resetpass=1/resetpass=0/g" /var/cpanel/cpanel.config
+  for i in $( cat /etc/userdomains | awk {'print $2'} | grep -v nobody | uniq); do  uapi --user=$i Email list_pops |grep -E 'anonymousfox|smtpfox'; done
 fi
-cat /etc/userdomains | sed "s/://g" | awk {'system("ls -1d /home/"$2"/mail/"$1"/* 2> /dev/null")'} | sed "s/\// /g" | awk {'print $5"@"$4'} | grep -E 'anonymousfox|smtpfox'
 )
+
 
 
 
