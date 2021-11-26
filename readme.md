@@ -394,7 +394,7 @@ Uses find, largest files over a pre-set amount, #M or #G
 diskusage()
 {
 clear
-echo -e "These are the top 20 largest files over $1   for $(hostname) as of $(date )"
+echo -e "These are the largest files over $1   for $(hostname) as of $(date )"
 echo -e "\n Logs"
 find /var/log/ -size +$1 -exec ls -hsS1 {} +
 journalctl --disk-usage
