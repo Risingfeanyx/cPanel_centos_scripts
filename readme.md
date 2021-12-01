@@ -320,7 +320,7 @@ auto_ssl_search()
   else
       echo -e "\n$1 does not point here, it points to  $(dig $1 +short)"
   fi
-  echo -e "\n Order Status for $1 $(curl -sLA "foo"  https://store.cpanel.net/json-api/ssl/certificate/order/$(grep -hoP 'ID:\s*\K\d+'   /var/cpanel/logs/autossl/$(date +%F)*/txt | tail -n1) | jq | grep -v certificate)"
+  echo -e "\n Most Recent SSL Order Status $(curl -sLA "foo"  https://store.cpanel.net/json-api/ssl/certificate/order/$(grep -hoP 'ID:\s*\K\d+'   /var/cpanel/logs/autossl/*/txt | tail -n1) | grep -v certificate)"
   curl -v --stderr - https://www.$1 | grep -A10 "Server certificate"
 }
 
