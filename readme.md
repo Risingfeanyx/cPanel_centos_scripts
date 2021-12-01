@@ -314,8 +314,7 @@ auto_ssl_search()
   /usr/local/cpanel/bin/checkallsslcerts --allow-retry --verbose
   clear
   /usr/local/cpanel/cpkeyclt --force
-  grep -EhC10 "$1|error" /var/cpanel/logs/autossl/*/txt | tail -n10
-
+  grep -EhC10 "$1|error|WARN" /var/cpanel/logs/autossl/*/txt | tail -n10
   if [ "$(dig $1 +short)" == "$(hostname -i )" ]; then
       echo -e "\n$1 points here $(hostname -i)"
   else
