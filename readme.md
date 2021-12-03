@@ -57,7 +57,7 @@ in progress, watches common logs for string. todo: enable choosing local variabl
 ```
 watch_logs()
 {
-  apache=/usr/local/apache/domlogs/* | grep -v -ssl_log
+  apache="/usr/local/apache/domlogs/*"
   apache_err=/usr/local/apache/logs/error_log
   cpanel_error=/usr/local/cpanel/logs/error_log
   cpanel=/usr/local/cpanel/logs/access_log
@@ -65,10 +65,10 @@ watch_logs()
   exim=/var/log/exim_mainlog
   nginx=/var/log/nginx/access.log
   nginx_err=/var/log/nginx/error.log
-  ssh_ftp=/var/log/messages
-  ssh_secure=/var/log/messages
-clear
-  tail -fn1 $apache $apache_err $cpanel_error $cpanel $email_login $exim  $nginx $nginx_err $ssh_ftp $ssh_secure | grep $1
+  ftp=/var/log/messages
+  ssh=/var/log/secure
+  clear
+  tail -fn1 "$apache" $apache_err $cpanel_error $cpanel $email_login $exim  $nginx $nginx_err "$ssh" $ftp | grep "$1"
 }
 ```
 
