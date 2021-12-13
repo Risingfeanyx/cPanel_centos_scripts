@@ -874,8 +874,8 @@ Enable  MySQL error Logging for $1  hour
   cp -fv /etc/my.cnf{,.bak_$(date +%F)}
   echo "log-error=/var/log/mysql_error_log" >> /etc/my.cnf
   service mysql restart
-  echo "general MySQL log is /var/log/mysql_error_log"
-  at now + $1 hour <<END
+  echo "error MySQL log is /var/log/mysql_error_log"
+  at now + 1 hour <<END
   cp -fv /etc/my.cnf{.bak_$(date +%F),}
   service mysql restart
 END
