@@ -583,10 +583,14 @@ clear
 /scripts/addpop test@"$1" "$(head -c32 /dev/urandom | md5sum |awk {'print $1'})" 50
 mail -s "Email Test Support" -r test@"$1" "$2" << END
 This is a test email sent on $(date '+%Y-%m-%d') by a member of the Technical Support team. 
-These are the DNS records for ""$1""
-$(dig any "$1" +short)
-This is the MX records IP address: $(dig a $(dig mx "$1" +short) +short)
-Blacklisted? $(echo http://multirbl.valli.org/lookup/$(hostname -i).html)
+SPF
+$(dig txt  "$1" +short)
+DMARC
+$(dig txt "_dmarc.$1" +short)
+MX
+$(dig MX "$1" +short | awk {'print $2'})
+This is the MX records IP address: $(dig a $(dig mx "$1" +short| awk {'print $2'})  +short)
+Blacklisted? $(echo http://multirbl.valli.org/lookup/$(dig a $(dig mx "$1" +short) +short).html)
 Replies are not monitored. Please ignore. 
 END
 clear
