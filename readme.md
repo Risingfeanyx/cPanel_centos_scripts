@@ -346,7 +346,7 @@ auto_ssl_search()
 
 
 ```
-
+```
 Generate cPanel logins for each user on server
 See below for more info
 https://api.docs.cpanel.net/openapi/whm/operation/create_user_session/
