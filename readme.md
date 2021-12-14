@@ -921,8 +921,8 @@ searches all instances of filenames/text in files for string
 search_text()
 {
 clear
-find $(pwd) -name  "*$1*" -print
-grep -rnw $(pwd) -e "*$1*"
+find $(pwd) -name  "*$1*" -print >> $1_results.$(date -I)
+grep -rnw $(pwd) -e "*$1*" >> $1_results.$(date -I)
 }
 ```
 
