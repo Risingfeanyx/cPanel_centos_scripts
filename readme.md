@@ -302,7 +302,7 @@ https://documentation.cpanel.net/display/DD/UAPI+Functions+-+SSL%3A%3Ainstalled_
 
 
 ```
-auto_ssl_search()
+auto_ssl_kick()
 {
   clear
   echo "$(($RANDOM%60)) $(($RANDOM%24)) * * * root /usr/local/cpanel/bin/autossl_check --all" > /etc/cron.d/cpanel_autossl && /scripts/restartsrv_crond
@@ -320,9 +320,28 @@ auto_ssl_search()
   else
       echo -e "\n$1 does not point here, it points to  $(dig $1 +short)"
   fi
-  echo -e "\n Most Recent SSL Order Status $(curl -sLA "foo"  https://store.cpanel.net/json-api/ssl/certificate/order/$(grep -hoP 'ID:\s*\K\d+'   /var/cpanel/logs/autossl/*/txt | tail -n1) | grep -v certificate)"
-  curl -v --stderr - https://www.$1 | grep -A10 "Server certificate"
+  curl -sLA "foo"  https://store.cpanel.net/json-api/ssl/certificate/order/$(grep -hoP 'ID:\s*\K\d+'   /var/cpanel/logs/autossl/*/txt | tail -n1) | jq
+  curl -v --stderr - https://www.$1 | grep -A10 "Server certificate" 
 }
+
+
+
+Search cpanel logs for most recnet autossl order, check ssl status for single domain
+
+```
+auto_ssl_search()
+{
+/usr/local/cpanel/bin/autossl_check --all
+  grep -EhC10 "$1|error|WARN" /var/cpanel/logs/autossl/*/txt | tail -n10
+  if [ "$(dig $1 +short)" == "$(hostname -i )" ]; then
+      echo -e "\n$1 points here $(hostname -i)"
+  else
+      echo -e "\n$1 does not point here, it points to  $(dig $1 +short)"
+  fi
+  curl -sLA "foo"  https://store.cpanel.net/json-api/ssl/certificate/order/$(grep -hoP 'ID:\s*\K\d+'   /var/cpanel/logs/autossl/*/txt | tail -n1) | jq
+  curl -v --stderr - https://www.$1 | grep -A10 "Server certificate" 
+}
+```
 
 
 
