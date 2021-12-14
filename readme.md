@@ -916,6 +916,15 @@ done
 
 
 ```
+searches all instances of filenames/text in files for string
+```
+search_text()
+{
+clear
+find / -name  "*$1*" -print
+grep -rnw / -e "*$1*"
+}
+```
 
 
 
