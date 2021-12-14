@@ -323,7 +323,7 @@ auto_ssl_kick()
   curl -sLA "foo"  https://store.cpanel.net/json-api/ssl/certificate/order/$(grep -hoP 'ID:\s*\K\d+'   /var/cpanel/logs/autossl/*/txt | tail -n1) | jq
   curl -v --stderr - https://www.$1 | grep -A10 "Server certificate" 
 }
-
+```
 
 
 Search cpanel logs for most recnet autossl order, check ssl status for single domain
