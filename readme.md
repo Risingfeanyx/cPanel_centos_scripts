@@ -590,7 +590,7 @@ mailtest()
 clear
 /scripts/addpop test@"$1" "$(head -c32 /dev/urandom | md5sum |awk {'print $1'})" 50
 mail -s "Email Test Support" -r test@"$1" "$2" << END
-This is a test email sent on $(date '+%Y-%m-%d') by a member of the Technical Support team. 
+This is a test email sent from $1 on $(date '+%Y-%m-%d') by a member of the Technical Support team. 
 SPF
 $(dig txt  "$1" +short)
 DMARC
