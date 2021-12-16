@@ -312,16 +312,6 @@ auto_ssl_kick()
   eval "whmapi1 reset_service_ssl_certificate service="{exim,dovecot,ftp,cpanel}";"
   eval "/scripts/restartsrv_"{exim,dovecot,ftpd,cpsrvd}";"
   /usr/local/cpanel/bin/checkallsslcerts --allow-retry --verbose
-  clear
-  /usr/local/cpanel/cpkeyclt --force
-  grep -EhC10 "$1|error|WARN" /var/cpanel/logs/autossl/*/txt | tail -n10
-  if [ "$(dig $1 +short)" == "$(hostname -i )" ]; then
-      echo -e "\n$1 points here $(hostname -i)"
-  else
-      echo -e "\n$1 does not point here, it points to  $(dig $1 +short)"
-  fi
-  curl -sLA "foo"  https://store.cpanel.net/json-api/ssl/certificate/order/$(grep -hoP 'ID:\s*\K\d+'   /var/cpanel/logs/autossl/*/txt | tail -n1) | jq
-  curl -v --stderr - https://www.$1 | grep -A10 "Server certificate" 
 }
 ```
 
@@ -331,7 +321,6 @@ Search cpanel logs for most recnet autossl order, check ssl status for single do
 ```
 auto_ssl_search()
 {
-/usr/local/cpanel/bin/autossl_check --all
   grep -EhC10 "$1|error|WARN" /var/cpanel/logs/autossl/*/txt | tail -n10
   if [ "$(dig $1 +short)" == "$(hostname -i )" ]; then
       echo -e "\n$1 points here $(hostname -i)"
