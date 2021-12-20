@@ -497,6 +497,36 @@ narrow down highest amount of inode usage, change directory to that folder
 
 <h2>DNS</h2>
 
+Explanation of mail related DNS
+
+```
+SPF (Sender Policy Framework) record:
+	This protects the envelope sender address used for message delivery. SPF allows you to create a policy and dictate a list of authorized senders. This means that only those on the list are able to be authenticated by any receiving server checking for spoofing. Upon a successful check, the email is assumed to be legitimate. If the check is unsuccessful, the email is considered fake and dealt with according to how the SPF policy is set up. Looking over yours, I see it doesn't actually exist.
+	A SPF record needs to have your current IP address in order to validate, and not trip any kind of SPF based spam filter. As with all DNS modifications, this can take up to 24 hours to take effect.
+
+DMARC(Domain-based Message Authentication and Conformance)
+	is a record that is defined in the DNS records associated with your domain name. 
+	The DMARC record contains a set of rules that work with SPF and DKIM records to best provide security for your email. 
+	The record also lets mail service providers like Gmail or Yahoo! know that the domain is using DMARC rules.
+
+MX (Mail exchanger) 
+	are DNS entries that indicate where email is being processed. If you are using the default settings for both hosting your website and handling your email, then you don’t need to change the MX records. However, if you intend to keep your old email service after moving your website, or if you want to use a third party service (e.g. Gsuite, Microsoft Exchange, iCloud), then you will need to make changes to the MX records.
+
+
+(DKIM) DomainKeys Identified Mail  
+	is a method for associating a domain name to an email message, thereby allowing a person, role, or organization to claim some responsibility for the message.
+	DKIM is an e-mail authentication system that allows for incoming mail to be checked against the server it was sent from to verify that the mail has not been modified. This ensures that messages are actually coming from the listed sender and allows abusive messages to be tracked with more ease.
+```
+
+
+Back up your zone file before running any of these.
+
+```
+tar -czf /root/named_backup_$(date +%F).tar.gz /var/named*
+ls -lah /root/named_backup_$(date +%F).tar.gz
+```
+
+
 
 #test HTTP codes for all domains on server (will rebuuld as a function to take in arguments to specify dns record types 
 
@@ -523,14 +553,6 @@ for i in $(for a in /var/named/*.db; do echo $(basename "$a" .db); done); do ech
     rua=mailto:dmarc-user@tld.com is the mailbox to which aggregate reports should be sent
     ruf=mailto:dmarc-yser@tld.com is the mailbox to which forensic reports should be sent
     pct=# is the percentage of mail to which the domain owner would like to have its policy applied
-
-
-Back up your zone file before running this.
-
-```
-tar -czf /root/named_backup_$(date +%F).tar.gz /var/named*
-ls -lah /root/named_backup_$(date +%F).tar.gz
-```
 
 
 
