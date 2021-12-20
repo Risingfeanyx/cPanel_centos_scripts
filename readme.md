@@ -11,7 +11,7 @@ target="_blank">Disk Usage</a>
 target="_blank">DNS</a>
 
 <a href="#email" 
-target="_blank">Email</al
+target="_blank">Email</al>
 
 
 <a href="#firewall" 
