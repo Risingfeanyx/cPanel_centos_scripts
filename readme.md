@@ -971,10 +971,10 @@ grep -rnw $(pwd) -e "*$1*" >> $1_results.$(date -I)
 ```
 
 <h2>Testing</h2>
-uses gtmetrix API to <a href="https://gtmetrix.com/api/docs/2.0/" 
-target="_blank">gtmetrix API </a> run external report on site
-```
+uses <a href="https://gtmetrix.com/api/docs/2.0/" 
+target="_blank">gtmetrix API </a> to  run external report on site
 
+```
 test()
 {
 export GTMETRIX_USER=
