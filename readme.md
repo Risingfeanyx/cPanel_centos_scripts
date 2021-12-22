@@ -970,6 +970,50 @@ grep -rnw $(pwd) -e "*$1*" >> $1_results.$(date -I)
 }
 ```
 
+<h2>Testing</h2>
+uses gtmetrix API to <a href="https://gtmetrix.com/api/docs/2.0/" 
+target="_blank">gtmetrix API </a> run external report on site
+```
+
+test()
+{
+export GTMETRIX_USER=
+export GTMETRIX_KEY=
+
+sites=$1
+
+for site in "${sites[@]}"
+do
+  echo "starting test for $site"
+  test_id=`curl --silent --user ${GTMETRIX_USER}:${GTMETRIX_KEY} --form url=$site --form x-metrix-adblock=0 https://gtmetrix.com/api/0.1/test | jq -r .test_id`
+
+  echo "test id is $test_id"
+  state=unknown
+  loop_run_time_secs=0
+
+  while [[ "$state" != "completed" && $loop_run_time_secs < 60 ]]
+  do
+    results=`curl --silent --user ${GTMETRIX_USER}:${GTMETRIX_KEY} https://gtmetrix.com/api/0.1/test/$test_id`
+    state=`echo $results | jq -r .state`
+    echo -ne "${state} ...\r"
+    sleep 6
+    loop_run_time_secs=$((loop_run_time_secs + 6))
+  done
+
+  page_load_time=`echo $results | jq -r .results.page_load_time`
+  html_bytes=`echo $results | jq -r .results.html_bytes`
+  page_elements=`echo $results | jq -r .results.page_elements`
+  report_url=`echo $results | jq -r .results.report_url`
+  html_load_time=`echo $results | jq -r .results.html_load_time`
+  page_bytes=`echo $results | jq -r .results.page_bytes`
+  pagespeed_score=`echo $results | jq -r .results.pagespeed_score`
+  yslow_score=`echo $results | jq -r .results.yslow_score`
+
+  echo -e "`date`\n Site: $site,\n Page Load Time: $page_load_time\n HTML Bytes: $html_bytes \n Page Elements: $page_elements\n HTML Load Time: $html_load_time\n Page Bytes: $page_bytes\n Page Speed Score: $pagespeed_score \n YSlow Score: $yslow_score \n $report_url"
+done
+}
+```
+
 
 
 <h2>Wordpress</h2>
@@ -1214,3 +1258,5 @@ doc_mover()
 	cd || exit
 	}
 ```
+
+
