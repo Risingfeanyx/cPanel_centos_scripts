@@ -26,6 +26,8 @@ target="_blank">PHP</a>
 <a href="#sql" 
 target="_blank">SQL</a>
 
+<a href="#testing" 
+target="_blank">Site Testing</a>
 
 <a href="#wordpress" 
 target="_blank">Wordpress</a>
