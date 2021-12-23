@@ -625,23 +625,21 @@ localdomain.com to@domain.com.
 ```
 mailtest()
 {
+domain=$1
 clear
-/scripts/addpop test@"$1" "$(head -c32 /dev/urandom | md5sum |awk {'print $1'})" 50
-mail -s "Email Test Support" -r test@"$1" "$2" << END
-This is a test email sent from $1 on $(date '+%Y-%m-%d') by a member of the Technical Support team. 
-SPF
-$(dig txt  "$1" +short)
-DMARC
-$(dig txt "_dmarc.$1" +short)
-MX
-$(dig MX "$1" +short | awk {'print $2'})
-This is the MX records IP address: $(dig a $(dig mx "$1" +short| awk {'print $2'})  +short)
-Blacklisted? $(echo http://multirbl.valli.org/lookup/$(dig a $(dig mx "$1" +short) +short).html)
+mail -s "Email Test Support" -r test@"$domain" "$2" << END
+This is a test email sent from $domain on $(date '+%Y-%m-%d') by a member of the Technical Support team. 
+SPF: $(dig txt  "$domain" +short)
+DMARC: $(dig txt "_dmarc.$domain" +short)
+MX: $(dig MX "$domain" +short | awk {'print $2'})
+This is the MX records IP address: $(dig a $(dig mx "$domain" +short| awk {'print $2'})  +short)
+Blacklisted? $(echo http://multirbl.valli.org/lookup/$(dig a $(dig mx "$domain" +short) +short).html)
 Replies are not monitored. Please ignore. 
 END
 clear
-echo "sending mail from ""test@$1"" to ""$2"""
+echo "sending mail from ""$domain"" to ""$2"""
 sudo tail -n10 /var/log/exim_mainlog | grep "$2"&
+}
 }
 ```
 
