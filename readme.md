@@ -1049,7 +1049,7 @@ clear
 for i in $(wp plugin list --skip-{plugins,themes} | awk {'print $1'})
  do echo "disabling $i for $(wp option get siteurl)"
  wp plugin deactivate "$i" --skip-{plugins,themes}
- curl -sLA "foo" $(wp option get siteurl) | grep -i error
+read -n 1 -s -r -p "Try  $(wp option get siteurl) , then press ENTER to continue"
  done
  wp db import plugins.$(date +%F).sql
 }
