@@ -1037,7 +1037,7 @@ for i in .htaccess php.ini  wp-config.php ; do cp $i{,.$(date +%F).bak}; done
 clear
 awk -F"'" '/DB_/{print $4}' wp-config.php;
 for i in theme plugin user ; do echo $i for $(wp option get siteurl --skip-{plugins,themes} );  wp $i list --skip-{plugins,themes} ; done
-mv *.sql ..
+mv *.sql ~/
 }
 ```
 
