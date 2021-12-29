@@ -334,6 +334,29 @@ Search cpanel logs for most recnet autossl order, check ssl status for single do
 }
 ```
 
+AutoSSL keeps assigning a cert to the wrong domain?
+
+disables this in Tweak Settings 
+Choose the closest matched domain for which that the system has a valid certificate when redirecting from non-SSL to SSL URLs. Formerly known as “Always redirect to SSL/TLS” 
+
+
+When a user visits /cpanel, /webmail, /whm, or visits other URLs that redirect to a cPanel service, the system will redirect to an SSL URL for the closest matched domain that the system has a valid certificate. If you disable this option, the system will redirect to the equivalent URL that they visited based on the original request made via HTTPS or HTTP. This option also controls how the system will redirect unencrypted cPanel, Webmail, WHM, and DAV requests to the best matched certificate for the domain when “Require SSL” is enabled. When enabled, it will redirect closest matched domain that the system has a valid certificate for. When it is disabled, it will simply redirect equivalent HTTPS URL.
+
+Enables this in Tweak Settings
+Generate a self signed SSL certificate if a CA signed certificate is not available when setting up new domains. 
+
+When you create a new domain, cPanel will apply the best available certificate (CA signed); otherwise cPanel will apply a self-signed SSL certificate and request a new certificate via AutoSSL if it is enabled. Warning: If you disable this option, and a CA signed certificate is not available, when a user attempts to visit the newly created domain over https, the user will see the first SSL certificate installed on that IP address. Warning: If you enable this option and do not have a CA signed certificate or AutoSSL enabled, Google search results may point to the SSL version of the site with a self-signed certificate, which will generate warnings in the users’ browser. To avoid both of these concerns, we strongly recommend that you enable AutoSSL.
+
+
+```
+(
+cp -v /var/cpanel/cpanel.config{,.bak_$(date +%F)}
+sed -i "s/selfsigned_generation_for_bestavailable_ssl_install=0/selfsigned_generation_for_bestavailable_ssl_install=1/g" /var/cpanel/cpanel.config
+sed -i "s/alwaysredirecttossl=1/alwaysredirecttossl=0/g" /var/cpanel/cpanel.config
+grep alwaysredirecttossl /var/cpanel/cpanel.config
+grep selfsigned_generation_for_bestavailable_ssl_install /var/cpanel/cpanel.config
+)
+```
 
 
 ```
