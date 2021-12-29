@@ -321,9 +321,9 @@ auto_ssl_kick()
 Search cpanel logs for most recnet autossl order, check ssl status for single domain
 
 ```
-auto_ssl_search()
+ auto_ssl_search()
 {
-  grep -EhC10 "$1|error|WARN" /var/cpanel/logs/autossl/*/txt | tail -n10
+  grep -EhC3 "$1|error|WARN" /var/cpanel/logs/autossl/*/txt | tail -n5
   if [ "$(dig $1 +short)" == "$(hostname -i )" ]; then
       echo -e "\n$1 points here $(hostname -i)"
   else
