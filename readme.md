@@ -375,22 +375,17 @@ clear
  )
 
  ```
-
-
-installs  <a href="https://docs.imunify360.com/command_line_interface/#malware" target="_blank">Imunify</a> , enables scanning for users, starts a scan, outputs details of the scan
-
-
+ 
+ Backup existing server configs/ea profile
+ 
+ https://docs.cpanel.net/whm/scripts/the-cpconftool-script/82/
 
 ```
 (
-clear
-curl -sL https://repo.imunify360.cloudlinux.com/defence360/imav-deploy.sh | bash -
-/usr/share/av-userside-plugin.sh
-imunify-antivirus malware user scan
-imunify-antivirus malware user list
+  for i in $(/usr/local/cpanel/bin/cpconftool --list-modules); do  /usr/local/cpanel/bin/cpconftool --backup --modules="$i" ; done
+  ea_current_to_profile 
 )
 ```
-
 
 
 <a href="https://docs.cpanel.net/ea4/basics/the-ea-cpanel-tools-package-scripts/#create-a-new-profile" target="_blank">Back up Ea4 Profile</a> 
@@ -406,6 +401,20 @@ Restore existing Ea4 Profile, excellent to use post migration to a new server.
 
 ```
 ea_install_profile --install file.json
+```
+
+installs  <a href="https://docs.imunify360.com/command_line_interface/#malware" target="_blank">Imunify</a> , enables scanning for users, starts a scan, outputs details of the scan
+
+
+
+```
+(
+clear
+curl -sL https://repo.imunify360.cloudlinux.com/defence360/imav-deploy.sh | bash -
+/usr/share/av-userside-plugin.sh
+imunify-antivirus malware user scan
+imunify-antivirus malware user list
+)
 ```
 
 
