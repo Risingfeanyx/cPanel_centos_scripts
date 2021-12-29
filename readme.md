@@ -640,7 +640,6 @@ clear
 echo "sending mail from ""$domain"" to ""$2"""
 sudo tail -n10 /var/log/exim_mainlog | grep "$2"&
 }
-}
 ```
 
 
