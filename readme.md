@@ -329,7 +329,7 @@ auto_ssl_search()
   else
       echo -e "\n$1 does not point here, it points to  $(dig $1 +short)"
   fi
-  curl -sLA "foo"  https://store.cpanel.net/json-api/ssl/certificate/order/$(grep ID /var/cpanel/logs/autossl/*/txt | grep cottagediy.com | tail -n1 | awk {'print $12'} |sed 's/[^0-9]*//g') | jq
+  curl -sLA "foo"  https://store.cpanel.net/json-api/ssl/certificate/order/$(grep ID /var/cpanel/logs/autossl/*/txt | grep $1 | tail -n1 | awk {'print $12'} |sed 's/[^0-9]*//g') | jq
   curl -v --stderr - https://www.$1 | grep -A10 "Server certificate" 
 }
 ```
