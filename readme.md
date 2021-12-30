@@ -1080,6 +1080,24 @@ for i in theme plugin user ; do echo $i for $(wp option get siteurl --skip-{plug
 }
 ```
 
+tests if a users email already exists, if it does, updates the pass, if it does not, creates it
+
+
+```
+test_user()
+{
+ newpass=$(openssl rand -base64 16 | tr -cd '[:alnum:]')
+if [[ $(wp user list | grep $1 | awk {'print $4'} ) = $1 ]]; 
+then
+  wp user update $1 --user_pass=${newpass};
+  echo $newpass 
+else
+  wp user create test --role=administrator $1 --skip-{plugins,themes}
+fi
+}
+```
+
+
 loop through each plugin, and curl site. replace plugins with theme for themes.  
 ```
 {
