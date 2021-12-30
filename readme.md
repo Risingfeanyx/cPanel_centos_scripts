@@ -966,12 +966,12 @@ slow_query()
   echo "slow_query_log_file = /var/log/slowqueries" >> /etc/my.cnf
   chown mysql:mysql /var/log/slowqueries
   systemctl restart mysqld
-  at now + $1 hour <<END
+  at now + $1 hours <<END
 cp -fv /etc/my.cnf{.bak_$(date +%F),}
 systemctl restart mysqld 
-cat /var/log/slowqueries  |   mail -s "SQL Slow Query logs for $(hostname)" -r root@"$(hostname)" "$2"
+echo "Slow Query Logging has been disabled and is saved to /var/log/slowqueries"  |   mail -s "SQL Slow Query logs for $(hostname)" -r mysql@"$(hostname)" "$2"
 END
-}	
+}
 ```
 
 
