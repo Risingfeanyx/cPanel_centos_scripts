@@ -1057,7 +1057,10 @@ done
 Does require knowledge of the  <a href="https://developer.wordpress.org/cli/commands/" 
 target="_blank">WP CLI</a>
 
-
+https://developer.wordpress.org/cli/commands/cache/flush/
+https://developer.wordpress.org/cli/commands/db/repair/
+https://developer.wordpress.org/cli/commands/core/download/
+https://developer.wordpress.org/cli/commands/core/verify-checksums/
 
 
 
@@ -1065,16 +1068,15 @@ target="_blank">WP CLI</a>
 Wordpress general info/backup crit files/replaces core files
 ```
 {
+wp db export ~/$(date -I).$(grep -i DB_NAME wp-config.php | awk {'print $2'} | tr -cd '[:alnum:]._-').sql --skip-{plugins,themes}&
 wp cache flush&
 wp db repair&
 #wp core download --version=$(wp core version) --force
 wp core verify-checksums&
-wp db export --skip-{plugins,themes}
 for i in .htaccess php.ini  wp-config.php ; do cp $i{,.$(date +%F).bak}; done
 clear
-awk -F"'" '/DB_/{print $4}' wp-config.php;
+awk -F"'" '/DB_/{print $4}' wp-config.php | head -n3
 for i in theme plugin user ; do echo $i for $(wp option get siteurl --skip-{plugins,themes} );  wp $i list --skip-{plugins,themes} ; done
-mv *.sql ~/
 }
 ```
 
