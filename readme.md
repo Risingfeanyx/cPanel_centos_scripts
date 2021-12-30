@@ -787,26 +787,32 @@ fi
 Go <a href="https://support.cpanel.net/hc/en-us/articles/360058051173-What-is-the-anonymousfox-address-on-my-system-" target="_blank">here</a>
 
 
-<h1>Non Root</h1>
+Checks for conns for domains
+As non root user
 
-#checks for all conns in cpanel acess logs
 ```
 domain_access()
 {
 echo "IP_Address Date/Time Site_Page for $1" | column -t
-cat ~/access-logs/$1 | awk {'print $1,$4,$7'} | uniq -c | sort -hr
+cat ~/access-logs/$1* | awk {'print $1,$4,$7'} | uniq | sort -hr
+echo -e "\nIndividual IPs that have accessed $1"
+cat  ~/access-logs/$1* | awk {'print $1'} | uniq
 }
 ```
 
-#Same thing, but for all domains
+As root user 
+
 ```
-all_domain_access()
+domain_access()
 {
-echo "$1" | column -t
-cat ~/access-logs/*.com | awk {'print $1,$4,$7'} | uniq -c | sort -hr
+echo "IP_Address Date/Time Site_Page for $1" | column -t
+cat /home/*/access-logs/$1* | awk {'print $1,$4,$7'} | uniq | sort -hr
+echo -e "\nIndividual IPs that have accessed $1"
+cat  /home/*/access-logs/$1* | awk {'print $1'} | uniq
 }
-clear ; for i in $(ls -lah ~/access-logs/ | awk {'print $9'}); do all_domain_access $i  ; done
 ```
+
+<h1>Non Root</h1>
 
 
 #view bots on all sites 
