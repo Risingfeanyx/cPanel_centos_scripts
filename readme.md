@@ -1059,8 +1059,9 @@ find_php_info()
 echo "<?php phpinfo(); ?>" >>phpinfo.php
 echo $1
 echo "Directive LocalValue MasterValue" | column -t
-curl -ksLA "foo" $1/phpinfo.php |  lynx -stdin -dump | grep -E 'doc_root|memory_limit|allow_url_fopen|disable_functions|display_errors|>error_log<|max_execution_time|memory_limit' | sort -u 
+curl -ksLA "foo" $1/phpinfo.php |  lynx -stdin -dump | grep -E "doc_root|memory_limit|allow_url_fopen|disable_functions|display_errors|error_log|max_execution_time|memory_limit" | sort -u 
 }
+
 ```
 
 
