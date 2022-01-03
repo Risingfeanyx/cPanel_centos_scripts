@@ -57,20 +57,24 @@ clear
 in progress, watches common logs for string. todo: enable choosing local variables, echo logname
 
 ```
+
 watch_logs()
 {
-  apache="/usr/local/apache/domlogs/*"
-  apache_err=/usr/local/apache/logs/error_log
-  cpanel_error=/usr/local/cpanel/logs/error_log
-  cpanel=/usr/local/cpanel/logs/access_log
-  email_login=/var/log/maillog
-  exim=/var/log/exim_mainlog
-  nginx=/var/log/nginx/access.log
-  nginx_err=/var/log/nginx/error.log
-  ftp=/var/log/messages
-  ssh=/var/log/secure
-  clear
-  tail -fn1 "$apache" $apache_err $cpanel_error $cpanel $email_login $exim  $nginx $nginx_err "$ssh" $ftp | grep "$1"
+clear
+cat << END
+  Apache Access /usr/local/apache/domlogs/* 
+  Apache Error Log /usr/local/apache/logs/error_log
+  cPanel Access /usr/local/cpanel/logs/access_log
+  cPanel Error Log /usr/local/cpanel/logs/error_log
+  cPanel Logins  /usr/local/cpanel/logs/login_log
+  Email Logins /var/log/maillog
+  Exim /var/log/exim_mainlog
+  Nginx /var/log/nginx/access.log
+  Nginx Error Logs /var/log/nginx/error.log
+  SSH/FTP /var/log/messages
+  SSH Secure /var/log/messages
+END
+tail -f /usr/local/apache/domlogs/* /usr/local/apache/logs/error_log /usr/local/cpanel/logs/access_log /usr/local/cpanel/logs/error_log /usr/local/cpanel/logs/login_log /var/log/maillog /var/log/exim_mainlog  /var/log/nginx/access.log /var/log/nginx/error.log /var/log/messages /var/log/messages | grep $1
 }
 ```
 
