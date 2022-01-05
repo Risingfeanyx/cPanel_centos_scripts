@@ -327,21 +327,24 @@ Search cpanel logs for most recnet autossl order, check ssl status for single do
 ```
  auto_ssl_search()
 {
-  if [ "$(dig $1 +short)" == "$(hostname -i )" ]; then
-    echo -e "\n$1 points here $(hostname -i)"
-    echo "AutoSSL Logs for $1"
-    grep -EhC3 "$1|error|WARN" /var/cpanel/logs/autossl/*/txt | tail -n5
-    echo "SSL Status for $1"
-    curl -v --stderr - https://www.$1 | grep -A10 "Server certificate"
+domain=$1
+  if [ "$(dig $domain +short)" == "$(ipusage | grep $domain | awk {'print $1'}
+)" ]; then
+    echo -e "\n$domain points here $(ipusage | grep $domain | awk {'print $1'}
+)"
+    echo "AutoSSL Logs for $domain"
+    grep -EhC3 "$domain|error|WARN" /var/cpanel/logs/autossl/*/txt | tail -n5
+    echo "SSL Status for $domain"
+    curl -v --stderr - https://www.$domain | grep -A10 "Server certificate"
 
   elif [[ $? != 0 ]]; then
-    echo -e "\n$1 is not pointed anywhere, check registration"
-    whois $1| grep -E "Domain Status|Registrar"
+    echo -e "\n$domain is not pointed anywhere, check registration \n whois.com/whois/$domain"
+    whois $domain| grep -E "Domain Status|Expiration|No match"
 
   else
-      echo -e "\n$1 does not point here, it points to  $(dig $1 +short)"
-    echo "SSL Status for $1"
-    curl -v --stderr - https://www.$1 | grep -A10 "Server certificate"
+      echo -e "\n$domain does not point here, it points to  $(dig $domain +short)"
+    echo "SSL Status for $domain"
+    curl -v --stderr - https://www.$domain | grep -A10 "Server certificate"
   fi
 }
 ```
