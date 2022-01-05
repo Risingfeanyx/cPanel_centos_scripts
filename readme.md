@@ -361,6 +361,22 @@ grep alwaysredirecttossl /var/cpanel/cpanel.config
 grep selfsigned_generation_for_bestavailable_ssl_install /var/cpanel/cpanel.config
 )
 ```
+AutoSSL not generating certs for service subdomains?
+
+Make sure Service subdomain override [?] is disabled
+
+
+Allow users to create cpanel, webmail, webdisk, cpcalendars, cpcontacts, and whm subdomains that override automatically generated service subdomains
+
+
+```
+(
+cp -v /var/cpanel/cpanel.config{,.bak_$(date +%F)}
+sed -i "s/proxysubdomainsoverride=1
+/proxysubdomainsoverride=0/g" /var/cpanel/cpanel.config
+)
+```
+
 
 
 ```
