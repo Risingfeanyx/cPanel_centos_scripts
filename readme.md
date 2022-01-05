@@ -387,11 +387,13 @@ sed -i "s/proxysubdomainsoverride=1/proxysubdomainsoverride=0/g" /var/cpanel/cpa
 )
 ```
 
+check status of recent autossl orders
 ```
 (
-clear
 if  grep "order item ID" /var/cpanel/logs/autossl/"$(date -I)"*/txt | awk {'print $8,$12'} ; 
 then 
+clear
+whmapi1 get_autossl_providers | grep -E "Sectigo|LetsEncrypt"
 echo "SSL orders from $(date -I)"
 grep "order item ID" /var/cpanel/logs/autossl/"$(date -I)"*/txt | awk {'print $8,$12'}
 read -rp "Need to check the status of a cPanel SSL order? Paste in the above ID(s)" cert
