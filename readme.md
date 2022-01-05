@@ -327,14 +327,21 @@ Search cpanel logs for most recnet autossl order, check ssl status for single do
 ```
  auto_ssl_search()
 {
-  grep -EhC3 "$1|error|WARN" /var/cpanel/logs/autossl/*/txt | tail -n5
   if [ "$(dig $1 +short)" == "$(hostname -i )" ]; then
-      echo -e "\n$1 points here $(hostname -i)"
+    echo -e "\n$1 points here $(hostname -i)"
+    echo "AutoSSL Logs for $1"
+    grep -EhC3 "$1|error|WARN" /var/cpanel/logs/autossl/*/txt | tail -n5
+    echo "SSL Status for $1"
+    curl -v --stderr - https://www.$1 | grep -A10 "Server certificate"
+
+  elif [[ $? != 0 ]]; then
+    echo -e "\n$1 is not pointed anywhere"
+
   else
       echo -e "\n$1 does not point here, it points to  $(dig $1 +short)"
+    echo "SSL Status for $1"
+    curl -v --stderr - https://www.$1 | grep -A10 "Server certificate"
   fi
-  curl -sLA "foo"  https://store.cpanel.net/json-api/ssl/certificate/order/$(grep ID /var/cpanel/logs/autossl/*/txt | grep $1 | tail -n1 | awk {'print $12'} |sed 's/[^0-9]*//g') | jq
-  curl -v --stderr - https://www.$1 | grep -A10 "Server certificate" 
 }
 ```
 
