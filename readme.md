@@ -383,6 +383,12 @@ sed -i "s/proxysubdomainsoverride=1/proxysubdomainsoverride=0/g" /var/cpanel/cpa
 )
 ```
 
+```
+(
+read -erp  "Need to check the status of a cPanel SSL order? " cert
+curl -sLA "foo"  https://store.cpanel.net/json-api/ssl/certificate/order/$cert | jq
+)
+```
 
 
 ```
