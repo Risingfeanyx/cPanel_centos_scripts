@@ -396,8 +396,10 @@ clear
 whmapi1 get_autossl_providers | grep -E "Sectigo|LetsEncrypt"
 echo "SSL orders from $(date -I)"
 grep "order item ID" /var/cpanel/logs/autossl/"$(date -I)"*/txt | awk {'print $8,$12'}
-read -rp "Need to check the status of a cPanel SSL order? Paste in the above ID(s)" cert
-curl -sLA "foo"  https://store.cpanel.net/json-api/ssl/certificate/order/"$cert" | jq
+read -rp "Need to check the status of a cPanel SSL order? Paste in the above ID(s) with a space between each ID: " cert
+for i in $cert; do 
+curl -sLA "foo"  https://store.cpanel.net/json-api/ssl/certificate/order/"$i" | jq
+done
 else "no new certs for today"
 fi
 )
