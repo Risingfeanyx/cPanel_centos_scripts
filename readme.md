@@ -335,7 +335,8 @@ Search cpanel logs for most recnet autossl order, check ssl status for single do
     curl -v --stderr - https://www.$1 | grep -A10 "Server certificate"
 
   elif [[ $? != 0 ]]; then
-    echo -e "\n$1 is not pointed anywhere"
+    echo -e "\n$1 is not pointed anywhere, check registration"
+    whois $1| grep -E "Domain Status|Registrar"
 
   else
       echo -e "\n$1 does not point here, it points to  $(dig $1 +short)"
