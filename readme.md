@@ -389,8 +389,15 @@ sed -i "s/proxysubdomainsoverride=1/proxysubdomainsoverride=0/g" /var/cpanel/cpa
 
 ```
 (
-read -erp  "Need to check the status of a cPanel SSL order? " cert
-curl -sLA "foo"  https://store.cpanel.net/json-api/ssl/certificate/order/$cert | jq
+clear
+if  grep "order item ID" /var/cpanel/logs/autossl/"$(date -I)"*/txt | awk {'print $8,$12'} ; 
+then 
+echo "SSL orders from $(date -I)"
+grep "order item ID" /var/cpanel/logs/autossl/"$(date -I)"*/txt | awk {'print $8,$12'}
+read -rp "Need to check the status of a cPanel SSL order? Paste in the above ID(s)" cert
+curl -sLA "foo"  https://store.cpanel.net/json-api/ssl/certificate/order/"$cert" | jq
+else "no new certs for today"
+fi
 )
 ```
 
