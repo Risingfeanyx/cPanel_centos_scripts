@@ -372,8 +372,7 @@ Allow users to create cpanel, webmail, webdisk, cpcalendars, cpcontacts, and whm
 ```
 (
 cp -v /var/cpanel/cpanel.config{,.bak_$(date +%F)}
-sed -i "s/proxysubdomainsoverride=1
-/proxysubdomainsoverride=0/g" /var/cpanel/cpanel.config
+sed -i "s/proxysubdomainsoverride=1/proxysubdomainsoverride=0/g" /var/cpanel/cpanel.config
 )
 ```
 
