@@ -1164,7 +1164,6 @@ fi
 
 Getting a crit plugin error?   
 ```
-
 (
 db=~/plugins.$(date +%F).sql
 site=$(wp option get siteurl --skip-{plugins,themes})
@@ -1178,7 +1177,6 @@ then
     do echo "disabling $i for $site"
     wp plugin deactivate "$i" --skip-{plugins,themes}
     echo "testing $site"
-    curl -skLA "foo" "$site" |   lynx -stdin -dump
       if [[ "$(curl -skLA "foo" "$site" |   lynx -stdin -dump | head -n1 | grep -v "There has been a critical error on this website")" ]]; then
     echo "$i was breaking the site"'!'
     echo "backup located at $db"
@@ -1189,7 +1187,6 @@ then
       fi
 
 )
-
 ```
 
 Reset all your Wordpress users passwords. creates a database backup jic
