@@ -1163,7 +1163,10 @@ fi
 
 
 Getting a crit plugin error?   
+TODO: reactivate plugin after deactivating if it is not the culprit
+echo correct plugin 
 ```
+
 (
 db=~/plugins.$(date +%F).sql
 site=$(wp option get siteurl --skip-{plugins,themes})
@@ -1180,13 +1183,15 @@ then
       if [[ "$(curl -skLA "foo" "$site" |   lynx -stdin -dump | head -n1 | grep -v "There has been a critical error on this website")" ]]; then
     echo "$i was breaking the site"'!'
     echo "backup located at $db"
+    else wp plugin activate "$i" --skip-{plugins,themes}
     fi
     done
        else
-        echo "$site working"
+        echo "$site not throwing critical errors"
       fi
 
 )
+
 ```
 
 Reset all your Wordpress users passwords. creates a database backup jic
