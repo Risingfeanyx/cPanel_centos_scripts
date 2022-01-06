@@ -1162,18 +1162,34 @@ fi
 ```
 
 
-loop through each plugin, and curl site. replace plugins with theme for themes.  
+Getting a crit plugin error?   
 ```
-{
-wp db export plugins.$(date +%F).sql
+
+(
+db=~/plugins.$(date +%F).sql
+site=$(wp option get siteurl --skip-{plugins,themes})
+
 clear
-for i in $(wp plugin list --skip-{plugins,themes} | awk {'print $1'})
- do echo "disabling $i for $(wp option get siteurl)"
- wp plugin deactivate "$i" --skip-{plugins,themes}
-read -n 1 -s -r -p "Try  $(wp option get siteurl) , then press ENTER to continue"
- done
- wp db import plugins.$(date +%F).sql
-}
+if [ "$(curl -skLA "foo" "$site" |   lynx -stdin -dump | head -n1 | grep "There has been a critical error on this website")" ];
+then
+    echo "$site failing"
+    wp db export "$db"
+    for i in $(wp plugin list --skip-{plugins,themes} --field=name) 
+    do echo "disabling $i for $site"
+    wp plugin deactivate "$i" --skip-{plugins,themes}
+    echo "testing $site"
+    curl -skLA "foo" "$site" |   lynx -stdin -dump
+      if [[ "$(curl -skLA "foo" "$site" |   lynx -stdin -dump | head -n1 | grep -v "There has been a critical error on this website")" ]]; then
+    echo "$i was breaking the site"'!'
+    echo "backup located at $db"
+    fi
+    done
+       else
+        echo "$site working"
+      fi
+
+)
+
 ```
 
 Reset all your Wordpress users passwords. creates a database backup jic
