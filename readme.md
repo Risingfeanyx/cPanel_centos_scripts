@@ -489,7 +489,7 @@ FROM information_schema.TABLES
 GROUP BY table_schema;
 EOF
 echo -e "\n Home Directories"
-find /home*/ -size +500M -exec ls -hsS1 {} +
+find /home*/  -not -path "/home/virtfs/*" -size +500M -exec ls -hsS1 {} +
 df -h
 }
 ```
