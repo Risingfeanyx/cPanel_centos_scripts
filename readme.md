@@ -1191,6 +1191,26 @@ then
 
 ```
 
+Test site speeds with each plug deactivated
+
+```
+(
+clear
+db=~/plugins.$(date +%F).sql
+site=$(wp option get siteurl --skip-{plugins,themes})
+    echo "$site failing"
+    wp db export "$db"
+    for i in $(wp plugin list --skip-{plugins,themes} --field=name) ;
+    do echo "disabling $i for $site"
+    wp plugin deactivate "$i" --skip-{plugins,themes} --quiet
+    echo "testing $site with $i deactivated "
+curl -kLA "foo" "$site" |   lynx -stdin -dump | head -n1
+    wp plugin activate "$i" --quiet
+done
+    wp db import $db
+)
+```
+
 Reset all your Wordpress users passwords. creates a database backup jic
 ```
 {
