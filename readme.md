@@ -1168,7 +1168,7 @@ Getting a crit plugin error?
 db=~/plugins.$(date +%F).sql
 
 clear
-if [ "$( curl -skLA "foo" "$(wp option get siteurl --skip-{plugins,themes})" |   lynx -stdin -dump | grep "There has been a critical error on your website.")" ];
+if [ "$( curl -skLA "foo" "$(wp option get siteurl --skip-{plugins,themes})" |   lynx -stdin -dump | grep "There has been a critical error")" ];
 then
     echo "$(wp option get siteurl --skip-{plugins,themes}) failing"
     wp db export "$db"
@@ -1176,7 +1176,7 @@ then
     do echo "disabling $i for $(wp option get siteurl --skip-{plugins,themes})"
     wp plugin deactivate "$i" --skip-{plugins,themes}
     echo "testing $(wp option get siteurl --skip-{plugins,themes})"
-      if [[ "$(curl -skLA "foo" "$(wp option get siteurl --skip-{plugins,themes})" |   lynx -stdin -dump | grep "There has been a critical error on your website.")" ]]; then
+      if [[ "$(curl -skLA "foo" "$(wp option get siteurl --skip-{plugins,themes})" |   lynx -stdin -dump | grep "There has been a critical error")" ]]; then
     echo  wp plugin activate "$i" --skip-{plugins,themes}
     else
     echo "$i was breaking the site"'!'
