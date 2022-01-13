@@ -1132,7 +1132,7 @@ https://developer.wordpress.org/cli/commands/core/verify-checksums/
 Wordpress general info/backup crit files/replaces core files
 ```
 {
-wp db export ~/$(date -I).$(grep -i DB_NAME wp-config.php | awk {'print $3'} | tr -cd '[:alnum:]._-').sql --skip-{plugins,themes}&
+ wp db export ~/$(date -I).$(awk -F"'" '/DB_NAME/{print $4}' wp-config.php).sql --skip-{plugins,themes}&
 wp cache flush&
 wp db repair&
 #wp core download --version=$(wp core version) --force
