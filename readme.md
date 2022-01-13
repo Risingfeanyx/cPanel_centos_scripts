@@ -1166,29 +1166,28 @@ Getting a crit plugin error?
 ```
 (
 db=~/plugins.$(date +%F).sql
-site=$(wp option get siteurl --skip-{plugins,themes})
 
 clear
-if [ "$(curl -skLA "foo" "$site" |   lynx -stdin -dump | head -n1 | grep "There has been a critical error on this website")" ];
+if [ "$( curl -skLA "foo" "$(wp option get siteurl --skip-{plugins,themes})" |   lynx -stdin -dump | grep "There has been a critical error on your website.")" ];
 then
-    echo "$site failing"
+    echo "$(wp option get siteurl --skip-{plugins,themes}) failing"
     wp db export "$db"
     for i in $(wp plugin list --skip-{plugins,themes} --field=name) 
-    do echo "disabling $i for $site"
+    do echo "disabling $i for $(wp option get siteurl --skip-{plugins,themes})"
     wp plugin deactivate "$i" --skip-{plugins,themes}
-    echo "testing $site"
-      if [[ "$(curl -skLA "foo" "$site" |   lynx -stdin -dump | head -n1 | grep -v "There has been a critical error on this website")" ]]; then
+    echo "testing $(wp option get siteurl --skip-{plugins,themes})"
+      if [[ "$(curl -skLA "foo" "$(wp option get siteurl --skip-{plugins,themes})" |   lynx -stdin -dump | grep "There has been a critical error on your website.")" ]]; then
+    echo  wp plugin activate "$i" --skip-{plugins,themes}
+    else
     echo "$i was breaking the site"'!'
-    break
     echo "backup located at $db"
-    else wp plugin activate "$i" --skip-{plugins,themes}
+    break
     fi
     done
        else
-        echo "$site not throwing critical errors"
+        echo "$(wp option get siteurl --skip-{plugins,themes}) not throwing critical errors"
       fi
 )
-
 ```
 
 Test site speeds with each plug deactivated
