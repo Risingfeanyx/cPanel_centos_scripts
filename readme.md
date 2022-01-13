@@ -1397,25 +1397,58 @@ vps_enter()
 
 
 
-
-#Work in progress, will implement databases
-clones data from one folder to another
-doc_mover Origin Destination
-
+Wordpress site cloner
+#will implement db backup templates for other CMS 
 ```
-doc_mover()
+	wp_clone()
 	{
+	destination_root=$1
+	site_backup=$(basename "$PWD").$(date -I).tar.gz
+	db_backup=$(awk -F"'" '/DB_NAME/{print $4}' wp-config.php).$(date -I).sql
+	db_pass=$(awk -F"'" '/DB_PASSWORD/{print $4}' wp-config.php)
+	db_name=$(awk -F"'" '/DB_NAME/{print $4}' wp-config.php)
+	db_user=$(awk -F"'" '/DB_USER/{print $4}' wp-config.php)
 	clear
-	mkdir ~/"$2"
-	cd "$1" || exit
-	tar -cvzf "OG.$1.$(date +%F).tar.gz" *
-	clear
-	rsync -azPv  "OG.$1.$(date +%F).tar.gz" ~/"$2"
-	cd ~/"$2" || exit
-	tar -xvzf "OG.$1.$(date +%F).tar.gz"
-	clear
-	diff ~/"$1" ~/"$2"
-	cd || exit
+	##test if WP install
+		if test -f wp-config.php;
+		then
+		echo "This is a Wordpress site"
+	echo "backing up database to $db_backup"
+	     mysqldump -p"$db_pass" -u "$db_user" "$db_name" > "$db_backup"
+	 echo "zipping up $(pwd)"
+		 tar -caf "$site_backup" *
+	echo "copying everything over to $1"
+		rsync -azvP "$site_backup" "$1"
+		cd "$1" || echo -e "Correct Document root? \n$PWD"
+		tar -xf "$site_backup"
+
+	##Create databases
+
+	(
+	n="$(awk -F"'" '/DB_NAME/{print $4}' wp-config.php)_clone"
+	p="$(pwmake 80)"
+	uapi Mysql create_database name="${n}"
+	uapi Mysql create_user name="${n}" password="${p}" && uapi Mysql set_privileges_on_database user="${n}" database="${n}" privileges='ALL PRIVILEGES'
+
+
+	##update wp-config
+
+	db_pass=$(awk -F"'" '/DB_PASSWORD/{print $4}' wp-config.php)
+	sed -i.pre_clone "s/$db_name/${n}/g" wp-config.php
+	sed -i "s/$db_user/${n}/g" wp-config.php
+	sed -i "s/$db_pass/$p/g" wp-config.php
+
+    ##manually sets password to match wp-config
+    uapi   Mysql set_password  user="$(awk -F"'" '/DB_USER/{print $4}' wp-config.php)" password="$(awk -F"'" '/DB_PASSWORD/{print $4}' wp-config.php)"
+    
+	mysql -p"$(awk -F"'" '/DB_PASSWORD/{print $4}' wp-config.php)" -u "$(awk -F"'" '/DB_USER/{print $4}' wp-config.php)" "$(awk -F"'" '/DB_NAME/{print $4}' wp-config.php)" < "$db_backup"
+
+	)
+
+
+	else
+	   echo "This is NOT a Wordpress install"
+	fi
 	}
 ```
 
