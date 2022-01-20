@@ -405,6 +405,26 @@ fi
 )
 ```
 
+Want to see if your server qualifies for Lets Encrypt?
+
+https://docs.cpanel.net/knowledge-base/security/guide-to-ssl/#autossl-providers
+https://letsencrypt.org/docs/rate-limits/
+
+```
+(
+subdomain_count=$(for user in $(awk -F: '{print $1}' /etc/trueuserowners); do uapi --user="$user" DomainInfo list_domains; done | awk '/ -/ || /sub_domain/{print $2}' | wc -l)
+domain_count=$(for a in /var/named/*.db; do echo $(basename $a .db); done | wc -l)
+clear
+whmapi1 get_autossl_providers | grep -E "Sectigo|LetsEncrypt"
+if (( "$subdomain_count" <= "100" )) && (( "$domain_count" <= "50" ))
+then 
+echo -e "there are $subdomain_count Subdomains and $domain_count Domains  \n Let's Encrypt"
+else
+echo "Let's Not Encrypt"
+fi
+)
+
+```
 
 ```
 ```
