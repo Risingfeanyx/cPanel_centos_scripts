@@ -412,7 +412,7 @@ https://letsencrypt.org/docs/rate-limits/
 
 ```
 (
-subdomain_count=$(for user in $(awk -F: '{print $1}' /etc/trueuserowners); do uapi --user="$user" DomainInfo list_domains; done | awk '/ -/ || /sub_domain/{print $2}' | wc -l)
+subdomain_count=$(for user in $(awk -F: '{print $1}' /etc/trueuserowners); do uapi --user="$user" DomainInfo list_domains; done | awk '/ -/ || /main_domain/{print $2}'| wc -l)
 domain_count=$(for a in /var/named/*.db; do echo $(basename $a .db); done | wc -l)
 clear
 whmapi1 get_autossl_providers | grep -E "Sectigo|LetsEncrypt"
@@ -423,6 +423,7 @@ else
 echo "Let's Not Encrypt"
 fi
 )
+
 
 ```
 
