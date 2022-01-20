@@ -412,19 +412,20 @@ https://letsencrypt.org/docs/rate-limits/
 
 ```
 (
+GREEN='\033[0;32m'
+NC='\033[0m' # No Color
+RED='\033[0;31m'
 subdomain_count=$(for user in $(awk -F: '{print $1}' /etc/trueuserowners); do uapi --user="$user" DomainInfo list_domains; done | awk '/ -/ || /main_domain/{print $2}'| wc -l)
 domain_count=$(for a in /var/named/*.db; do echo $(basename $a .db); done | wc -l)
 clear
 whmapi1 get_autossl_providers | grep -E "Sectigo|LetsEncrypt"
 if (( "$subdomain_count" <= "100" )) && (( "$domain_count" <= "50" ))
 then 
-echo -e "there are $subdomain_count Subdomains and $domain_count Domains  \n Let's Encrypt"
+echo -e "$domain_count Domains \n$subdomain_count Subdomains \n ${GREEN} Let's Encrypt! ${NC}\n"
 else
-echo "Let's Not Encrypt"
+echo -e "$domain_count Domains \n$subdomain_count Subdomains \n ${RED} Let's not Encrypt! ${NC} \n see https://letsencrypt.org/docs/rate-limits/ for rate limits"
 fi
 )
-
-
 ```
 
 ```
