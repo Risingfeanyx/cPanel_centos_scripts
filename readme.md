@@ -1197,7 +1197,7 @@ Test site speeds with each plug deactivated
 clear
 db=~/plugins.$(date +%F).sql
 site=$(wp option get siteurl --skip-{plugins,themes})
-    echo "$site failing, exporting database "
+    echo "Testing $site speeds"
     wp db export "$db"
     for i in $(wp plugin list --skip-{plugins,themes} --field=name) ;
     do echo "disabling $i for $site"
