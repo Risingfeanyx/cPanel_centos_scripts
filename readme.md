@@ -336,13 +336,10 @@ domain=$1
     grep -EhC3 "$domain|error|WARN" /var/cpanel/logs/autossl/*/txt | tail -n5
     echo "SSL Status for $domain"
     curl -v --stderr - https://www.$domain | grep -A10 "Server certificate"
-
-  elif [[ $? != 0 ]]; then
-    echo -e "\n$domain is not pointed anywhere, check registration \n whois.com/whois/$domain"
-    whois $domain| grep -E "Domain Status|Expiration|No match"
-
   else
       echo -e "\n$domain does not point here, it points to  $(dig $domain +short)"
+      echo "https://www.whatsmydns.net/#A/$domain"
+      curl ipinfo.io/$(dig a $domain +short)
     echo "SSL Status for $domain"
     curl -v --stderr - https://www.$domain | grep -A10 "Server certificate"
   fi
