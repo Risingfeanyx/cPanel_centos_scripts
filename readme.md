@@ -1423,6 +1423,44 @@ Laravel ✓
 
 ```
 
+in progress
+```
+
+	(
+#Wordpress DB creds
+  wp_db_backup=$(awk -F"'" '/DB_NAME/{print $4}' wp-config.php).$(date -I).sql
+  wp_db_pass=$(awk -F"'" '/DB_PASSWORD/{print $4}' wp-config.php)
+  wp_db_name=$(awk -F"'" '/DB_NAME/{print $4}' wp-config.php)
+  wp_db_user=$(awk -F"'" '/DB_USER/{print $4}' wp-config.php)
+#Prestashop DB creds
+
+ps_db_backup=$(awk -F"'" '/DB_NAME/{print $4}' config/settings.inc.php).$(whoami).$(date +%F).sql"
+ps_db_pass=$(awk -F"'" '/DB_PASSWD_/{print $4}' config/settings.inc.php)"
+ps_db_name=$(awk -F"'" '/DB_NAME/{print $4}' config/settings.inc.php)
+ps_db_user=$(awk -F"'" '/DB_USER/{print $4}' config/settings.inc.php)
+
+	#Joomla DB creds
+
+	#Laravel DB creds 
+clear
+##test if WP install
+	if test -f wp-config.php;
+	then
+	echo "This is a Wordpress site"
+echo "backing up database to $wp_db_backup"
+     mysqldump -p"$wp_db_pass" -u "$wp_db_user" "$wp_db_name" > "$wp_db_backup"
+     fi
+##test if Prestashop install
+      if test -f "config/settings.inc.php"; then echo "This is Prestashop $(awk -F"'" '/PS_VERSION/{print $4}' config/settings.inc.php)"
+	echo "backing up database to $ps_db_backup"
+     mysqldump -p"$ps_db_pass" -u "$ps_db_user" "$ps_db_name" > "$ps_db_backup"
+     fi
+##Test if Joomla install
+ if test -f "configuration.php"; then 
+       echo "This is a Joomla install"
+       fi
+)
+```
 
 
 <h2>vz</h2>
