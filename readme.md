@@ -961,7 +961,7 @@ to restore OG file
 ```
 	{
 	clear
-	tail -10 /var/lib/mysql/*.err
+	tail -n10 /var/lib/mysql/*.err
 	systemctl stop mysql;
 	mv /var/lib/mysql/ib_logfile0 /var/lib/mysql/ib_logfile0.bak;
 	mv /var/lib/mysql/ib_logfile1 /var/lib/mysql/ib_logfile1.bak;
