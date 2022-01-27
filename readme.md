@@ -692,15 +692,17 @@ Test/generates DNS information for all domains on server
 
 ```
 
+
 {
 clear
 for i in $(for a in /var/named/*.db; do echo $(basename "$a" .db); done)
 do echo -e " \n $i"
 curl -Is $i | head -n 1
-dig  any $i
+dig  any $i +short
 for d in A CNAME MX NS PTR SOA SRV TXT CAS ; do  echo https://www.whatsmydns.net/#$d/"$i" ; done 
 done
 }
+
 
 
 ```
