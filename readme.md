@@ -321,6 +321,21 @@ auto_ssl_kick()
 }
 ```
 
+rename existing cert, re-runs autossl service
+
+```
+domain_ssl_kick()
+{
+domain=$1
+  clear
+  mv /var/cpanel/ssl/apache_tls/$domain/ /var/cpanel/ssl/apache_tls/$domain.$(tr -dc A-Za </dev/urandom | head -c 5).$(date -I)
+  /usr/local/cpanel/bin/autossl_check --user=$(/scripts/whoowns $domain)
+  grep -EhC3 "$domain|error|WARN" /var/cpanel/logs/autossl/*/txt | tail -n5
+  echo "SSL Status for $domain"
+  curl -v --stderr - https://www.$domain | grep -A10 "Server certificate"
+}
+```
+
 
 Search cpanel logs for most recnet autossl order, check ssl status for single domain
 
