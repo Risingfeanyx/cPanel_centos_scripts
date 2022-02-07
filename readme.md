@@ -1208,17 +1208,18 @@ Getting a crit plugin error?
 ```
 (
 db=~/plugins.$(date +%F).sql
+domain=$(wp option get siteurl --skip-{plugins,themes} | sed 's/https\?:\/\///')
 
 clear
-if [ "$( curl -skLA "foo" "$(wp option get siteurl --skip-{plugins,themes})" |   lynx -stdin -dump | grep "There has been a critical error")" ];
+if [ "$( curl -skLA "foo" "$domain" |   lynx -stdin -dump | grep "There has been a critical error")" ];
 then
-    echo "$(wp option get siteurl --skip-{plugins,themes}) failing"
+    echo "$domain failing"
     wp db export "$db"
     for i in $(wp plugin list --skip-{plugins,themes} --field=name) 
-    do echo "disabling $i for $(wp option get siteurl --skip-{plugins,themes})"
+    do echo "disabling $i for $domain"
     wp plugin deactivate "$i" --skip-{plugins,themes}
-    echo "testing $(wp option get siteurl --skip-{plugins,themes})"
-      if [[ "$(curl -skLA "foo" "$(wp option get siteurl --skip-{plugins,themes})" |   lynx -stdin -dump | grep "There has been a critical error")" ]]; then
+    echo "testing $domain"
+      if [[ "$(curl -skLA "foo" "$domain" |   lynx -stdin -dump | grep "There has been a critical error")" ]]; then
     echo  wp plugin activate "$i" --skip-{plugins,themes}
     else
     echo "$i was breaking the site"'!'
@@ -1227,7 +1228,7 @@ then
     fi
     done
        else
-        echo "$(wp option get siteurl --skip-{plugins,themes}) not throwing critical errors"
+        echo "$domain not throwing critical errors"
       fi
 )
 ```
