@@ -509,27 +509,31 @@ imunify-antivirus malware user list
 
 See <a href="https://unix.stackexchange.com/a/194058" target="_blank">this</a> for more info on clearing the journal logs based on size/days in usage
 
-Uses find, largest files over 500M
+largest files over 500M
 
 ```
 {
+	GREEN='\033[0;32m'
+	NC='\033[0m' # No Color
 clear
-echo -e "These are the largest files over 500M  for $(hostname) as of $(date)"
+echo -e "These are the largest files over 500M for $(hostname) as of $(date)"
 df -hT -xtmpfs -xdevtmpfs
-echo -e "\n Logs"
+echo -e "\n${GREEN} Logs ${NC}"
 find /var/log/ -size +500M -exec ls -hsS1 {} +
 journalctl --disk-usage
-echo -e "\n Backups"
+echo -e "Run the following to clear logs older then X days \njournalctl --vacuum-time=Xd"
+echo -e "\n${GREEN} Backups ${NC}"
 find /backup*/ -size +500M -exec ls -hsS1 {} +
-find /* -type f -name "*.tar.gz" -size +1G -exec du -sh {} \; | grep -vE "(/var|/usr|/root|/opt|cpbackup|\.cpanm|\.cpan)" |sort -h
-echo -e "\n Databases"
+echo -e "\n${GREEN}Backups outside of /backup directory${NC}"
+find /home/ -type f \( -iname \*.tar.gz -o -iname \*.zip \) -size +500M -exec du -sh {} \; | grep -vE "(/var|/usr|/root|/opt|cpbackup|\.cpanm|\.cpan)" |sort -h
+echo -e "\n${GREEN} Databases ${NC}"
 mysql << EOF
 SELECT table_schema AS "Database", 
 ROUND(SUM(data_length + index_length) / 1024 / 1024, 2) AS "Size (MB)" 
 FROM information_schema.TABLES 
 GROUP BY table_schema;
 EOF
-echo -e "\n Home Directories"
+echo -e "\n${GREEN} Home Directories ${NC}"
 find /home*/  -not -path "/home/virtfs/*" -size +500M -exec ls -hsS1 {} +
 }
 ```
@@ -541,24 +545,28 @@ Uses find, largest files over a pre-set amount, #M or #G
 ```
 diskusage()
 {
+	GREEN='\033[0;32m'
+	NC='\033[0m' # No Color
 clear
-echo -e "These are the largest files over $1   for $(hostname) as of $(date )"
-echo -e "\n Logs"
+echo -e "These are the largest files over $1 for $(hostname) as of $(date)"
+df -hT -xtmpfs -xdevtmpfs
+echo -e "\n${GREEN} Logs ${NC}"
 find /var/log/ -size +$1 -exec ls -hsS1 {} +
 journalctl --disk-usage
-echo -e "\n Backups"
+echo -e "Run the following to clear logs older then X days \njournalctl --vacuum-time=Xd"
+echo -e "\n${GREEN} Backups ${NC}"
 find /backup*/ -size +$1 -exec ls -hsS1 {} +
-find /* -type f -name "*.tar.gz" -size +1G -exec du -sh {} \; | grep -vE "(/var|/usr|/root|/opt|cpbackup|\.cpanm|\.cpan)" |sort -h
-echo -e "\n Databases"
+echo -e "\n${GREEN}Backups outside of /backup directory${NC}"
+find /home/ -type f \( -iname \*.tar.gz -o -iname \*.zip \) -size +$1 -exec du -sh {} \; | grep -vE "(/var|/usr|/root|/opt|cpbackup|\.cpanm|\.cpan)" |sort -h
+echo -e "\n${GREEN} Databases ${NC}"
 mysql << EOF
 SELECT table_schema AS "Database", 
 ROUND(SUM(data_length + index_length) / 1024 / 1024, 2) AS "Size (MB)" 
 FROM information_schema.TABLES 
 GROUP BY table_schema;
 EOF
-echo -e "\n Home Directories"
-find /home*/ -size +$1 -exec ls -hsS1 {} +
-df -h
+echo -e "\n${GREEN} Home Directories ${NC}"
+find /home*/  -not -path "/home/virtfs/*" -size +$1 -exec ls -hsS1 {} +
 }
 
 ```
