@@ -515,6 +515,7 @@ Uses find, largest files over 500M
 {
 clear
 echo -e "These are the largest files over 500M  for $(hostname) as of $(date)"
+df -hT -xtmpfs -xdevtmpfs
 echo -e "\n Logs"
 find /var/log/ -size +500M -exec ls -hsS1 {} +
 journalctl --disk-usage
@@ -530,7 +531,6 @@ GROUP BY table_schema;
 EOF
 echo -e "\n Home Directories"
 find /home*/  -not -path "/home/virtfs/*" -size +500M -exec ls -hsS1 {} +
-df -h
 }
 ```
 
