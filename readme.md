@@ -762,6 +762,7 @@ SPF: $(dig txt  "$domain" +short)
 DMARC: $(dig txt "_dmarc.$domain" +short)
 MX: $(dig MX "$domain" +short | awk {'print $2'})
 This is the MX records IP address: $(dig a $(dig mx "$domain" +short| awk {'print $2'})  +short)
+This is the current PTR record: $(dig -x $(hostname -i) +short)
 Blacklisted? $(echo http://multirbl.valli.org/lookup/$(dig a $(dig mx "$domain" +short) +short).html)
 Replies are not monitored. Please ignore. 
 END
