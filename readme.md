@@ -1213,22 +1213,23 @@ fi
 ```
 
 
-Getting a crit plugin error?   
+Takes in error, tests site and loops through existing plugins to verify if said plug is causing the error  
 ```
-(
+plugin_loop()
+{
 db=~/plugins.$(date +%F).sql
 domain=$(wp option get siteurl --skip-{plugins,themes} | sed 's/https\?:\/\///')
-
 clear
-if [ "$( curl -skLA "foo" "$domain" |   lynx -stdin -dump | grep "There has been a critical error")" ];
+read -rp "What error is $domain throwing?" error_text
+if [ "$( curl -skLA "foo" "$domain" |   lynx -stdin -dump | grep "$error_text")" ];
 then
-    echo "$domain failing"
+    echo "$domain throwing $error_text"
     wp db export "$db"
     for i in $(wp plugin list --skip-{plugins,themes} --field=name) 
     do echo "disabling $i for $domain"
     wp plugin deactivate "$i" --skip-{plugins,themes}
-    echo "testing $domain"
-      if [[ "$(curl -skLA "foo" "$domain" |   lynx -stdin -dump | grep "There has been a critical error")" ]]; then
+    echo "testing $domain with $i deactivated"
+      if [[ "$(curl -skLA "foo" "$domain" |   lynx -stdin -dump | grep "$error_text")" ]]; then
     echo  wp plugin activate "$i" --skip-{plugins,themes}
     else
     echo "$i was breaking the site"'!'
@@ -1237,9 +1238,9 @@ then
     fi
     done
        else
-        echo "$domain not throwing critical errors"
+        echo "$domain not throwing $error_text"
       fi
-)
+}
 ```
 
 Test site speeds with each plug deactivated
