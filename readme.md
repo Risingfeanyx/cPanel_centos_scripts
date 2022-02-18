@@ -1233,6 +1233,7 @@ then
     echo  wp plugin activate "$i" --skip-{plugins,themes}
     else
     echo "$i was breaking the site"'!'
+    wp plugin verify-checksums $i
     echo "backup located at $db"
     break
     fi
