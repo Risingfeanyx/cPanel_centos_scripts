@@ -1244,6 +1244,25 @@ then
 }
 ```
 
+Same thing, but just takes in the domain and spits out the curl output
+
+```
+{
+db=~/plugins.$(date +%F).sql
+clear
+read -rp "What is the $domain we are testing?" domain
+    wp db export "$db"
+    for i in $(wp plugin list --skip-{plugins,themes} --field=name) 
+    do echo "disabling $i for $domain"
+    wp plugin deactivate "$i" --skip-{plugins,themes}
+    echo "testing $domain with $i deactivated"
+    curl -sLA "foo" $domain | lynx -stdin -dump | head -n10 
+    echo  wp plugin activate "$i" --skip-{plugins,themes}
+    echo "backup located at $db"
+    done
+ }
+```
+
 Test site speeds with each plug deactivated
 
 ```
