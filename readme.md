@@ -1384,8 +1384,9 @@ site URLs still need to be updated after the restore
 	##test if WP install
 		if test -f wp-config.php;
 		then
+		read -rp "What will be the name of the cloned site?: " destination_name
 		echo "This is a Wordpress site"
-	echo "backing up database to $db_backup"
+	echo "backing up database to $db_backup and $site_backup"
 	     mysqldump -p"$db_pass" -u "$db_user" "$db_name" > "$db_backup"
 	 echo "zipping up $(pwd)"
 		 tar -caf "$site_backup" *
@@ -1393,35 +1394,36 @@ site URLs still need to be updated after the restore
 		rsync -azvP "$site_backup" "$1"
 		cd "$1" || echo -e "Correct Document root? \n$PWD"
 		tar -xf "$site_backup"
-
+         mv "$site_backup" ~/
 	##Create databases
 
 	(
-	n="$(awk -F"'" '/DB_NAME/{print $4}' wp-config.php)_clone"
-	p="$(pwmake 80)"
-	uapi Mysql create_database name="${n}"
-	uapi Mysql create_user name="${n}" password="${p}" && uapi Mysql set_privileges_on_database user="${n}" database="${n}" privileges='ALL PRIVILEGES'
+	new_user="$(echo $(whoami)_$(tr -dc a-za </dev/urandom | head -c 5))"
+	new_pass="$(pwmake 80)"
+	uapi Mysql create_database name="${new_user}"
+	uapi Mysql create_user name="${new_user}" password="${new_pass}" && uapi Mysql set_privileges_on_database user="${new_user}" database="${new_user}" privileges='ALL PRIVILEGES'
 
-
-	##update wp-config
-
-	db_pass=$(awk -F"'" '/DB_PASSWORD/{print $4}' wp-config.php)
-	sed -i.pre_clone "s/$db_name/${n}/g" wp-config.php
-	sed -i "s/$db_user/${n}/g" wp-config.php
-	sed -i "s/$db_pass/$p/g" wp-config.php
-
-    ##manually sets password to match wp-config
-    uapi   Mysql set_password  user="$(awk -F"'" '/DB_USER/{print $4}' wp-config.php)" password="$(awk -F"'" '/DB_PASSWORD/{print $4}' wp-config.php)"
+ 
+	##recreate wp-config
+    mv -v wp-config.php{,.bak_$(date +%F)}
+	wp config create --dbuser="${new_user}" --dbpass="${new_pass}" --dbname="${new_user}"
     
+    #import db
 	mysql -p"$(awk -F"'" '/DB_PASSWORD/{print $4}' wp-config.php)" -u "$(awk -F"'" '/DB_USER/{print $4}' wp-config.php)" "$(awk -F"'" '/DB_NAME/{print $4}' wp-config.php)" < "$db_backup"
 
+	#update site home/urls
+	wp search-replace $(wp option get siteurl) https://$destination_name
+	wp option update siteurl https://$destination_name
+	wp option update home https://$destination_name
+    wp option get siteurl
+    wp option get home 
 	)
-
-
 	else
 	   echo "This is NOT a Wordpress install"
 	fi
 	}
+
+
 ```
 
 
