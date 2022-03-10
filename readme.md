@@ -1368,9 +1368,7 @@ search_replace()
 
 
 
-Wordpress site cloner
-#will implement db backup templates for other CMS 
-site URLs still need to be updated after the restore
+Wordpress site cloner. only arguement required is the destination document root. Can only be run within single user
 ```
 	wp_clone()
 	{
@@ -1394,7 +1392,7 @@ site URLs still need to be updated after the restore
 		rsync -azvP "$site_backup" "$1"
 		cd "$1" || echo -e "Correct Document root? \n$PWD"
 		tar -xf "$site_backup"
-         mv "$site_backup" ~/
+         mv -f "$site_backup" ~/
 	##Create databases
 
 	(
@@ -1422,6 +1420,7 @@ site URLs still need to be updated after the restore
 	   echo "This is NOT a Wordpress install"
 	fi
 	}
+
 
 
 ```
