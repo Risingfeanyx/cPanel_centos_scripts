@@ -134,7 +134,7 @@ change_php_fpms()
   egrep "max_children|max_requests|idle_timeout" /var/cpanel/ApachePHPFPM/system_pool_defaults.yaml
   echo -e "${GREEN}Current Domain-Specific PHP-FPM Values${NC}\n" 
   echo -e "${GREEN}PHP-FPM hitting caps ${NC}\n" 
-  cat /opt/cpanel/ea-*/root/usr/var/log/php-fpm/error.log | grep -i consider
+  cat /opt/cpanel/ea-*/root/usr/var/log/php-fpm/error.log | grep -ia consider
   egrep "max_children|max_requests|idle_timeout" /var/cpanel/userdata/*/*.php-fpm.yaml
   read -erp  "Which files did you need to update? Please paste the full file path Max Children, then the Max Requests " fpm_changes max_children max_requests
   cp -v $fpm_changes{,.bak_$(date +%F)}
