@@ -1447,8 +1447,6 @@ Joomla ✓
 in progress  | stable so far
 ```
 
-	(
-
   (
 ##universal database dumper
 #Wordpress DB creds
