@@ -1462,6 +1462,7 @@ in progress  | stable so far
 ```
 
 
+
   (
 ##universal database dumper
 #Wordpress DB creds
@@ -1505,6 +1506,7 @@ wordpress_dump()
   echo "This is a Wordpress site"
   echo "backing up database to ~/$wp_db_backup"
   mysqldump -p"$wp_db_pass" -u "$wp_db_user" "$wp_db_name" > ~/"$wp_db_backup"
+   tar -caf ~/$(wp option get home | tr -d https://).$(date -I).tar.gz . ~/$wp_db_backup
 }
 
 no_dbs()
@@ -1527,6 +1529,7 @@ clear
        no_dbs
        fi
 )
+
 
 
 ```
