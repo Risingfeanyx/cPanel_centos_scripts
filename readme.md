@@ -256,6 +256,20 @@ for i in $(for user in $(awk -F: '{print $1}' /etc/trueuserowners); do uapi --us
 
 <h2>cPanel</h2>
 
+create database
+
+```
+(
+new_user="$(echo $(whoami)_$(tr -dc a-za </dev/urandom | head -c 5))"
+new_pass="$(pwmake 80)"
+		
+uapi Mysql create_database name="${new_user}"
+		
+uapi Mysql create_user name="${new_user}" password="${new_pass}"
+
+uapi Mysql set_privileges_on_database user="${new_user}" database="${new_user}" privileges='ALL PRIVILEGES'
+)
+```
 
 #list all domains
 
