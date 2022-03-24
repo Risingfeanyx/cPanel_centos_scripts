@@ -1461,6 +1461,7 @@ Joomla ✓
 in progress  | stable so far
 ```
 
+
   (
 ##universal database dumper
 #Wordpress DB creds
@@ -1506,19 +1507,28 @@ wordpress_dump()
   mysqldump -p"$wp_db_pass" -u "$wp_db_user" "$wp_db_name" > ~/"$wp_db_backup"
 }
 
+no_dbs()
+{
+  echo -e "databases currently in $(whoami) \n$(uapi  Mysql list_databases | grep database:| awk {'print $2'}) "
+}
+
 clear
 ##test if WP install
   if test -f wp-config.php;
   then wordpress_dump
-     fi
+    
 ##test if Prestashop install
-      if test -f "config/settings.inc.php"; then  presta_dump
-     fi
+      elif test -f "config/settings.inc.php"; then  presta_dump
+     
 ##Test if Joomla install
- if test -f "configuration.php"; then 
+ elif test -f "configuration.php"; then 
        joomla_dump
+       else 
+       no_dbs
        fi
 )
+
+
 ```
 
 
