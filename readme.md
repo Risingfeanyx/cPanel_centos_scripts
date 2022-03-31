@@ -1299,8 +1299,32 @@ done
     wp db import $db
 )
 
+```
+
+Same thing, but saves to a results file and sorts the output from that file
 
 ```
+(
+clear
+db=~/plugins.$(date +%F).sql
+site=$(wp option get siteurl --skip-{plugins,themes} | sed 's/https\?:\/\///')
+results=~/results_$(date +"%F:%H:%M")_$site
+    echo "Testing $site speeds"
+    wp db export "$db"
+    for i in $(wp plugin list --skip-{plugins,themes} --field=name) ;
+    do echo "disabling $i for $site"
+    wp plugin deactivate "$i" --skip-{plugins,themes} --quiet 
+    echo "Testing "$site" Response Time with "$i" deactivated $(curl -ksw "%{time_total}\n" $(wp option get siteurl --skip-{plugins,themes}))" | tee -a $results
+    wp plugin activate "$i" --quiet
+done
+   echo "Testing "$site" Response Time with all plugins deactivated $(wp plugin deactivate "$i" --all --quiet
+    curl -ksw "%{time_total}\n" $(wp option get siteurl --skip-{plugins,themes}) )" | tee -a $results
+    wp db import $db
+    clear
+     sort -nk8 $results
+)
+```
+
 
 Reset all your Wordpress users passwords. creates a database backup jic
 ```
