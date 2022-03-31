@@ -7,7 +7,7 @@ target="_blank">cPanel</a>
 <a href="#disk-usage" 
 target="_blank">Disk Usage</a>
 
-<a href="#dns" 
+<a href="#dns"
 target="_blank">DNS</a>
 
 <a href="#email" 
@@ -1301,14 +1301,14 @@ done
 
 ```
 
-Same thing, but saves to a results file and sorts the output from that file
+Same thing, but saves to a results file and sorts the output from that file to show which plugs are the most resource intensive
 
 ```
 (
 clear
 db=~/plugins.$(date +%F).sql
 site=$(wp option get siteurl --skip-{plugins,themes} | sed 's/https\?:\/\///')
-results=~/results_$(date +"%F:%H:%M")_$site
+results=~/results_$(tr -dc A-Za </dev/urandom | head -c 5)_$(date -I)_$site
     echo "Testing $site speeds"
     wp db export "$db"
     for i in $(wp plugin list --skip-{plugins,themes} --field=name) ;
@@ -1323,6 +1323,7 @@ done
     clear
      sort -nk8 $results
 )
+
 ```
 
 
