@@ -1244,10 +1244,10 @@ then
     wp plugin deactivate "$i" --skip-{plugins,themes}
     echo "testing $domain with $i deactivated"
       if [[ "$(curl -skLA "foo" "$domain" |   lynx -stdin -dump | grep "$error_text")" ]]; then
-    echo  wp plugin activate "$i" --skip-{plugins,themes}
+    wp plugin activate "$i" --skip-{plugins,themes}
     else
     echo "$i was breaking the site"'!'
-    wp plugin verify-checksums $i
+    wp plugin verify-checksums $i --skip-{plugins,themes}
     echo "backup located at $db"
     break
     fi
