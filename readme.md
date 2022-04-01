@@ -1308,7 +1308,7 @@ Same thing, but saves to a results file and sorts the output from that file to s
 clear
 db=~/plugins.$(date +%F).sql
 site=$(wp option get siteurl --skip-{plugins,themes} | sed 's/https\?:\/\///')
-results=~/results_$(tr -dc A-Za </dev/urandom | head -c 5)_$(date -I)_$site
+results=~/results_$(date -I)_$site
     echo "Testing $site speeds"
     wp db export "$db"
     for i in $(wp plugin list --skip-{plugins,themes} --field=name) ;
@@ -1323,6 +1323,8 @@ done
     clear
      sort -nk8 $results
 )
+
+
 
 ```
 
