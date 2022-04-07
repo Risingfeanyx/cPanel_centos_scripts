@@ -1057,8 +1057,8 @@ Getting this error?
 ```
 (
 clear
-mkdir /var/lib/mysql/aria_old.$(date +%F)/
-mv /var/lib/mysql/aria_log* /var/lib/mysql/aria_old.$(date +%F)
+mkdir aria_old.$(date +%F)
+mv -v /var/lib/mysql/aria_log* ~/aria_old.$(date +%F)
 systemctl restart mysql
 systemctl status mysql
 )
