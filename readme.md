@@ -702,6 +702,7 @@ for i in $(for a in /var/named/*.db; do echo $(basename "$a" .db); done); do ech
 ```
 SPF()
 {
+cp -v /var/named/$1.db{,.bak_$(date +%F)}
 whmapi1 addzonerecord domain=$1 name=$1 class=IN ttl=86400 type=TXT txtdata="v=spf1 +mx +a +ip4:$(hostname -i) ~all "
 echo -e "This will take effect globally between $(date -d "+4 hours") and $( date -d "+24 hours")"
 echo "$1"
@@ -713,8 +714,10 @@ echo https://www.whatsmydns.net/#TXT/"$1"
 ```
 
 ```
+
 DMARC()
 {
+ cp -v /var/named/$1.db{,.bak_$(date +%F)}
 whmapi1 addzonerecord domain="$1" name="_dmarc.$1." class=IN ttl=86400 type=TXT txtdata='v=DMARC1; p=none'
 echo -e "This will take effect globally between $(date -d "+4 hours") and $( date -d "+24 hours")"
 echo "$1"
