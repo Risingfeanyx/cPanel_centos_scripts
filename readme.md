@@ -903,6 +903,10 @@ fi
 ```
 Go <a href="https://support.cpanel.net/hc/en-us/articles/360058051173-What-is-the-anonymousfox-address-on-my-system-" target="_blank">here</a>
 
+for loop to run a core verif on all wordpress sites.
+```
+ clear ; for i in $(find /home/*/ -name wp-config.php | grep -v virtfs); do echo -e "\n$i"; cd $(dirname $i); wp core verify-checksums --allow-root; done
+```
 
 Checks for conns for domains
 As non root user
