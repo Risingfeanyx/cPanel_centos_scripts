@@ -884,9 +884,9 @@ ls -lah /dev/shm/ /tmp
 Scan for anonfox meddled contact emails + created emails, automaticaly removes the contact email entry  and disables cpanel password resets
 ```
 (
-  modified=$(grep -EHl 'anonymousfox|smtpfox' /home*/*/.contactemail /home/*/.cpanel/contactinfo)
+  modified=$(grep -EHl 'anonymousfox|smtpfox' /home*/*/.contactemail /home/*/.cpanel/contactinfo /home/*/etc/*/shadow /home/*/etc/*/passwd)
   clear
-if  grep -EH 'anonymousfox|smtpfox' /home*/*/.contactemail /home/*/.cpanel/contactinfo; then
+if  grep -EH 'anonymousfox|smtpfox' /home*/*/.contactemail /home/*/.cpanel/contactinfo /home/*/etc/*/shadow /home/*/etc/*/passwd; then
   echo -e "\n cPanel contact emails modified by AnonymousFox"
   echo 
   echo $modified
