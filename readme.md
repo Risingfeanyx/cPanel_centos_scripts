@@ -357,16 +357,18 @@ Search cpanel logs for most recnet autossl order, check ssl status for single do
  auto_ssl_search()
 {
 domain=$1
-    echo "AutoSSL Logs for $domain"
-    grep -EhC3 "$domain|error|WARN" /var/cpanel/logs/autossl/*/txt | tail -n5
+domain_arec=$(/scripts/cpdig $domain a)
+    echo -e "\n AutoSSL Logs for $domain"
+    grep -EhC3 "$domain" /var/cpanel/logs/autossl/*/txt | tail -n5
     echo "SSL Status for $domain"
     curl -v --stderr - https://www.$domain | grep -A10 "Server certificate"
 echo "Forcing HTTPS?"
     curl -sIA securetest $domain | grep Location
-echo "Is $(/scripts/cpdig $domain a) here?"
-ipusage | grep $(/scripts/cpdig $domain a)
-whois $(/scripts/cpdig $domain a) | egrep 'Organization|OrgName'
+echo "Where is  $domain_arec?"
+ipusage | grep $domain_arec
+whois $domain_arec | egrep 'Organization|OrgName'
 }
+
 
 ```
 
