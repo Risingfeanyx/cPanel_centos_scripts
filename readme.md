@@ -1562,6 +1562,8 @@ wordpress_dump()
 no_dbs()
 {
   echo -e "databases currently in $(whoami) \n$(uapi  Mysql list_databases | grep database:| awk {'print $2'}) "
+  echo "any conf files in $(pwd) that have DB configs?"
+  grep --include='*.php' -lR "$(whoami)_"
 }
 
 clear
@@ -1579,8 +1581,6 @@ clear
        no_dbs
        fi
 )
-
-
 
 ```
 
