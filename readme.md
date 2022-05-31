@@ -1481,8 +1481,11 @@ EOF
 
 #update site home/urls
 
-wp option update siteurl https://$destination_name --skip-{plugins,themes}
-wp option update home https://$destination_name --skip-{plugins,themes}
+wp search-replace "$(wp option get home)" "https://$destination_name " --all-tables
+
+wp search-replace "$(wp option get siteurl)" "https://$destination_name " --all-tables
+
+##test
   wp option get siteurl --skip-{plugins,themes}
   wp option get home  --skip-{plugins,themes}
 
