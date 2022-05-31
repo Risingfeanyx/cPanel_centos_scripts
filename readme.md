@@ -1505,26 +1505,24 @@ The purpose of this is to automate dumping databases from common CMS's
 Wordpress ✓
 Prestashop ✓
 Joomla ✓
-	#Joomla coming soon™
+Drupal ✓
+
 	#Moodle coming soon™
-	#Drupal coming soon™ 
+
 	#Laravel coming soon™ 
 
 
 in progress  | stable so far
 ```
-
-
-
-  (
+(
 ##universal database dumper
 #Wordpress DB creds
   wp_db_backup=$(awk -F"'" '/DB_NAME/{print $4}' wp-config.php).$(date -I).sql
   wp_db_pass=$(awk -F"'" '/DB_PASSWORD/{print $4}' wp-config.php)
   wp_db_name=$(awk -F"'" '/DB_NAME/{print $4}' wp-config.php)
   wp_db_user=$(awk -F"'" '/DB_USER/{print $4}' wp-config.php)
-#Prestashop DB creds
 
+#Prestashop DB creds
 ps_db_backup=$(awk -F"'" '/DB_NAME/{print $4}' config/settings.inc.php).$(whoami).$(date +%F).sql"
 ps_db_pass=$(awk -F"'" '/DB_PASSWD_/{print $4}' config/settings.inc.php)"
 ps_db_name=$(awk -F"'" '/DB_NAME/{print $4}' config/settings.inc.php)
@@ -1535,6 +1533,14 @@ jl_db_backup=$(grep  'public $db = ' configuration.php | awk {'print $4'} | tr -
 jl_db_user=$(grep  'public $user = ' configuration.php | awk {'print $4'} | tr -d "';")
 jl_db_pass=$(grep  'public $password = ' configuration.php | awk {'print $4'} | tr -d "';")
 jl_db_name=$(grep  'public $db = ' configuration.php | awk {'print $4'} | tr -d "';")
+
+  #Drupal DB creds
+dr_db_backup=$(grep -A1 $(whoami)_ sites/default/settings.php | awk {'print $3'} | tr -d "'," | head -n1).$(date -I).sql
+dr_db_user=$(grep -A1 $(whoami)_ sites/default/settings.php | awk {'print $3'} | tr -d "'," | head -n1)
+dr_db_pass=$(grep -A1 $(whoami)_ sites/default/settings.php | awk {'print $3'} | tr -d "'," | tail -n1)
+dr_db_name=$(grep -A1 $(whoami)_ sites/default/settings.php | awk {'print $3'} | tr -d "'," | head -n1)
+
+
 
 #subshells
 
@@ -1562,6 +1568,13 @@ wordpress_dump()
    tar -caf ~/$(wp option get home | tr -d https://).$(date -I).tar.gz . ~/$wp_db_backup
 }
 
+  drupal_dump()
+{
+  echo "This is Drupal"
+  echo "backing up database to ~/$dr_db_backup"
+  mysqldump -p"$dr_db_pass" -u "$dr_db_user" "$dr_db_name" > ~/"$dr_db_backup"
+}
+
 no_dbs()
 {
   echo -e "databases currently in $(whoami) \n$(uapi  Mysql list_databases | grep database:| awk {'print $2'}) "
@@ -1577,6 +1590,11 @@ clear
 ##test if Prestashop install
       elif test -f "config/settings.inc.php"; then  presta_dump
      
+##Test if Drupal install
+ elif test -f "sites/default/settings.php"; then 
+       drupal_dump
+
+
 ##Test if Joomla install
  elif test -f "configuration.php"; then 
        joomla_dump
