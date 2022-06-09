@@ -1506,8 +1506,7 @@ Wordpress ✓
 Prestashop ✓
 Joomla ✓
 Drupal ✓
-
-	#Moodle coming soon™
+Moodle ✓
 
 	#Laravel coming soon™ 
 
@@ -1582,6 +1581,21 @@ no_dbs()
 }
 
 
+moodle_dump()
+   {
+     #Joomla DB creds
+moodle_db_backup=$(grep  '$CFG->dbname    =' config.php | awk {'print $3'} | tr -d "';").$(date -I).sql
+moodle_db_user=$(grep  '$CFG->dbuser    =' config.php | awk {'print $3'} | tr -d "';")
+moodle_db_pass=$(grep  '$CFG->dbpass    =' config.php | awk {'print $3'} | tr -d "';")
+moodle_db_name=$(grep  '$CFG->dbname    =' config.php | awk {'print $3'} | tr -d "';")
+
+  clear
+  echo "This is a Moodle install"
+  echo "backing up database to ~/$moodle_db_backup"
+  mysqldump -p"$moodle_db_pass" -u "$moodle_db_user" "$moodle_db_name" > ~/"$moodle_db_backup"
+   }
+
+
 
 clear
 ##test if WP install
@@ -1594,15 +1608,20 @@ clear
 ##Test if Drupal install
  elif test -f "sites/default/settings.php"; then 
        drupal_dump
-
-
 ##Test if Joomla install
  elif test -f "configuration.php"; then 
        joomla_dump
+
+
+##Test if Moodle install
+ elif test -f "config.php"; then 
+       moodle_dump
        else 
        no_dbs
        fi
+
 )
+
 
 ```
 
