@@ -1639,6 +1639,99 @@ clear
 ```
 
 
+Command line installer for common CMS
+todo: automatically connect databases, add in other CMS beyond Wordpress, Prestashop and Joomla
+
+```
+
+cms_download()
+{
+  local ARG1="${@}"
+  local ARGUMENT="${ARG1:-helpme}"
+
+db_create()
+{
+new_user="$(echo $(whoami)_$(tr -dc a-za </dev/urandom | head -c 5))"
+new_pass="$(openssl rand -base64 14 | tr -cd [:alpha:])"
+uapi Mysql create_database name="${new_user}"
+uapi Mysql create_user name="${new_user}" password="${new_pass}" && uapi Mysql set_privileges_on_database user="${new_user}" database="${new_user}" privileges='ALL PRIVILEGES'
+echo "Database credentials are as follows"
+echo -e "\n${new_user} \n${new_pass}"
+}
+
+install_prestashop()
+{
+TMPFILE=`mktemp`
+PWD=`pwd`
+wget "https://www.prestashop.com/en/system/files/ps_releases/prestashop_1.7.8.6.zip?token=1574e5c379" -O $TMPFILE
+unzip -d $PWD $TMPFILE
+rm -rf $TMPFILE
+db_create
+final_steps
+}
+
+install_wordpress()
+{
+db_create
+echo "DB:" $new_user;
+echo "Pass:" $new_pass;
+wp core download
+wp config create --dbuser="$new_user" --dbpass="$new_pass" --dbname="$new_user";
+final_steps
+}
+
+install_joomla()
+{
+TMPFILE=`mktemp`
+PWD=`pwd`
+wget "https://downloads.joomla.org/cms/joomla4/4-1-4/Joomla_4-1-4-Stable-Full_Package.zip?format=zip" -O $TMPFILE
+unzip -d $PWD $TMPFILE
+rm -rf $TMPFILE
+db_create
+final_steps
+}
+
+final_steps()
+{
+cat << EOF
+
+Don't forget to connect the CMS to the database
+echo "DB:" $new_user;
+echo "Pass:" $new_pass;
+Wordpress does this automatically, howevor, the others do not.
+Navigate to the domain to finish any other required steps
+EOF
+}
+
+  help_document(){
+    cat << EOF
+
+Universal CMS installer 
+Allows the installation/database creation of the following Content Management Systems. 
+
+wordpress
+https://wordpress.org/news/category/releases/
+
+joomla
+https://www.joomla.org/announcements/release-news.html
+
+prestashop
+https://github.com/PrestaShop/PrestaShop/releases
+drupal
+https://www.drupal.org/project/drupal/releases
+EOF
+}
+
+  case $ARGUMENT in
+     wordpress )   install_wordpress  ;;
+     joomla )   install_joomla  ;;
+     prestashop )   install_prestashop ;;
+     drupal )   install_drupal;;
+     * )     help_document ;;
+  esac
+}
+```
+
 <h2>vz</h2>
 
 
