@@ -1412,19 +1412,19 @@ search_replace()
 
 
 
-Wordpress site cloner. only arguement required is the destination document root and clone name. Can only be run within single user
+Wordpress site cloner. only arguement required is the destination document root and clone name, in that order . Can only be run within single user
 ```
+
 wp_clone()
 {
+destination_root=$1
+destination_name=$2
 site_backup=$(basename "$PWD").$(date -I).tar.gz
 db_backup=$(awk -F"'" '/DB_NAME/{print $4}' wp-config.php).$(date -I).sql
 db_pass=$(awk -F"'" '/DB_PASSWORD/{print $4}' wp-config.php)
 db_name=$(awk -F"'" '/DB_NAME/{print $4}' wp-config.php)
 db_user=$(awk -F"'" '/DB_USER/{print $4}' wp-config.php)
-##test if WP install
-if test -f wp-config.php;
-then
-read -rp "What will be the name of the cloned site? and it's destination document root? " destination_name destination_root
+
 ##test if destination directory exists
 if [ -d "$destination_root" ]
 then
@@ -1432,6 +1432,11 @@ then
 else
       echo  "$destination_root does NOT exist" ; return 1
 fi
+
+##test if WP install
+if test -f wp-config.php;
+then
+
 
 echo "backing up database to $db_backup and $site_backup"
      mysqldump -p"$db_pass" -u "$db_user" "$db_name" > "$db_backup"
@@ -1446,7 +1451,7 @@ tar -xvf "$site_backup"
        mv -f "$site_backup" ~/
 ##Create databases
 
-(
+
 (
 new_user="$(echo $(whoami)_$(tr -dc a-za </dev/urandom | head -c 5))"
 new_pass="$(openssl rand -base64 14 | tr -cd [:alpha:])"
