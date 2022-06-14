@@ -261,13 +261,11 @@ create database
 ```
 (
 new_user="$(echo $(whoami)_$(tr -dc a-za </dev/urandom | head -c 5))"
-new_pass="$(pwmake 80)"
-		
+new_pass="$(openssl rand -base64 14 | tr -cd [:alpha:])"
 uapi Mysql create_database name="${new_user}"
-		
-uapi Mysql create_user name="${new_user}" password="${new_pass}"
-
-uapi Mysql set_privileges_on_database user="${new_user}" database="${new_user}" privileges='ALL PRIVILEGES'
+uapi Mysql create_user name="${new_user}" password="${new_pass}" && uapi Mysql set_privileges_on_database user="${new_user}" database="${new_user}" privileges='ALL PRIVILEGES'
+echo "Database credentials are as follows"
+echo -e "\n${new_user} \n${new_pass}"
 )
 ```
 
@@ -1449,12 +1447,12 @@ tar -xvf "$site_backup"
 ##Create databases
 
 (
+(
 new_user="$(echo $(whoami)_$(tr -dc a-za </dev/urandom | head -c 5))"
-new_pass="$(date | md5sum | awk {'print $1'})"
+new_pass="$(openssl rand -base64 14 | tr -cd [:alpha:])"
 uapi Mysql create_database name="${new_user}"
 uapi Mysql create_user name="${new_user}" password="${new_pass}" && uapi Mysql set_privileges_on_database user="${new_user}" database="${new_user}" privileges='ALL PRIVILEGES'
 
-	 
 ##recreate wp-config
   mv -vf wp-config.php{,.bak_$(date +%F)}
 wp config create --dbuser="${new_user}" --dbpass="${new_pass}" --dbname="${new_user}"
