@@ -1507,6 +1507,7 @@ Prestashop ✓
 Joomla ✓
 Drupal ✓
 Moodle ✓
+CodeIgnitor ✓
 
 	#Laravel coming soon™ 
 
@@ -1595,6 +1596,19 @@ moodle_db_name=$(grep  '$CFG->dbname    =' config.php | awk {'print $3'} | tr -d
   mysqldump -p"$moodle_db_pass" -u "$moodle_db_user" "$moodle_db_name" > ~/"$moodle_db_backup"
    }
 
+codeignitor_dump()
+{
+#Code Ignitor DB creds
+  ci_db_backup=$(awk -F"'" '/database/{print $4}' application/config/database.php).$(date -I).sql
+  ci_db_pass=$(awk -F"'" '/password/{print $4}' application/config/database.php)
+  ci_db_name=$(awk -F"'" '/database/{print $4}' application/config/database.php)
+  ci_db_user=$(awk -F"'" '/username/{print $4}' application/config/database.php)
+
+  clear
+  echo "This is a Code Ignitor  site"
+  echo "backing up database to ~/$ci_db_backup"
+  mysqldump -p"$ci_db_pass" -u "$ci_db_user" "$ci_db_name" > ~/"$ci_db_backup"
+}
 
 
 clear
@@ -1612,6 +1626,8 @@ clear
  elif test -f "configuration.php"; then 
        joomla_dump
 
+##test if CodeIgnitor install
+
 
 ##Test if Moodle install
  elif test -f "config.php"; then 
@@ -1621,7 +1637,6 @@ clear
        fi
 
 )
-
 
 ```
 
