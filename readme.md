@@ -1514,7 +1514,8 @@ CodeIgnitor ✓
 
 in progress  | stable so far
 ```
-(
+cms_dump()
+{
 ##universal database dumper
 
 #subshells
@@ -1636,8 +1637,7 @@ clear
        no_dbs
        fi
 
-)
-
+}
 ```
 
 
