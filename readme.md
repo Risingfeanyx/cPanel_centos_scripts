@@ -1614,21 +1614,6 @@ codeignitor_dump()
   mysqldump -p"$ci_db_pass" -u "$ci_db_user" "$ci_db_name" > ~/"$ci_db_backup"
 }
 
-magento_dump()
-{
-#Code Ignitor DB creds
-  mag_db_backup=$(awk -F"'" '/dbname/{print $4}' app/etc/env.php).$(date -I).sql
-  mag_db_pass=$(awk -F"'" '/password/{print $4}' app/etc/env.php)
-  mag_db_name=$(awk -F"'" '/dbname/{print $4}' app/etc/env.php)
-  mag_db_user=$(awk -F"'" '/username/{print $4}' app/etc/env.php)
-
-  clear
-  echo "This is a Magento site"
-  echo "backing up database to ~/$mag_db_backup"
-  mysqldump -p"$mag_db_pass" -u "$mag_db_user" "$mag_db_name" > ~/"$mag_db_backup"
-}
-
-
 
 clear
 ##test if WP install
@@ -1645,13 +1630,7 @@ clear
  elif test -f "configuration.php"; then 
        joomla_dump
 
-##test if Magento install
- elif test -f "app/etc/env.php"; then 
-       magento_dump
-       
-##test if Code Ignitor  install
- elif test -f "application/config/database.php"; then 
-       codeignitor_dump
+##test if CodeIgnitor install
 
 
 ##Test if Moodle install
