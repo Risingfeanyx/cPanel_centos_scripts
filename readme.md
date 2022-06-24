@@ -1586,6 +1586,23 @@ no_dbs()
 }
 
 
+magento_dump()
+{
+#Wordpress DB creds
+  mag_db_backup=$(awk -F"'" '/dbname/{print $4}' app/etc/env.php).$(date -I).sql
+  mag_db_pass=$(awk -F"'" '/password/{print $4}' app/etc/env.php)
+  mag_dbname=$(awk -F"'" '/dbname/{print $4}' app/etc/env.php)
+  mag_db_user=$(awk -F"'" '/username/{print $4}' app/etc/env.php)
+
+  clear
+  echo "This is a Magento 2.0 site"
+  echo "backing up database to ~/$mag_db_backup"
+  mysqldump -p"$mag_db_pass" -u "$mag_db_user" "$mag_dbname" > ~/"$mag_db_backup"
+}
+
+
+
+
 moodle_dump()
    {
      #Joomla DB creds
