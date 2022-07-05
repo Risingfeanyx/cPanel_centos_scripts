@@ -840,6 +840,94 @@ f2b(){
     }
 ```
 
+
+Easily swap between CSF and APF. 
+
+```
+csf_apf_swap(){
+# CSF and APF managemnt utility.
+
+  local ARG1="${@}"
+  local ARGUMENT="${ARG1:-helpme}"
+
+  help_document(){
+    cat << EOF
+
+  [+] APF and CSF firewall manager managemnet wizard
+    [-] Allows the cycling of APF and CSF at a whim with the args:
+                        \`a2c\`       \`c2a\`
+
+EOF
+  }
+
+  remove_apf(){
+    # Removes APF firewall maanager
+    service apf stop
+    chkconfig --del apf
+    yum -y remove apf-ded whm-addip
+    rm -fr /etc/init.d/apf /usr/local/sbin/apf /etc/apf /usr/local/cpanel/whostmgr/cgi/{apfadd,addon_add2apf.cgi}
+    if [[ ! -z $(grep -q add_ip_to_firewall /var/cpanel/pluginscache.yaml) ]];then
+      sed '3,/add_ip_to_firewall/d' -i /var/cpanel/pluginscache.yaml
+    fi
+  }
+
+  remove_csf(){
+    # Removes CSF firewall manager
+    service csf stop
+    chkconfig --del csf
+    rm -fr /etc/init.d/csf /usr/sbin/csf /usr/local/cpanel/whostmgr/cgi/configserver
+    yum -y remove csf-ded
+    if [[ ! -z $(grep -q add_ip_to_firewall /var/cpanel/pluginscache.yaml) ]];then
+      sed '3,/configserver_security_firewall/d' -i /var/cpanel/pluginscache.yaml
+    fi
+  }
+
+  install_apf(){
+    # Installs APF firewall manaegr
+    yum -y install apf-ded whm-addip
+    printf 'add_ip_to_firewall' >> /var/cpanel/resellers
+  }
+
+  install_csf(){
+    # Installs CSF firewall manager
+    yum install -y csf-ded
+    printf 'root:0:USE,ALLOW,DENY,UNBLOCK' >> /etc/csf/csf.resellers
+    # filter top user
+    for user in $(awk -F': ' '{print $2}' /etc/trueuserowners|uniq -c|tail -n1|awk '{print $2}'|xargs);do
+      printf '$user:0:USE,ALLOW,DENY,UNBLOCK' >> /etc/csf/csf.resellers
+    done
+    printf ',software-ConfigServer-csf' >> /var/cpanel/resellers
+    sed 's/\(LF_\(PERMBLOCK\|SSHD\|FTPD\|SMTPAUTH\|POP3D\|IMAPD\|CPANEL\) *= *"\)[^"]\+/\11/;s/\(LF_TRIGGER *= *"\)[^"]\+/\13/'   -i  /etc/csf/csf.conf
+    wget http://download.configserver.com/csupdate -P /usr/bin/
+    chmod +x /usr/bin/csupdate
+    perl -i -pe 'y|\r||d' /usr/bin/csupdate
+    /usr/bin/csupdate
+  }
+
+  csf_to_apf(){
+    if [[ ! -z $(which csf) ]];then
+      remove_csf
+      install_apf
+    fi
+  }
+
+  apf_to_csf(){
+    if [[ ! -z $(which apf) ]];then
+      remove_apf
+      install_csf
+    fi
+  }
+
+
+  case $ARGUMENT in
+     c2a )   csf_to_apf  ;;
+     a2c )   apf_to_csf ;;
+     * )     help_document ;;
+  esac
+}
+
+```
+
 bulk  change cpanel passwords
 
 ```
