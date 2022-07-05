@@ -1306,7 +1306,7 @@ tests if a users email already exists, if it does, updates the pass, if it does 
 test_user()
 {
  newpass=$(openssl rand -base64 16 | tr -cd '[:alnum:]')
-if [[ $(wp user list | grep $1 | awk {'print $4'} ) = $1 ]]; 
+if [[ $(wp user list --skip-{plugins,themes} --field=user_email ) = $1 ]]; 
 then
   wp user update $1 --user_pass=${newpass};
   echo $newpass 
