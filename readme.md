@@ -1318,14 +1318,16 @@ fi
 ```
 
 
-Takes in error, tests site and loops through existing plugins to verify if said plug is causing the error  
+Takes in error, tests site and loops through existing plugins to verify if said plug is causing the error.
+
+Make sure to put error in double quotes
 ```
 plugin_loop()
 {
 db=~/plugins.$(date +%F).sql
 domain=$(wp option get siteurl --skip-{plugins,themes} | sed 's/https\?:\/\///')
+error_text=$1
 clear
-read -rp "What error is $domain throwing?" error_text
 if [ "$( curl -skLA "foo" "$domain" |   lynx -stdin -dump | grep "$error_text")" ];
 then
     echo "$domain throwing $error_text"
