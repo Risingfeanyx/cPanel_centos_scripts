@@ -769,6 +769,7 @@ localdomain.com to@domain.com.
 mailtest()
 {
 domain=$1
+sudo tail -f /var/log/exim_mainlog | egrep "$1|$2"&
 clear
 mail -s "Email Test Support" -r test@"$domain" "$2" << END
 This is a test email sent from $domain on $(date '+%Y-%m-%d') by a member of the Technical Support team. 
