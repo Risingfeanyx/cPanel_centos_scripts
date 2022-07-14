@@ -812,11 +812,11 @@ f2b(){
     echo -e "\n LFD Logs"
     grep $1 /var/log/lfd.log| tail -n2
     echo -e "\n Failed Email Logins"
-    grep "$1" /var/log/maillog | grep 'auth failed' | tail -n2| awk {'print $1,$2,$3,$5,$10,$11,$12,$13,$14 $15'}
+    grep "$1" /var/log/maillog | grep 'auth failed' | tail -n2
     
     #failing exim
     echo -e "\n Failed Exim Authentication"
-    grep "$1" /var/log/exim_mainlog | grep 'authenticator failed' | tail -n2  | awk  {'print $1,$2,$4,$5,$6,$9,$15'}
+    grep "$1" /var/log/exim_mainlog | grep 'authenticator failed' | tail -n2 
  
     #Modsec blocks
     echo -e "\n ModSecurity blocks"
@@ -824,7 +824,7 @@ f2b(){
 
     #cPanel blocks
     echo -e "\n Cpanel Login Failures"
-     grep "$1" /usr/local/cpanel/logs/login_log | grep "FAILED LOGIN" | tail -n2 | awk {'print $1,$2,$3,$5,$6,$8,$14,$15,$16,$17'}
+     grep "$1" /usr/local/cpanel/logs/login_log | grep "FAILED LOGIN" | tail -n2
 
      #imunify blocks
 
