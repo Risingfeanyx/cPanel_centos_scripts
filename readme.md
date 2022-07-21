@@ -1761,15 +1761,18 @@ cms_download()
 {
   local ARG1="${@}"
   local ARGUMENT="${ARG1:-helpme}"
-
+  
+  
 db_create()
 {
-new_user="$(echo $(whoami)_$(tr -dc a-za </dev/urandom | head -c 5))"
+db_pref="$(uapi Mysql get_restrictions | grep prefix | awk {'print $2'})"
+new_user="$(tr -dc a-za </dev/urandom | head -c 5)"
 new_pass="$(openssl rand -base64 14 | tr -cd [:alpha:])"
-uapi Mysql create_database name="${new_user}"
-uapi Mysql create_user name="${new_user}" password="${new_pass}" && uapi Mysql set_privileges_on_database user="${new_user}" database="${new_user}" privileges='ALL PRIVILEGES'
+uapi Mysql create_database name="${db_pref}${new_user}"  2>&1 > /dev/null
+uapi Mysql create_user name="${db_pref}${new_user}" password="${new_pass}" 2>&1 > /dev/null
+ uapi Mysql set_privileges_on_database user="${db_pref}${new_user}" database="${db_pref}${new_user}" privileges='ALL PRIVILEGES'  2>&1 > /dev/null 
 echo "Database credentials are as follows"
-echo -e "\n${new_user} \n${new_pass}"
+echo -e "\n${db_pref}${new_user} \n${new_pass}"
 }
 
 install_prestashop()
