@@ -1506,6 +1506,7 @@ search_replace()
 Wordpress site cloner. only arguement required is the destination document root and clone name, in that order . Can only be run within single user
 ```
 
+
 wp_clone()
 {
 destination_root=$1
@@ -1515,6 +1516,18 @@ db_backup=$(awk -F"'" '/DB_NAME/{print $4}' wp-config.php).$(date -I).sql
 db_pass=$(awk -F"'" '/DB_PASSWORD/{print $4}' wp-config.php)
 db_name=$(awk -F"'" '/DB_NAME/{print $4}' wp-config.php)
 db_user=$(awk -F"'" '/DB_USER/{print $4}' wp-config.php)
+
+db_create()
+{
+db_pref="$(uapi Mysql get_restrictions | grep prefix | awk {'print $2'})"
+new_user="$(tr -dc a-za </dev/urandom | head -c 5)"
+new_pass="$(openssl rand -base64 14 | tr -cd [:alpha:])"
+uapi Mysql create_database name="${db_pref}${new_user}"  2>&1 > /dev/null
+uapi Mysql create_user name="${db_pref}${new_user}" password="${new_pass}" 2>&1 > /dev/null
+ uapi Mysql set_privileges_on_database user="${db_pref}${new_user}" database="${db_pref}${new_user}" privileges='ALL PRIVILEGES'  2>&1 > /dev/null 
+echo "Database credentials are as follows"
+echo -e "\n${db_pref}${new_user} \n${new_pass}"
+}
 
 ##test if destination directory exists
 if [ -d "$destination_root" ]
@@ -1544,14 +1557,11 @@ tar -xvf "$site_backup"
 
 
 (
-new_user="$(echo $(whoami)_$(tr -dc a-za </dev/urandom | head -c 5))"
-new_pass="$(openssl rand -base64 14 | tr -cd [:alpha:])"
-uapi Mysql create_database name="${new_user}"
-uapi Mysql create_user name="${new_user}" password="${new_pass}" && uapi Mysql set_privileges_on_database user="${new_user}" database="${new_user}" privileges='ALL PRIVILEGES'
+db_create
 
 ##recreate wp-config
   mv -vf wp-config.php{,.bak_$(date +%F)}
-wp config create --dbuser="${new_user}" --dbpass="${new_pass}" --dbname="${new_user}"
+wp config create --dbuser="${db_pref}${new_user}" --dbpass="${new_pass}" --dbname="${db_pref}${new_user}"
   
   #import db
 mysql -p"$(awk -F"'" '/DB_PASSWORD/{print $4}' wp-config.php)" -u "$(awk -F"'" '/DB_USER/{print $4}' wp-config.php)" "$(awk -F"'" '/DB_NAME/{print $4}' wp-config.php)" < "$db_backup"
@@ -1587,6 +1597,7 @@ wp search-replace "$(wp option get siteurl)" "https://$destination_name " --all-
 )
 else
    echo "This is NOT a Wordpress install"
+   
 fi
 }
 ```
