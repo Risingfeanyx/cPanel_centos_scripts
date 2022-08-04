@@ -1504,6 +1504,7 @@ search_replace()
 
 
 Wordpress site cloner. only arguement required is the destination document root and clone name, in that order . Can only be run within single user
+#to do: detect nonstandard wp prefixes/update accordingly
 ```
 
 
