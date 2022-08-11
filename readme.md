@@ -276,9 +276,10 @@ for a in /var/named/*.db; do echo $(basename $a .db); done
 ```
 
 #list all users
+#https://api.docs.cpanel.net/openapi/whm/operation/listaccts/ for more detail about said users
 
 ```
-ls /var/cpanel/users
+modify-account  --list-users
  ```
 
 #rebuild cpanel <a href="https://docs.cpanel.net/knowledge-base/accounts/how-to-rebuild-userdata-files/" target="_blank">userdata files</a>? files
