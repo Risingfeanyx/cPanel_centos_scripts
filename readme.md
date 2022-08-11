@@ -793,13 +793,15 @@ sudo tail -n10 /var/log/exim_mainlog | grep "$2"&
 
 ```
 f2b(){
-    clear;
     #see https://api.docs.cpanel.net/openapi/whm/operation/flush_cphulk_login_history_for_ips/
     echo -e "\n Cphulk Firewall"
     whmapi1 flush_cphulk_login_history_for_ips ip="$1"
     /scripts/cphulkdwhitelist "$1"
+    #https://api.docs.cpanel.net/openapi/whm/operation/read_cphulk_records/
+    whmapi1    read_cphulk_records   list_name='black'| grep $1
     echo -e "\n APF/CSF"
     [ -f /etc/csf/csf.conf ] && csf -a "$1" || apf -a "$1"
+
     #fail2ban log
     echo -e "\n Fail2ban"
     tail -n2 /var/log/fail2ban.log | grep "$1"
@@ -827,9 +829,9 @@ f2b(){
      grep "$1" /usr/local/cpanel/logs/login_log | grep "FAILED LOGIN" | tail -n2
 
      #imunify blocks
-
-     echo -e "\n Whitelisting in Imunify"
-    imunify360-agent whitelist ip add $1
+     #https://docs.imunify360.com/command_line_interface/#whitelist
+     #echo -e "\n Whitelisting in Imunify"
+    #imunify360-agent whitelist ip add $1
 
     #iptables
     echo -e "\n Whitelisting in iptables"
