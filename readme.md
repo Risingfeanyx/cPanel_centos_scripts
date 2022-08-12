@@ -791,57 +791,138 @@ sudo tail -n10 /var/log/exim_mainlog | grep "$2"&
 
 <h2>Firewall</h2>
 #Can't find why the firewall blocked your IP?
+Firewall wrapper for common firewalls CSF,APF,Imunify360, iptables, and CPhulk
 
 ```
-f2b(){
-    #see https://api.docs.cpanel.net/openapi/whm/operation/flush_cphulk_login_history_for_ips/
-    echo -e "\n Cphulk Firewall"
-    whmapi1 flush_cphulk_login_history_for_ips ip="$1"
-    /scripts/cphulkdwhitelist "$1"
-    #https://api.docs.cpanel.net/openapi/whm/operation/read_cphulk_records/
-    whmapi1    read_cphulk_records   list_name='black'| grep $1
-    echo -e "\n APF/CSF"
-    [ -f /etc/csf/csf.conf ] && csf -a "$1" || apf -a "$1"
 
-    #fail2ban log
-    echo -e "\n Fail2ban"
-    tail -n2 /var/log/fail2ban.log | grep "$1"
-    # ssh/FTP logs
-    echo -e "\n SSH/FTP"
-    grep $1 /var/log/messages | tail -n2
-    grep $1 /var/log/secure | tail -n2
-    #mail client login fails
-    #LFD blocks
-    echo -e "\n LFD Logs"
-    grep $1 /var/log/lfd.log| tail -n2
-    echo -e "\n Failed Email Logins"
-    grep "$1" /var/log/maillog | grep 'auth failed' | tail -n2
-    
-    #failing exim
-    echo -e "\n Failed Exim Authentication"
-    grep "$1" /var/log/exim_mainlog | grep 'authenticator failed' | tail -n2 
- 
-    #Modsec blocks
-    echo -e "\n ModSecurity blocks"
-    grep "$1" /usr/local/apache/logs/error_log | grep -E 'id "(13052|13051|13504|90334)"' | tail -n2
+allfw(){
 
-    #cPanel blocks
-    echo -e "\n Cpanel Login Failures"
-     grep "$1" /usr/local/cpanel/logs/login_log | grep "FAILED LOGIN" | tail -n2
+local ARG1="$1"
+local ARG2="$2"
+local ARGUMENT="${ARG1:-helpme}"
+GREEN='\033[0;32m'
+NC='\033[0m' # No Color
+RED='\033[0;31m'
+YELLOW='\033[0;33m'
 
+
+unblock_ip()
+{
+	 echo -e "\n${GREEN}Unblocking "$1" in.....${NC}\n"
+	#see https://api.docs.cpanel.net/openapi/whm/operation/flush_cphulk_login_history_for_ips/
+	
+	echo -e "\n${GREEN}...Cphulk Firewall${NC}"
+	whmapi1 flush_cphulk_login_history_for_ips ip="$1"
+	/scripts/cphulkdwhitelist  "$1"
+	
+	echo -e "\n${GREEN}...APF/CSF${NC}"
+	[ -f /etc/csf/csf.conf ] && csf -a  "$1" || apf -a  "$1"
+     
      #imunify blocks
      #https://docs.imunify360.com/command_line_interface/#whitelist
-     #echo -e "\n Whitelisting in Imunify"
-    #imunify360-agent whitelist ip add $1
-
+     echo -e "${GREEN}...in Imunify360; if this is the free version, this will show no output,IP deny/blocking is only available in the paid version.${NC}"
+    imunify360-agent whitelist ip add  "$1" 2>/dev/null  || echo "this is the free version of Imunify, which does not allow for whitelisting/blacklisting IP"
+    
     #iptables
-    echo -e "\n Whitelisting in iptables"
-    iptables -A INPUT -s $1 -j ACCEPT
+    echo -e "${GREEN}...in iptables${NC}"
+    iptables -vA INPUT -s  $1 -j ACCEPT
+}
+
+block_ip()
+{
+	 echo -e "\n${RED}Blocking "$1" in.....${NC}\n"
+	#see https://api.docs.cpanel.net/openapi/whm/operation/flush_cphulk_login_history_for_ips/
+	
+	echo -e "\n${RED}...Cphulk Firewall${NC}"
+	whmapi1 flush_cphulk_login_history_for_ips ip="$1"
+	/scripts/cphulkdblacklist "$1" 2>/dev/null
+	
+	echo -e "\n${RED}...APF/CSF${NC}"
+	[ -f /etc/csf/csf.conf ] && csf -d  "$1" || apf -d  "$1"
+     
+     #imunify blocks
+     #hhttps://docs.imunify360.com/command_line_interface/#blacklist
+     echo -e "\n${RED}...in Imunify360; if this is the free version, this will show no output, as it failed.${NC}"
+    imunify360-agent blacklist ip add  "$1" 2>/dev/null
+    
+    #iptables
+    echo -e "\n${RED}...in iptables${NC}"
+    iptables -vA INPUT -s  "$1" -j DROP
+}
+
+
+view_ip()
+{
+	echo -e "\n${YELLOW}Looking for "$1" in.....${NC}\n"
+	#https://api.docs.cpanel.net/openapi/whm/operation/read_cphulk_records/
+	echo -e "\n${YELLOW}Cphulk${NC}"
+    whmapi1    read_cphulk_records   list_name='black'| grep  "$1"
+
+	echo -e "\n${YELLOW}Fail2ban${NC}"
+    tail -n2 /var/log/fail2ban.log | grep  "$1"
+
+	echo -e "\n${YELLOW}SSH/FTP${NC}"
+    grep  "$1" /var/log/messages | tail -n2
+    grep  "$1" /var/log/secure | tail -n2
+    
+	echo -e "\n${YELLOW}LFD${NC}"
+    grep  "$1" /var/log/lfd.log| tail -n2
+
+	echo -e "\n${YELLOW}Email Logins${NC}"
+    grep  "$1" /var/log/maillog | grep 'auth failed' | tail -n2
+    
+    #failing exim
+    grep  "$1" /var/log/exim_mainlog | grep 'authenticator failed' | tail -n2 
+ 
+    #Modsec blocks
+	echo -e "\n${YELLOW}ModSecurity${NC}"
+    grep  "$1" /usr/local/apache/logs/error_log | grep -E 'id "(13052|13051|13504|90334)"' | tail -n2
+
+    #cPanel blocks
+	echo -e "\n${YELLOW}cPanel${NC}"
+     grep  "$1" /usr/local/cpanel/logs/access_log /usr/local/cpanel/logs/login_log  /usr/local/cpanel/logs/error_log | grep "FAILED LOGIN" | tail -n2
 
     #apf/csf logs, requires root
-   echo -e "\n CSF/APF Deny/Allow Rules"
-   grep "$1" /etc/*/*allow* /etc/*/*deny*| tail -n2
-    }
+	echo -e "\n${YELLOW}CSF/APF${NC}"
+   grep  "$1" /etc/*/*allow* /etc/*/*deny*| tail -n2
+	echo -e "\n${YELLOW}iptables${NC}"
+	iptables -L -n | grep $1
+
+}
+
+
+
+
+     help_document(){
+       cat << EOF
+A wrapper for common firewalls 
+
+
+'allfw allow' will whitelist  in  CSF,APF,Imunify360, iptables, and CPhulk
+https://support.cpanel.net/hc/en-us/articles/360058211754-Useful-CSF-Commands
+https://docs.imunify360.com/command_line_interface/#whitelist
+https://docs.cpanel.net/knowledge-base/security/https://cphulk-management-on-the-command-line/#blacklist-an-ip-address
+
+ 'allfw view' will go through logs and find why an IP address was originally blocked. This makes no changes
+Fail2Ban: /var/log/fail2ban.log
+SSH/FTP: /var/log/messages /var/log/secure
+Email Logins: /var/log/maillog 
+ModSecurity: /usr/local/apache/logs/error_log
+cPanel Logins: /usr/local/cpanel/logs/login_log 
+
+ 'allfw deny' will block an IP in each service mentioned above 
+EOF
+}
+
+   case $ARGUMENT in
+      allow )   unblock_ip  "$2" ;;
+      view )   view_ip   "$2" ;;
+      deny )   block_ip  "$2" ;;	
+      * )     help_document ;;
+      esac
+      }
+
+
 ```
 
 
