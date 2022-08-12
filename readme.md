@@ -925,6 +925,19 @@ EOF
 
 ```
 
+backup existing FW rules from apf/csf and iptables. will implement into above at some point 
+
+```
+backup_rules()
+{
+	fw_backup=fw_backup.$(date -I).tar.gz
+	iptables-save > "iptables_rules.$(date -I)"
+	[ -f /etc/csf/csf.conf ] && tar -vcaf "$fw_backup" /etc/csf/ || tar -vcaf "$fw_backup" /etc/apf
+	tar -vcaf "$fw_backup" "iptables_rules.$(date -I)"
+	echo "$([ -f /etc/csf/csf.conf ] && echo "CSF" || echo "APF") and $(iptables -V) rules saved to $fw_backup"
+}
+```
+
 
 Easily swap between CSF and APF. 
 
