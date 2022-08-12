@@ -1421,14 +1421,18 @@ Make sure to put error in double quotes
 ```
 plugin_loop()
 {
-db=~/plugins.$(date +%F).sql
+db=~/testing_plugins.$(date +%F).sql
 domain=$(wp option get siteurl --skip-{plugins,themes} | sed 's/https\?:\/\///')
 error_text=$1
+  wp_db_backup=$(awk -F"'" '/DB_NAME/{print $4}' wp-config.php).$(date -I).sql
+  wp_db_pass=$(awk -F"'" '/DB_PASSWORD/{print $4}' wp-config.php)
+  wp_db_name=$(awk -F"'" '/DB_NAME/{print $4}' wp-config.php)
+  wp_db_user=$(awk -F"'" '/DB_USER/{print $4}' wp-config.php)
 clear
 if [ "$( curl -skLA "foo" "$domain" |   lynx -stdin -dump | grep "$error_text")" ];
 then
     echo "$domain throwing $error_text"
-    wp db export "$db"
+    wp db export "$wp_db_backup"
     for i in $(wp plugin list --skip-{plugins,themes} --field=name) 
     do echo "disabling $i for $domain"
     wp plugin deactivate "$i" --skip-{plugins,themes}
@@ -1438,7 +1442,7 @@ then
     else
     echo "$i was breaking the site"'!'
     wp plugin verify-checksums $i --skip-{plugins,themes}
-    echo "backup located at $db"
+    echo "backup located at $wp_db_backup"
     break
     fi
     done
