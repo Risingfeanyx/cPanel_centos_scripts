@@ -1607,8 +1607,6 @@ search_replace()
 Wordpress site cloner. only arguement required is the destination document root and clone name, in that order . Can only be run within single user
 #to do: detect nonstandard wp prefixes/update accordingly
 ```
-
-
 wp_clone()
 {
 destination_root=$1
@@ -1686,8 +1684,8 @@ EOF
 
 
 #update site home/urls
-
-wp search-replace "$(wp option get home)" "https://$destination_name " --all-tables
+ 
+wp search-replace "$(wp option get home)" "https://$destination_name " --all-tables || vim -c "/table_prefix" wp-config.php
 
 wp search-replace "$(wp option get siteurl)" "https://$destination_name " --all-tables
 
