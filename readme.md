@@ -364,13 +364,9 @@ domain_arec=$(/scripts/cpdig $domain a)
 echo "Forcing HTTPS?"
     curl -sIA securetest $domain | grep Location
 echo "Where is  $domain_arec?"
-    ipusage | grep $domain_arec
+    ipusage | grep $domain_arec| awk {'print $1'}
      whois $domain_arec | egrep 'Organization|OrgName'
 }
-
-
-
-
 ```
 
 AutoSSL keeps assigning a cert to the wrong domain?
