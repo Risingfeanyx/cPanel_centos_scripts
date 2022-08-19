@@ -1752,16 +1752,17 @@ jl_db_name=$(grep  'public $db = ' configuration.php | awk {'print $4'} | tr -d 
 wordpress_dump()
 {
 #Wordpress DB creds
-  wp_db_backup=$(awk -F"'" '/DB_NAME/{print $4}' wp-config.php).$(date -I).sql
-  wp_db_pass=$(awk -F"'" '/DB_PASSWORD/{print $4}' wp-config.php)
-  wp_db_name=$(awk -F"'" '/DB_NAME/{print $4}' wp-config.php)
-  wp_db_user=$(awk -F"'" '/DB_USER/{print $4}' wp-config.php)
+  wp_db_backup=$(wp eval 'echo DB_NAME;').$(date -I).sql
+  wp_db_pass=$(wp eval 'echo DB_PASSWORD;')
+  wp_db_name=$(wp eval 'echo DB_NAME;')
+  wp_db_user=$(wp eval 'echo DB_USER;')
 
   clear
   echo "This is a Wordpress site"
   echo "backing up database to ~/$wp_db_backup"
   mysqldump -p"$wp_db_pass" -u "$wp_db_user" "$wp_db_name" > ~/"$wp_db_backup"
 }
+
 
   drupal_dump()
 {
