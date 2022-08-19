@@ -1399,14 +1399,51 @@ tests if a users email already exists, if it does, updates the pass, if it does 
 ```
 test_user()
 {
- newpass=$(openssl rand -base64 16 | tr -cd '[:alnum:]')
-if [[ $(wp user list --skip-{plugins,themes} --field=user_email ) = $1 ]]; 
+
+
+temp_user=$1
+newpass=$(openssl rand -base64 16 | tr -cd '[:alnum:]')
+wp_db_backup=$(wp eval 'echo DB_NAME;').$(date -I).sql
+
+wordpress_dump()
+{
+#Wordpress DB creds
+  wp_db_backup=$(wp eval 'echo DB_NAME;').$(date -I).sql
+  wp_db_pass=$(wp eval 'echo DB_PASSWORD;')
+  wp_db_name=$(wp eval 'echo DB_NAME;')
+  wp_db_user=$(wp eval 'echo DB_USER;')
+
+  clear
+  echo "This is a Wordpress site"
+  echo "backing up database to ~/$wp_db_backup"
+  mysqldump -p"$wp_db_pass" -u "$wp_db_user" "$wp_db_name" > ~/"$wp_db_backup"
+}
+
+
+
+create_user()
+{
+if [[ $(wp user list --skip-{plugins,themes} --field=user_email | grep "$temp_user") = "$temp_user" ]]; 
 then
-  wp user update $1 --user_pass=${newpass};
-  echo $newpass 
+  wp user update "$temp_user" --user_pass="${newpass}" --skip-{plugins,themes} ;
+  echo "New password for $temp_user is $newpass and will expire in 15 minutes"
 else
-  wp user create test --role=administrator $1 --skip-{plugins,themes}
+  wp user create test --role=administrator "$temp_user" --skip-{plugins,themes}
 fi
+echo "wp user delete $temp_user --reassign=1" | at now + 15 minutes 
+}
+
+(
+if [ -f ~/"$wp_db_backup" ]
+then
+      echo  "$wp_db_backup already exists"
+else
+      echo  "$wp_db_backup NOT exist" ; wordpress_dump
+fi
+)
+
+create_user "$temp_user"
+
 }
 ```
 
