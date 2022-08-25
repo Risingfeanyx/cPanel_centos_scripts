@@ -1429,7 +1429,7 @@ then
   echo "New password for $temp_user is $newpass and will expire in 15 minutes"
 else
   wp user create test --role=administrator "$temp_user" --skip-{plugins,themes}
-  wp user update $temp_user --locale='es_MX'
+  wp user update $temp_user --locale='es_US'
 fi
 echo "wp user delete $temp_user --reassign=1" | at now + 15 minutes 
 }
