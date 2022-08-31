@@ -1408,10 +1408,10 @@ wp_db_backup=$(wp eval 'echo DB_NAME;').$(date -I).sql
 wordpress_dump()
 {
 #Wordpress DB creds
-  wp_db_backup=$(wp eval 'echo DB_NAME;').$(date -I).sql
-  wp_db_pass=$(wp eval 'echo DB_PASSWORD;')
-  wp_db_name=$(wp eval 'echo DB_NAME;')
-  wp_db_user=$(wp eval 'echo DB_USER;')
+  wp_db_backup=$(wp eval 'echo DB_NAME;' --skip-{plugins,themes}).$(date -I).sql
+  wp_db_pass=$(wp eval 'echo DB_PASSWORD;' --skip-{plugins,themes})
+  wp_db_name=$(wp eval 'echo DB_NAME;' --skip-{plugins,themes})
+  wp_db_user=$(wp eval 'echo DB_USER;'--skip-{plugins,themes} )
 
   clear
   echo "This is a Wordpress site"
