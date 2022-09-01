@@ -1380,17 +1380,89 @@ https://developer.wordpress.org/cli/commands/core/verify-checksums/
 
 Wordpress general info/backup crit files/replaces core files
 ```
+wpinfo()
 {
- wp db export ~/$(date -I).$(awk -F"'" '/DB_NAME/{print $4}' wp-config.php).sql --skip-{plugins,themes}&
-wp cache flush&
-wp db repair&
-#wp core download --version=$(wp core version) --force
-wp core verify-checksums&
-for i in .htaccess php.ini  wp-config.php ; do cp $i{,.$(date +%F).bak}; done
-clear
-awk -F"'" '/DB_/{print $4}' wp-config.php | head -n3
-for i in theme plugin user ; do echo $i for $(wp option get siteurl --skip-{plugins,themes} );  wp $i list --skip-{plugins,themes} ; done
+  local ARG1="${@}"
+  local ARGUMENT="${ARG1:-helpme}"
+	clear
+
+scan_wp()
+{
+echo "Wordpress info for $(wp option get home  --skip-{plugins,themes})"
+	wp core version --skip-{plugins,themes}
+	wp core verify-checksums --skip-{plugins,themes}
+	wp option get siteurl --skip-{plugins,themes}
+	wp option get home  --skip-{plugins,themes}
+echo "Database Credentials/Size"
+	wp eval 'echo DB_USER;' --skip-{plugins,themes}
+	wp eval 'echo DB_NAME;' --skip-{plugins,themes}
+   	wp eval 'echo DB_PASSWORD;' --skip-{plugins,themes}
+   	wp db size --size_format=mb
+
+echo -e "\nPHP info"
+	php -i | grep -E "PHP Version|Loaded Configuration File|memory_limit|display_errors|max_execution_time|error_log" 
 }
+
+fix_wp()
+{
+    wordpress_dump
+	wp core download --version="$(wp core version)" --force
+	wp db repair
+	wp cache flush
+	cp -v .htaccess{,.bak_"$(date +%F)"}
+
+cat << EOF > .htaccess
+	# BEGIN WordPress
+
+	RewriteEngine On
+	RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+	RewriteBase /
+	RewriteRule ^index\.php$ - [L]
+	RewriteCond %{REQUEST_FILENAME} !-f
+	RewriteCond %{REQUEST_FILENAME} !-d
+	RewriteRule . /index.php [L]
+
+	# END WordPress
+EOF
+
+}
+
+wordpress_dump()
+{
+#Wordpress DB creds
+  wp_db_backup=$(wp eval 'echo DB_NAME;' --skip-{plugins,themes}).$(date -I).sql
+  wp_db_pass=$(wp eval 'echo DB_PASSWORD;' --skip-{plugins,themes})
+  wp_db_name=$(wp eval 'echo DB_NAME;' --skip-{plugins,themes})
+  wp_db_user=$(wp eval 'echo DB_USER;' --skip-{plugins,themes} )
+  echo "backing up database to ~/$wp_db_backup"
+  mysqldump -p"$wp_db_pass" -u "$wp_db_user" "$wp_db_name" > ~/"$wp_db_backup"
+}
+
+
+
+help_document()
+
+{
+	       cat << EOF
+scan: provides common php settings, wp users, themes and db creds
+fix: replaces WP core files, runs a database repair replaces .htaccess with default 
+
+See the following for more info
+
+https://developer.wordpress.org/cli/commands/core/download/
+https://developer.wordpress.org/cli/commands/db/repair/
+https://wordpress.org/support/article/htaccess/ 
+EOF
+}
+
+  case $ARGUMENT in
+     scan )   scan_wp  ;;
+     fix )   fix_wp  ;;
+     * )     help_document ;;
+     esac
+	
+}
+
 ```
 
 tests if a users email already exists, if it does, updates the pass, if it does not, creates it
