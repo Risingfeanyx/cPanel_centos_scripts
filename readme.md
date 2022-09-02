@@ -1394,11 +1394,12 @@ echo "Wordpress info for $(wp option get home  --skip-{plugins,themes})"
 	wp option get siteurl --skip-{plugins,themes}
 	wp option get home  --skip-{plugins,themes}
 echo "Database Credentials/Size"
-	wp eval 'echo DB_USER;' --skip-{plugins,themes}
-	wp eval 'echo DB_NAME;' --skip-{plugins,themes}
-   	wp eval 'echo DB_PASSWORD;' --skip-{plugins,themes}
-   	wp db size --size_format=mb
-
+(
+ wp eval 'echo DB_USER;' --skip-{plugins,themes}
+	echo -e "\n"; wp eval 'echo DB_NAME;' --skip-{plugins,themes}
+   echo -e "\n"; 	wp eval 'echo DB_PASSWORD;' --skip-{plugins,themes}
+   	echo -e "\n"; wp db size --size_format=mb
+)
 echo -e "\nPHP info"
 	php -i | grep -E "PHP Version|Loaded Configuration File|memory_limit|display_errors|max_execution_time|error_log" 
 }
@@ -1438,6 +1439,13 @@ wordpress_dump()
   mysqldump -p"$wp_db_pass" -u "$wp_db_user" "$wp_db_name" > ~/"$wp_db_backup"
 }
 
+wordpress_backup()
+
+{
+	wordpress_dump
+	tar -vcaf ~/$(wp option get home |tr -cd '[:alnum:]._-').$(date -I).tar.gz ~/"$wp_db_backup" *
+
+}
 
 
 help_document()
@@ -1446,9 +1454,12 @@ help_document()
 	       cat << EOF
 scan: provides common php settings, wp users, themes and db creds
 fix: replaces WP core files, runs a database repair replaces .htaccess with default 
+backup: backs up Wordpress site/database, saves to homedir backup, datestamps
 
 See the following for more info
 
+
+https://man7.org/linux/man-pages/man1/tar.1.html
 https://developer.wordpress.org/cli/commands/core/download/
 https://developer.wordpress.org/cli/commands/db/repair/
 https://wordpress.org/support/article/htaccess/ 
@@ -1458,11 +1469,11 @@ EOF
   case $ARGUMENT in
      scan )   scan_wp  ;;
      fix )   fix_wp  ;;
+     backup ) wordpress_backup ;;
      * )     help_document ;;
      esac
 	
 }
-
 ```
 
 tests if a users email already exists, if it does, updates the pass, if it does not, creates it
