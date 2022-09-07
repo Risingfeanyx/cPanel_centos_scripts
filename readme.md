@@ -768,7 +768,7 @@ mailtest()
 domain=$1
 sudo tail -f /var/log/exim_mainlog | egrep "$1|$2"&
 clear
-mail -s "Email Test Support" -r test@"$domain" "$2" << END
+mail -vv -s  "Email Test Support" -r test@"$domain" "$2" << END
 This is a test email sent from $domain on $(date '+%Y-%m-%d') by a member of the Technical Support team. 
 SPF: $(dig txt  "$domain" +short)
 DMARC: $(dig txt "_dmarc.$domain" +short)
@@ -778,9 +778,7 @@ This is the current PTR record: $(dig -x $(hostname -i) +short)
 Blacklisted? $(echo http://multirbl.valli.org/lookup/$(dig a $(dig mx "$domain" +short) +short).html)
 Replies are not monitored. Please ignore. 
 END
-clear
 echo "sending mail from ""$domain"" to ""$2"""
-sudo tail -n10 /var/log/exim_mainlog | grep "$2"&
 }
 ```
 
