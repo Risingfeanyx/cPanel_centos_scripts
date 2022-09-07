@@ -1431,7 +1431,7 @@ EOF
 wordpress_dump()
 {
 #Wordpress DB creds
-  wp_db_backup=$(wp eval 'echo DB_NAME;' --skip-{plugins,themes}).$(date -I).sql
+  wp_db_backup=$(wp eval 'echo DB_NAME;' --skip-{plugins,themes}).$(date -I).bak.sql
   wp_db_pass=$(wp eval 'echo DB_PASSWORD;' --skip-{plugins,themes})
   wp_db_name=$(wp eval 'echo DB_NAME;' --skip-{plugins,themes})
   wp_db_user=$(wp eval 'echo DB_USER;' --skip-{plugins,themes} )
