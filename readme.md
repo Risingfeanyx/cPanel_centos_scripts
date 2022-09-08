@@ -1434,7 +1434,7 @@ wordpress_dump()
   wp_db_name=$(wp eval 'echo DB_NAME;' --skip-{plugins,themes})
   wp_db_user=$(wp eval 'echo DB_USER;' --skip-{plugins,themes} )
   echo "backing up database to ~/$wp_db_backup"
-  mysqldump -p"$wp_db_pass" -u "$wp_db_user" "$wp_db_name" > ~/"$wp_db_backup"
+  mysqldump --force -p"$wp_db_pass" -u "$wp_db_user" "$wp_db_name" > ~/"$wp_db_backup"
 }
 
 wordpress_backup()
@@ -1486,18 +1486,16 @@ temp_user=$1
 newpass=$(openssl rand -base64 16 | tr -cd '[:alnum:]')
 wp_db_backup=$(wp eval 'echo DB_NAME;').$(date -I).sql
 
+
 wordpress_dump()
 {
 #Wordpress DB creds
-  wp_db_backup=$(wp eval 'echo DB_NAME;' --skip-{plugins,themes}).$(date -I).sql
+  wp_db_backup=$(wp eval 'echo DB_NAME;' --skip-{plugins,themes}).$(date -I).bak.sql
   wp_db_pass=$(wp eval 'echo DB_PASSWORD;' --skip-{plugins,themes})
   wp_db_name=$(wp eval 'echo DB_NAME;' --skip-{plugins,themes})
   wp_db_user=$(wp eval 'echo DB_USER;' --skip-{plugins,themes} )
-
-  clear
-  echo "This is a Wordpress site"
   echo "backing up database to ~/$wp_db_backup"
-  mysqldump -p"$wp_db_pass" -u "$wp_db_user" "$wp_db_name" > ~/"$wp_db_backup"
+  mysqldump --force -p"$wp_db_pass" -u "$wp_db_user" "$wp_db_name" > ~/"$wp_db_backup"
 }
 
 
@@ -1869,19 +1867,18 @@ jl_db_name=$(grep  'public $db = ' configuration.php | awk {'print $4'} | tr -d 
    }
 
 
+
 wordpress_dump()
 {
 #Wordpress DB creds
-  wp_db_backup=$(wp eval 'echo DB_NAME;' --skip-{plugins,themes}).$(date -I).sql
+  wp_db_backup=$(wp eval 'echo DB_NAME;' --skip-{plugins,themes}).$(date -I).bak.sql
   wp_db_pass=$(wp eval 'echo DB_PASSWORD;' --skip-{plugins,themes})
   wp_db_name=$(wp eval 'echo DB_NAME;' --skip-{plugins,themes})
   wp_db_user=$(wp eval 'echo DB_USER;' --skip-{plugins,themes} )
-
-  clear
-  echo "This is a Wordpress site"
   echo "backing up database to ~/$wp_db_backup"
-  mysqldump -p"$wp_db_pass" -u "$wp_db_user" "$wp_db_name" > ~/"$wp_db_backup"
+  mysqldump --force -p"$wp_db_pass" -u "$wp_db_user" "$wp_db_name" > ~/"$wp_db_backup"
 }
+
 
 
   drupal_dump()
