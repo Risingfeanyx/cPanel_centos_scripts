@@ -1423,7 +1423,28 @@ cat << EOF > .htaccess
 
 	# END WordPress
 EOF
+#set Wordpress files/directories to 677 and 755 perms
+#https://wordpress.org/support/article/changing-file-permissions/
+#backs up just in case
 
+find . -type  f | xargs getfacl > perms_files.$(date -I).acl
+find . -type  d | xargs getfacl > perms_dirs.$(date -I).acl
+
+    find . -type f -exec chmod 644 {} +
+    find . -type d -exec chmod 755 {} +
+
+	       cat << EOF
+
+set Wordpress files/directories to 677 and 755 perms
+https://wordpress.org/support/article/changing-file-permissions/
+backs up just in case
+setfacl --restore=perms_files.$(date -I).acl
+setfacl --restore=perms_files.$(date -I).acl
+Will remove above in 24 hours automatically
+EOF
+
+echo "rm -rf perms_files.$(date -I).acl" | at now + 24 hours 
+echo "rm -rf perms_files.$(date -I).acl" | at now + 24 hours
 }
 
 wordpress_dump()
@@ -1451,7 +1472,7 @@ help_document()
 {
 	       cat << EOF
 scan: provides common php settings, wp users, themes and db creds
-fix: replaces WP core files, runs a database repair replaces .htaccess with default 
+fix: replaces WP core files, runs a database repair replaces .htaccess with default , fixes WP permissions 
 backup: backs up Wordpress site/database, saves to homedir backup, datestamps
 
 See the following for more info
