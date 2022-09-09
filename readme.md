@@ -2038,7 +2038,7 @@ db_create
 echo "DB:" $new_user;
 echo "Pass:" $new_pass;
 wp core download
-wp config create --dbuser="$new_user" --dbpass="$new_pass" --dbname="$new_user";
+wp config create --dbuser="${db_pref}${new_user}" --dbpass="$new_pass" --dbname="${db_pref}${new_user}";
 final_steps
 }
 
