@@ -919,6 +919,14 @@ EOF
 
 ```
 
+```
+watch_ip()
+{
+  echo -e "\n${YELLOW}Watching for ""$1"" in.....${NC}"
+tail -f /var/log/messages /var/log/secure /var/log/maillog /var/log/exim_mainlog /usr/local/cpanel/logs/access_log /usr/local/cpanel/logs/login_log  /usr/local/cpanel/logs/error_log | grep "$1"
+}
+```
+
 backup existing FW rules from apf/csf and iptables. will implement into above at some point 
 
 ```
