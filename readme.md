@@ -237,6 +237,11 @@ err()
 	}
 ```
 
+generate whm sec advisor in cli cleanly
+
+```
+whmapi1  fetch_security_advice | sed 's/<[^>]*>//g' | grep -E "key|suggestion"
+```
 
 explode nginx/apache stack. Or "why aren't my changes pushing out?"
 ```
