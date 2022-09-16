@@ -1257,19 +1257,26 @@ systemctl status mysql
 )
 ```
 
-Enable  MySQL error Logging for $1  hour
+Enable  MySQL error Logging for 1  hour
 
 ```
+
 {
+sql_error_log="/var/lib/mysql/$(hostname).err"
+touch $sql_error_log
+chown mysql:mysql $sql_error_log
   cp -fv /etc/my.cnf{,.bak_$(date +%F)}
-  echo "log-error=/var/log/mysql_error_log" >> /etc/my.cnf
+   echo "log-error=$sql_error_log" >> /etc/my.cnf
   service mysql restart
-  echo "error MySQL log is /var/log/mysql_error_log"
   at now + 1 hour <<END
   cp -fv /etc/my.cnf{.bak_$(date +%F),}
   service mysql restart
 END
+echo "MySQL error logging will be disabled in 1 hour"
+mysql -e "show variables like 'log_error';"
 }
+
+
 ```
 enable slow query logs for $1 hours email results to $2
 ```
