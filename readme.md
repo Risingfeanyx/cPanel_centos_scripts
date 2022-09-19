@@ -1523,7 +1523,7 @@ test_user()
 
 temp_user=$1
 newpass=$(openssl rand -base64 16 | tr -cd '[:alnum:]')
-wp_db_backup=$(wp eval 'echo DB_NAME;').$(date -I).sql
+wp_db_backup=$(wp eval 'echo DB_NAME;').$(date -I).bak.sql
 
 
 wordpress_dump()
