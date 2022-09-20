@@ -714,17 +714,73 @@ echo https://www.whatsmydns.net/#TXT/"$1"
 
 ```
 
-DMARC()
+DMARC(){
+
+local ARG1="$1"
+local ARG2="$2"
+local ARGUMENT="${ARG1:-helpme}"
+
+
+none()
 {
  cp -v /var/named/$1.db{,.bak_$(date +%F)}
 whmapi1 addzonerecord domain="$1" name="_dmarc.$1." class=IN ttl=86400 type=TXT txtdata='v=DMARC1; p=none'
 echo -e "This will take effect globally between $(date -d "+4 hours") and $( date -d "+24 hours")"
 echo "$1"
-for i in $(dig ns $1 +short |head -n1); do dig @$i txt $1 +short ; done
 for i in $(dig ns $1 +short |head -n1); do dig @$i txt _dmarc.$1 +short ; done
 echo https://www.whatsmydns.net/#TXT/_dmarc."$1"
-echo https://www.whatsmydns.net/#TXT/"$1"
 }
+
+quarantine()
+{
+ cp -v /var/named/$1.db{,.bak_$(date +%F)}
+whmapi1 addzonerecord domain="$1" name="_dmarc.$1." class=IN ttl=86400 type=TXT txtdata='v=DMARC1; p=quarantine'
+echo -e "This will take effect globally between $(date -d "+4 hours") and $( date -d "+24 hours")"
+echo "$1"
+for i in $(dig ns $1 +short |head -n1); do dig @$i txt _dmarc.$1 +short ; done
+echo https://www.whatsmydns.net/#TXT/_dmarc."$1"
+}
+
+
+reject()
+{
+ cp -v /var/named/$1.db{,.bak_$(date +%F)}
+whmapi1 addzonerecord domain="$1" name="_dmarc.$1." class=IN ttl=86400 type=TXT txtdata='v=DMARC1; p=reject'
+echo -e "This will take effect globally between $(date -d "+4 hours") and $( date -d "+24 hours")"
+echo "$1"
+for i in $(dig ns $1 +short |head -n1); do dig @$i txt _dmarc.$1 +short ; done
+echo https://www.whatsmydns.net/#TXT/_dmarc."$1"
+}
+
+restore()
+{
+\cp -fv /var/named/$1.db{.bak_$(date +%F),}
+}
+
+
+
+     help_document(){
+       cat << EOF
+Wrapper for adding DMARC rules to a domain. Make sure it uses our NS
+
+none: treat the mail the same as it would be without any DMARC validation
+quarantine: accept the mail but place it somewhere other than the recipient’s inbox (typically the spam folder)
+reject: reject the message outright 
+restore: restores from datestamped backup
+EOF
+}
+
+   case $ARGUMENT in
+      none )   none  "$2" ;;
+      quarantine )   quarantine   "$2" ;;
+      reject )   reject  "$2" ;;	
+      restore )   restore  "$2" ;;  
+
+      * )     help_document ;;
+      esac
+      }
+
+
 ```
 
 
