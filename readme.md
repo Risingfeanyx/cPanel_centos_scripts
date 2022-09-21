@@ -325,8 +325,106 @@ https://documentation.cpanel.net/display/DD/WHM+API+1+Functions+-+fetch_ssl_cert
 https://documentation.cpanel.net/display/DD/UAPI+Functions+-+SSL%3A%3Ainstalled_host
 
 
+For a single domain, a wrapper to investigate AutoSSL history, force a renew of an AutoSSL cert and check for existing orders
+
 ```
-auto_ssl_kick()
+auto_ssl_domain(){
+
+local ARG1="$1"
+local ARG2="$2"
+local ARGUMENT="${ARG1:-helpme}"
+
+
+ssl_search()
+{
+domain=$1
+domain_arec=$(/scripts/cpdig $domain a)
+    echo -e "\n AutoSSL Logs for $domain"
+    grep -EhC3 "$domain|error|WARN" /var/cpanel/logs/autossl/*/txt | tail -n5
+    echo "SSL Status for $domain"
+    
+whmapi1 --output=jsonpretty   get_autossl_user_excluded_domains   username=$(whoowns $domain)| awk '/"excluded_domain"/{print $3}' 
+
+
+    curl -v --stderr - https://www.$domain | grep -A10 "Server certificate"
+echo "Forcing HTTPS?"
+    curl -sIA securetest -- $domain | awk '/Location/{print $2}'
+echo "Where is  $domain pointed?"
+    ipusage | grep $domain_arec| awk {'print $1'}
+     for domain_recs in $(/scripts/cpdig $domain a); do echo $domain_recs ; whois $domain_recs | grep -E 'Organization|OrgName' ;done
+}
+
+
+
+domain_ssl_kick()
+{
+domain=$1
+  mv -v /var/cpanel/ssl/apache_tls/$domain/ /var/cpanel/ssl/apache_tls/$domain.$(tr -dc A-Za </dev/urandom | head -c 5).$(date -I)
+  /usr/local/cpanel/bin/autossl_check --user=$(/scripts/whoowns $domain)
+  grep -EhC3 "$domain|error|WARN" /var/cpanel/logs/autossl/*/txt | tail -n5
+  echo "SSL Status for $domain"
+  curl -v --stderr - https://www.$domain | grep -A10 "Server certificate"
+}
+
+
+
+
+order_check()
+{
+if  awk  '/order item ID/{print $8,$12}' /var/cpanel/logs/autossl/"$(date -I)"*/txt | tr -d '“”)' ; 
+then 
+clear
+whmapi1 get_autossl_providers | grep -E "Sectigo|LetsEncrypt"
+echo "SSL orders from $(date -I)"
+awk  '/order item ID/{print $8,$12}' /var/cpanel/logs/autossl/"$(date -I)"*/txt | tr -d '“”)'
+read -rp "Need to check the status of a recent cPanel SSL order? Paste in the above ID(s) with a space between each ID: " cert
+for i in $cert; do 
+curl -sLA "foo"  https://store.cpanel.net/json-api/ssl/certificate/order/"$i" | jq | grep message || echo "jq not installed, navigate to https://store.cpanel.net/json-api/ssl/certificate/order/$i"
+done
+else "no new certs for today"
+fi
+}
+
+
+
+
+     help_document(){
+       cat << EOF
+Wrapper for various AutoSSL features for a single domain. 
+
+search: Searches AutoSSL logs for domain status and where it is pointing
+rename: renames the current SSL stored in /var/cpanel/ssl/apache_tls/$domain/ to force AutoSSL to run for that domain
+orders: checks for order status for any new SSL orders created today 
+EOF
+}
+
+   case $ARGUMENT in
+      search )   ssl_search  "$2" ;;
+      rename )   domain_ssl_kick "$2" ;;  
+      orders )   order_check  ;; 
+
+      * )     help_document ;;
+      esac
+      }
+
+
+```
+
+
+For the server: a wrapper to test if it qualifies for Let's Encrypt, installing Let's Encrypt and forces AutoSSL usage for the whole server
+
+```
+
+auto_ssl_server(){
+
+local ARG1="$1"
+local ARG2="$2"
+local ARGUMENT="${ARG1:-helpme}"
+
+
+##server-wide
+
+ssl_kick()
 {
   clear
   echo "$(($RANDOM%60)) $(($RANDOM%24)) * * * root /usr/local/cpanel/bin/autossl_check --all" > /etc/cron.d/cpanel_autossl && /scripts/restartsrv_crond
@@ -337,43 +435,65 @@ auto_ssl_kick()
   eval "/scripts/restartsrv_"{exim,dovecot,ftpd,cpsrvd}";"
   /usr/local/cpanel/bin/checkallsslcerts --allow-retry --verbose
 }
-```
 
-rename existing cert, re-runs autossl service
 
-```
-domain_ssl_kick()
+
+
+install_letsencrypt()
 {
-domain=$1
-  clear
-  mv /var/cpanel/ssl/apache_tls/$domain/ /var/cpanel/ssl/apache_tls/$domain.$(tr -dc A-Za </dev/urandom | head -c 5).$(date -I)
-  /usr/local/cpanel/bin/autossl_check --user=$(/scripts/whoowns $domain)
-  grep -EhC3 "$domain|error|WARN" /var/cpanel/logs/autossl/*/txt | tail -n5
-  echo "SSL Status for $domain"
-  curl -v --stderr - https://www.$domain | grep -A10 "Server certificate"
-}
-```
-
-
-Search cpanel logs for most recnet autossl order, check ssl status for single domain
-
-```
- auto_ssl_search()
-{
-domain=$1
-domain_arec=$(/scripts/cpdig $domain a)
-    echo -e "\n AutoSSL Logs for $domain"
-    grep -EhC3 "$domain|error|WARN" /var/cpanel/logs/autossl/*/txt | tail -n5
-    echo "SSL Status for $domain"
-    curl -v --stderr - https://www.$domain | grep -A10 "Server certificate"
-echo "Forcing HTTPS?"
-    curl -sIA securetest -- $domain | awk '/Location/{print $2}'
-echo "Where is  $domain pointed?"
-    ipusage | grep $domain_arec| awk {'print $1'}
-     for domain_recs in $(/scripts/cpdig $domain a); do echo $domain_recs ; whois $domain_recs | grep -E 'Organization|OrgName' ;done
+/scripts/install_lets_encrypt_autossl_provider
+ whmapi1 set_autossl_provider provider=LetsEncrypt x_terms_of_service_accepted="https://letsencrypt.org/documents/LE-SA-v1.2-November-15-2017-w-v1.3-notice.pdf"
+whmapi1 start_autossl_check_for_all_users
 }
 
+letsencrypt_qualif()
+    {
+GREEN='\033[0;32m'
+NC='\033[0m' # No Color
+RED='\033[0;31m'
+subdomain_count=$(for user in $(awk -F: '{print $1}' /etc/trueuserowners); do uapi --user="$user" DomainInfo list_domains; done | awk '/ -/ || /main_domain/{print $2}'| wc -l)
+domain_count=$(for a in /var/named/*.db; do echo $(basename $a .db); done | wc -l)
+clear
+whmapi1 get_autossl_providers | grep -E "Sectigo|LetsEncrypt"
+if (( "$subdomain_count" <= "100" )) && (( "$domain_count" <= "50" ))
+then 
+echo -e "$domain_count Domains \n$subdomain_count Subdomains \n ${GREEN} Let's Encrypt! ${NC}\n"
+else
+echo -e "$domain_count Domains \n$subdomain_count Subdomains \n ${RED} Let's not Encrypt! ${NC} \n see https://letsencrypt.org/docs/rate-limits/ \n https://docs.cpanel.net/knowledge-base/security/guide-to-ssl/#autossl-providers for rate limits:
+The Let’s Encrypt provider has the following limitations:
+    \nA rate limit of 300 certificate orders every three hours.
+    \nA weekly limit of 50 registered domains.
+    \nA maximum of 100 subdomains per certificate.
+    \nLimits the certificates it issues to a specific set of domains to five certificates per week. After this, Let’s Encrypt blocks any further certificates for that set of domains.
+"
+fi
+}
+
+
+     help_document(){
+       cat << EOF
+Wrapper for various AutoSSL features for the server
+
+kick: forces AutoSSL to run for all services/domains
+le?: tests to see if the server configuration can work within Let's Encrypts rate limits
+le: Switches SSL provider over to Let's Encrypt and runs AutoSSL checks for all domains 
+EOF
+}
+
+   case $ARGUMENT in
+      kick )   ssl_kick  "$2" ;;
+      le? )   letsencrypt_qualif "$2" ;;  
+      le )   install_letsencrypt  ;; 
+
+      * )     help_document ;;
+      esac
+      }
+
 ```
+
+
+
+
 
 
 test common ssl info
