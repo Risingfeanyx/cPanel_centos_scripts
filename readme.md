@@ -1316,6 +1316,22 @@ https://forums.cpanel.net/resources/innodb-corruption-repair-guide.395/
 ```
 
 
+Clone database
+
+```
+db_clone()
+{
+  origin_db=$1
+  dest_db=$2
+if [ "$(whoami)" = root ] ; then
+    for db in $origin_db; do mysqldump --force "$origin_db" > "$origin_db".$(date -I).sql;done
+    mysql --verbose "$dest_db" < "$origin_db".$(date -I).sql
+else
+echo "Not currently root user, get root"
+fi
+}
+```
+
 Getting this error?
  The Aria engine must be enabled to continue as mysqld was configured with --with-aria-tmp-tables
  rename them aria log files 
