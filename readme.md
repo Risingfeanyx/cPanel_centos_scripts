@@ -367,10 +367,27 @@ domain_arec=$(/scripts/cpdig $domain a)
     echo "SSL Status for $domain"
     curl -v --stderr - https://www.$domain | grep -A10 "Server certificate"
 echo "Forcing HTTPS?"
-    curl -sIA securetest $domain | grep Location| awk {'print $2'}
+    curl -sIA securetest -- $domain | awk '/Location/{print $2}'
 echo "Where is  $domain pointed?"
     ipusage | grep $domain_arec| awk {'print $1'}
      for domain_recs in $(/scripts/cpdig $domain a); do echo $domain_recs ; whois $domain_recs | grep -E 'Organization|OrgName' ;done
+}
+
+```
+
+
+test common ssl info
+
+```
+ssl_test()
+{
+domain=$1
+    echo "SSL Status for $domain"
+    curl -v --stderr - https://www.$domain | grep -A10 "Server certificate"
+echo "Forcing HTTPS?"
+    curl -sIA securetest -- $domain | awk '/Location/{print $2}'
+echo "Where is  $domain pointed?"
+    for i in $(dig $domain +short);do whois $i | grep OrgName; done
 }
 ```
 
