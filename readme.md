@@ -447,34 +447,6 @@ fi
 )
 ```
 
-Want to see if your server qualifies for Lets Encrypt?
-
-https://docs.cpanel.net/knowledge-base/security/guide-to-ssl/#autossl-providers
-https://letsencrypt.org/docs/rate-limits/
-
-```
-    (
-GREEN='\033[0;32m'
-NC='\033[0m' # No Color
-RED='\033[0;31m'
-subdomain_count=$(for user in $(awk -F: '{print $1}' /etc/trueuserowners); do uapi --user="$user" DomainInfo list_domains; done | awk '/ -/ || /main_domain/{print $2}'| wc -l)
-domain_count=$(for a in /var/named/*.db; do echo $(basename $a .db); done | wc -l)
-clear
-whmapi1 get_autossl_providers | grep -E "Sectigo|LetsEncrypt"
-if (( "$subdomain_count" <= "100" )) && (( "$domain_count" <= "50" ))
-then 
-echo -e "$domain_count Domains \n$subdomain_count Subdomains \n ${GREEN} Let's Encrypt! ${NC}\n"
-else
-echo -e "$domain_count Domains \n$subdomain_count Subdomains \n ${RED} Let's not Encrypt! ${NC} \n see https://letsencrypt.org/docs/rate-limits/ \n https://docs.cpanel.net/knowledge-base/security/guide-to-ssl/#autossl-providers for rate limits:
-The Let’s Encrypt provider has the following limitations:
-    \nA rate limit of 300 certificate orders every three hours.
-    \nA weekly limit of 50 registered domains.
-    \nA maximum of 100 subdomains per certificate.
-    \nLimits the certificates it issues to a specific set of domains to five certificates per week. After this, Let’s Encrypt blocks any further certificates for that set of domains.
-"
-fi
-)
-```
 
 ```
 ```
