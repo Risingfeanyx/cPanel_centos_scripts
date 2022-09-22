@@ -1581,46 +1581,46 @@ wpinfo()
 {
   local ARG1="${@}"
   local ARGUMENT="${ARG1:-helpme}"
-	clear
+  clear
 
 scan_wp()
 {
 echo "Wordpress info for $(wp option get home  --skip-{plugins,themes})"
-	wp core version --skip-{plugins,themes}
-	wp core verify-checksums --skip-{plugins,themes}
-	wp option get siteurl --skip-{plugins,themes}
-	wp option get home  --skip-{plugins,themes}
+  wp core version --skip-{plugins,themes}
+  wp core verify-checksums --skip-{plugins,themes}
+  wp option get siteurl --skip-{plugins,themes}
+  wp option get home  --skip-{plugins,themes}
 echo "Database Credentials/Size"
 (
  wp eval 'echo DB_USER;' --skip-{plugins,themes}
-	echo -e "\n"; wp eval 'echo DB_NAME;' --skip-{plugins,themes}
-   echo -e "\n"; 	wp eval 'echo DB_PASSWORD;' --skip-{plugins,themes}
-   	echo -e "\n"; wp db size --size_format=mb
+  echo -e "\n"; wp eval 'echo DB_NAME;' --skip-{plugins,themes}
+   echo -e "\n";  wp eval 'echo DB_PASSWORD;' --skip-{plugins,themes}
+    echo -e "\n"; wp db size --size_format=mb
 )
 echo -e "\nPHP info"
-	php -i | grep -E "PHP Version|Loaded Configuration File|memory_limit|display_errors|max_execution_time|error_log" 
+  php -i | grep -E "PHP Version|Loaded Configuration File|memory_limit|display_errors|max_execution_time|error_log" 
 }
 
 fix_wp()
 {
     wordpress_dump
-	wp core download --version="$(wp core version)" --force
-	wp db repair
-	wp cache flush
-	cp -v .htaccess{,.bak_"$(date +%F)"}
+  wp core download --version="$(wp core version)" --force
+  wp db repair
+  wp cache flush
+  cp -v .htaccess{,.bak_"$(date +%F)"}
 
 cat << EOF > .htaccess
-	# BEGIN WordPress
+  # BEGIN WordPress
 
-	RewriteEngine On
-	RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
-	RewriteBase /
-	RewriteRule ^index\.php$ - [L]
-	RewriteCond %{REQUEST_FILENAME} !-f
-	RewriteCond %{REQUEST_FILENAME} !-d
-	RewriteRule . /index.php [L]
+  RewriteEngine On
+  RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+  RewriteBase /
+  RewriteRule ^index\.php$ - [L]
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule . /index.php [L]
 
-	# END WordPress
+  # END WordPress
 EOF
 #set Wordpress files/directories to 677 and 755 perms
 #https://wordpress.org/support/article/changing-file-permissions/
@@ -1632,7 +1632,7 @@ find . -type  d | xargs getfacl > perms_dirs.$(date -I).acl
     find . -type f -exec chmod 644 {} +
     find . -type d -exec chmod 755 {} +
 
-	       cat << EOF
+         cat << EOF
 
 set Wordpress files/directories to 677 and 755 perms
 https://wordpress.org/support/article/changing-file-permissions/
@@ -1660,16 +1660,16 @@ wordpress_dump()
 wordpress_backup()
 
 {
-	wordpress_dump
-	tar -vcaf ~/$(wp option get home |tr -cd '[:alnum:]._-').$(date -I).tar.gz ~/"$wp_db_backup" *
-
+  wordpress_dump
+  tar -vcaf ~/$(wp option get home |tr -cd '[:alnum:]._-').$(date -I).tar.gz ~/"$wp_db_backup" *
+  find ~ -type f -name ""$wp_db_backup"" -delete
 }
 
 
 help_document()
 
 {
-	       cat << EOF
+         cat << EOF
 scan: provides common php settings, wp users, themes and db creds
 fix: replaces WP core files, runs a database repair replaces .htaccess with default , fixes WP permissions 
 backup: backs up Wordpress site/database, saves to homedir backup, datestamps
@@ -1690,7 +1690,7 @@ EOF
      backup ) wordpress_backup ;;
      * )     help_document ;;
      esac
-	
+  
 }
 ```
 
