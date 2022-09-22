@@ -442,7 +442,7 @@ ssl_kick()
 install_letsencrypt()
 {
 /scripts/install_lets_encrypt_autossl_provider
- whmapi1 set_autossl_provider provider=LetsEncrypt x_terms_of_service_accepted="https://letsencrypt.org/documents/LE-SA-v1.2-November-15-2017-w-v1.3-notice.pdf"
+ whmapi1 set_autossl_provider provider=LetsEncrypt x_terms_of_service_accepted="https://letsencrypt.org/documents/LE-SA-v1.3-September-21-2022.pdf"
 whmapi1 start_autossl_check_for_all_users
 }
 
