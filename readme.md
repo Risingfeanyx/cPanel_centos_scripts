@@ -2016,9 +2016,9 @@ EOF
 
 #update site home/urls
  
-wp search-replace "$(wp option get home)" "https://$destination_name " --all-tables || vim -c "/table_prefix" wp-config.php
+wp search-replace "$(wp option get home)" "https://$destination_name" --all-tables || vim -c "/table_prefix" wp-config.php
 
-wp search-replace "$(wp option get siteurl)" "https://$destination_name " --all-tables
+wp search-replace "$(wp option get siteurl)" "https://$destination_name" --all-tables
 
 ##test
   wp option get siteurl --skip-{plugins,themes}
