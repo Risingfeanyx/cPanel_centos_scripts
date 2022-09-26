@@ -956,7 +956,6 @@ END
 Firewall wrapper for common firewalls CSF,APF,Imunify360, iptables, and CPhulk
 
 ```
-
 allfw(){
 
 local ARG1="$1"
@@ -970,41 +969,39 @@ YELLOW='\033[0;33m'
 
 unblock_ip()
 {
-	 echo -e "\n${GREEN}Unblocking "$1" in.....${NC}\n"
+	 echo -e "\n${GREEN}Unblocking "$1" in.....${NC}"
 	#see https://api.docs.cpanel.net/openapi/whm/operation/flush_cphulk_login_history_for_ips/
 	
 	echo -e "\n${GREEN}...Cphulk Firewall${NC}"
-	whmapi1 flush_cphulk_login_history_for_ips ip="$1"
-	/scripts/cphulkdwhitelist  "$1"
+	whmapi1 flush_cphulk_login_history_for_ips ip="$1" | grep -E "*removed"
+	/scripts/cphulkdwhitelist  "$1" 
 	
-	echo -e "\n${GREEN}...APF/CSF${NC}"
-	[ -f /etc/csf/csf.conf ] && csf -a  "$1" || apf -a  "$1"
+	
+	[ -f /etc/csf/csf.conf ] && echo -e "\n${GREEN}...CSF${NC}" csf -a  "$1" || echo -e "\n${GREEN}...APF${NC}" apf -a  "$1"
      
      #imunify blocks
      #https://docs.imunify360.com/command_line_interface/#whitelist
-     echo -e "${GREEN}...in Imunify360; if this is the free version, this will show no output,IP deny/blocking is only available in the paid version.${NC}"
-    imunify360-agent whitelist ip add  "$1" 2>/dev/null  || echo "this is the free version of Imunify, which does not allow for whitelisting/blacklisting IP"
+    imunify360-agent whitelist ip add  "$1" 2>/dev/null 
     
     #iptables
-    echo -e "${GREEN}...in iptables${NC}"
+    echo -e "\n${GREEN}...in iptables${NC}"
     iptables -vA INPUT -s  $1 -j ACCEPT
 }
 
 block_ip()
 {
-	 echo -e "\n${RED}Blocking "$1" in.....${NC}\n"
+	 echo -e "\n${RED}Blocking "$1" in.....${NC}"
 	#see https://api.docs.cpanel.net/openapi/whm/operation/flush_cphulk_login_history_for_ips/
 	
 	echo -e "\n${RED}...Cphulk Firewall${NC}"
-	whmapi1 flush_cphulk_login_history_for_ips ip="$1"
-	/scripts/cphulkdblacklist "$1" 2>/dev/null
+	whmapi1 flush_cphulk_login_history_for_ips ip="$1" | grep -E "*removed"
+	/scripts/cphulkdblacklist "$1" 2>/dev/null  | grep $1
 	
-	echo -e "\n${RED}...APF/CSF${NC}"
-	[ -f /etc/csf/csf.conf ] && csf -d  "$1" || apf -d  "$1"
+
+	[ -f /etc/csf/csf.conf ] &&	echo -e "\n${RED}...CSF${NC}" csf -d  "$1" || 	echo -e "\n${RED}...APF${NC}" apf -d  "$1"
      
      #imunify blocks
      #hhttps://docs.imunify360.com/command_line_interface/#blacklist
-     echo -e "\n${RED}...in Imunify360; if this is the free version, this will show no output, as it failed.${NC}"
     imunify360-agent blacklist ip add  "$1" 2>/dev/null
     
     #iptables
@@ -1019,7 +1016,7 @@ view_ip()
 	#https://api.docs.cpanel.net/openapi/whm/operation/read_cphulk_records/
 	echo -e "\n${YELLOW}Cphulk${NC}"
     whmapi1    read_cphulk_records   list_name='black'| grep  "$1"
-
+    whmapi1    read_cphulk_records   list_name='white'| grep  "$1"
 	echo -e "\n${YELLOW}Fail2ban${NC}"
     tail -n2 /var/log/fail2ban.log | grep  "$1"
 
@@ -1083,6 +1080,7 @@ EOF
       * )     help_document ;;
       esac
       }
+
 
 
 ```
