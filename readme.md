@@ -977,7 +977,7 @@ unblock_ip()
 	/scripts/cphulkdwhitelist  "$1" 
 	
 	
-	[ -f /etc/csf/csf.conf ] && echo -e "\n${GREEN}...CSF${NC}" csf -a  "$1" || echo -e "\n${GREEN}...APF${NC}" apf -a  "$1"
+	[ -f /etc/csf/csf.conf ] &&	echo -e "\n${GREEN}...CSF${NC}"; csf -a  "$1"  2>/dev/null || 	echo -e "\n${GREEN}...APF${NC}" ;apf -a  "$1"  2>/dev/null
      
      #imunify blocks
      #https://docs.imunify360.com/command_line_interface/#whitelist
@@ -998,7 +998,7 @@ block_ip()
 	/scripts/cphulkdblacklist "$1" 2>/dev/null  | grep $1
 	
 
-	[ -f /etc/csf/csf.conf ] &&	echo -e "\n${RED}...CSF${NC}" csf -d  "$1" || 	echo -e "\n${RED}...APF${NC}" apf -d  "$1"
+	[ -f /etc/csf/csf.conf ] &&	echo -e "\n${RED}...CSF${NC}"; csf -d  "$1"  2>/dev/null || 	echo -e "\n${RED}...APF${NC}" ;apf -d  "$1"  2>/dev/null
      
      #imunify blocks
      #hhttps://docs.imunify360.com/command_line_interface/#blacklist
