@@ -1508,7 +1508,6 @@ tail -fn+1 /var/cpanel/logs/$(whmapi1 start_background_mysql_upgrade version=10.
 ```
 
 
-```
 searches all instances of filenames/text in files for string
 ```
 search_text()
