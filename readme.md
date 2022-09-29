@@ -1728,9 +1728,10 @@ tests if a users email already exists, if it does, updates the pass, if it does 
 
 
 ```
-test_user()
-{
 
+
+test_user()
+{ [[ $@ ]] || { echo "need to pass a username" ;return 1;};
 
 temp_user=$1
 newpass=$(openssl rand -base64 16 | tr -cd '[:alnum:]')
@@ -1752,6 +1753,7 @@ wordpress_dump()
 
 create_user()
 {
+
 if [[ $(wp user list --skip-{plugins,themes} --field=user_email | grep "$temp_user") = "$temp_user" ]]; 
 then
   wp user update "$temp_user" --user_pass="${newpass}" --skip-{plugins,themes} ;
