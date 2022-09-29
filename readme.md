@@ -1488,6 +1488,7 @@ echo -e "\n All instances of $1 in $i" >> $1_sql_$(date +%F)
 mysqldump  "$i" | grep -i "$1"  | tee -a $1_sql_$(date +%F)
 done
 }
+```
 
 upgrade mysql, takes backup first
 
