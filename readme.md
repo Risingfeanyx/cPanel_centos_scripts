@@ -1410,16 +1410,16 @@ Clone database
 
 ```
 db_clone()
-{
-  origin_db=$1
-  dest_db=$2
-if [ "$(whoami)" = root ] ; then
-    for db in $origin_db; do mysqldump --force "$origin_db" > "$origin_db".$(date -I).sql;done
-    mysql --verbose "$dest_db" < "$origin_db".$(date -I).sql
-else
-echo "Not currently root user, get root"
-fi
-}
+ { [[ $@ ]] || { echo "First db is original, 2nd is clone" ;mysql -e 'show databases;'; return 1;};
+    origin_db=$1;   
+    dest_db=$2;  
+    if [ "$(whoami)" = root ]
+    then     
+    for db in $origin_db; do mysqldump --force "$origin_db" > "$origin_db".$(date -I).sql;done;     mysql --verbose "$dest_db" < "$origin_db".$(date -I).sql
+    else echo "Not currently root user, get root"
+    fi
+   } 
+
 ```
 
 Getting this error?
