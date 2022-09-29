@@ -1430,9 +1430,11 @@ Make sure to pass it the log file
 ```
 aria_fix()
 {
+[[ $@ ]] || { echo -e "\n gotta pass the log file ";mysql -e "show variables like 'log_error';"|| grep -i error /etc/my.cnf; return 1;};
 error_log=$1
 
-if grep -q "Aria engine is not enabled or did not start" "/var/lib/mysql/$error_log" | grep $(date -I); then
+
+if grep -q "Aria engine is not enabled or did not start" "/var/lib/mysql/$error_log"  | grep $(date -I) ; then
 
 (
 clear
@@ -1443,19 +1445,11 @@ systemctl restart mysql
 systemctl status mysql
 )
 
-  else echo "Aria Engine error not in error log for $(date -I)"
+  else echo -e "Aria Engine error not in error log for $(date -I)"
 fi
-
-(
-if [ -z "$1" ]
-  then
-    echo "No Logfile supplied"
-    grep -i error /etc/my.cnf
-     mysql -e "show variables like 'log_error';"
-fi
-)
 
 }
+
 ```
 
 Enable  MySQL error Logging for 1  hour
