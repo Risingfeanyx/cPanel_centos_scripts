@@ -1489,6 +1489,22 @@ mysqldump  "$i" | grep -i "$1"  | tee -a $1_sql_$(date +%F)
 done
 }
 
+upgrade mysql, takes backup first
+
+```
+(
+mkdir /root/dbbackups_$(date -Is)
+ls -1d $_
+cd $_
+touch list
+for db in $(mysql -N -e 'SHOW DATABASES;' | grep -v "performance_schema\|information_schema" | awk '{print $1}'); do
+    echo "Dumping database: $db"
+    mysqldump --add-drop-table $db > $db.sql
+    echo $db >> list
+done
+tail -fn+1 /var/cpanel/logs/$(whmapi1 start_background_mysql_upgrade version=10.6 | awk '/mysql_upgrade/{print $2}' | head -n1)/unattended_background_upgrade.log
+)
+```
 
 
 ```
