@@ -936,7 +936,9 @@ localdomain.com to@domain.com.
 ```
 mailtest()
 {
+[[ $@ ]] || { echo "Please provide an origin domain and destination email address" ;return 1;};
 domain=$1
+
 clear
 mail -vv -s  "Email Test Support" -r test@"$domain" "$2" << END
 This is a test email sent from $domain on $(date '+%Y-%m-%d') by a member of the Technical Support team. 
