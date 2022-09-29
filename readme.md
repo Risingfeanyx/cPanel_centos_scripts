@@ -501,6 +501,7 @@ test common ssl info
 ```
 ssl_test()
 {
+[[ $@ ]] || { echo "Pass me a domain" ;return 1;};
 domain=$1
     echo "SSL Status for $domain"
     curl -v --stderr - https://www.$domain | grep -A10 "Server certificate"
