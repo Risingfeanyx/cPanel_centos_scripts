@@ -1252,6 +1252,11 @@ if  grep -EH 'anonymousfox|smtpfox' /home*/*/.contactemail /home/*/.cpanel/conta
   echo -e  "\nhttps://support.cpanel.net/hc/en-us/articles/360058051173-What-is-the-anonymousfox-address-on-my-system \nhttps://sucuri.net/guides/anonymousfox-hack-guide/"
 else echo "No contact emails have been modified by AnonymousFox"
 fi
+
+(
+echo "suspect crons?"
+for i in $(modify-account --list-users); do echo $i; crontab -l -u $i;done
+)
 )
 
 ```
