@@ -2407,6 +2407,6 @@ rsync_between_servers()
 	  echo "Logging in"
 	  ssh -i $keypair  $destination_server
 	  echo -e "Run the following to SSH back in \n"ssh -i $keypair  $destination_server" "
-	  echo -e "Run the following to sync data if any was chosen  \n"rsync -zvaPe "ssh -i $keypair" $origin_data $destination_server:$destination_data" "
+	  echo -e "Run the following to sync data if any was chosen  \nrsync -zvaPe 'ssh -i $keypair' $origin_data $destination_server:$destination_data "
 	}
 ```
