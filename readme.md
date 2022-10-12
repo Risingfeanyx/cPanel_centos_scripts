@@ -2386,27 +2386,33 @@ vps_enter()
 
 
 
-#sets up ssh keys, rsyncs data
+#sets up ssh keys, rsyncs data. Removes keys once finished, this is useful for one-time data transfer
 
 ```
 rsync_between_servers()
 	{
 	destination_server=$1
-	keypair=~/.ssh/intmig
-	clear
-	read -rep "What is the FROM and TO data?" origin_data destination_data
-	clear
+	keypair=~/.ssh/intmig.$(date -I).$(tr -dc A-Za </dev/urandom | head -c 5)
+	origin_data=$2
+	destination_data=$3
+
+	#read -rep "What is the ORIGIN and DESTINATION? Please paste in the FULL file path of the origin data" origin_data destination_data
 	GREEN='\033[0;32m'
 	NC='\033[0m' # No Color
 	clear
 	  echo -e 'y\n' | ssh-keygen -t rsa -N "" -f $keypair > /dev/null
-	  echo -e "Paste this into ~/.ssh/authorized_keys on $destination_server \n ${GREEN} $(cat $keypair.pub)${NC}\n" 
+	  echo -e "Paste this on $destination_server \n${GREEN} $(cat $keypair.pub)${NC}\n" 
 	  echo -e "Don't forget permissions \nchmod 700 ~/.ssh/; \nchmod 600 ~/.ssh/authorized_keys"
 	  echo -e "Whitelist $(hostname -i) on $destination_server"
 	  read -p "Press enter once  $destination_server is whitelisted"
-	  echo "Logging in"
+	  echo "Testing Login, CTRL-D when ready to transfer data"
 	  ssh -i $keypair  $destination_server
-	  echo -e "Run the following to SSH back in \n"ssh -i $keypair  $destination_server" "
-	  echo -e "Run the following to sync data if any was chosen  \nrsync -zvaPe 'ssh -i $keypair' $origin_data $destination_server:$destination_data "
+	  #echo -e "Run the following to SSH back in \n"ssh -i $keypair  $destination_server" "
+	  rsync -zvaPe "ssh -i $keypair" $origin_data $destination_server:$destination_data
+	  #removes from destination server
+	  ssh -i "$keypair" $destination_server "sed -i.bak '/$(hostname)/d' ~/.ssh/authorized_keys"	
+	  #removes from origin server
+	  find  "$keypair" "$keypair".pub -delete 
 	}
+
 ```
