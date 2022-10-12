@@ -2410,9 +2410,8 @@ rsync_between_servers()
 	  #echo -e "Run the following to SSH back in \n"ssh -i $keypair  $destination_server" "
 	  rsync -zvaPe "ssh -i $keypair" $origin_data $destination_server:$destination_data
 	  #removes from destination server
-	  ssh -i "$keypair" $destination_server "sed -i.bak '/$(hostname)/d' ~/.ssh/authorized_keys"	
+	  ssh -i "$keypair" $destination_server "sed -i.bak '/$(whoami)/d' ~/.ssh/authorized_keys"	
 	  #removes from origin server
 	  find  "$keypair" "$keypair".pub -delete 
 	}
-
 ```
